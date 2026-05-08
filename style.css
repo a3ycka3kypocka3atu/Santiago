@@ -3,16 +3,35 @@ html {
   scroll-padding-top: 25vh; /* Places the section nicely in the middle when clicked */
 }
 
+/* ═══════════════════════════════════════════
+   CSS CUSTOM PROPERTIES (Design Tokens)
+   ═══════════════════════════════════════════ */
+:root {
+  /* Colors */
+  --bg-void: #080812;
+  --fg: #eaeaea;
+  --fg-muted: #a0a0b8;
+  --glow-blue: #3b82f6;
+  --glow-green: #10b981;
+  --glow-yellow: #f59e0b;
+
+  /* Spacing & Radius */
+  --radius-popup: 20px;
+
+  /* Animation */
+  --ease-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 body {
   margin: 0;
   padding: 0;
   font-family: 'Inter', sans-serif;
   color: #eaeaea;
-  background: linear-gradient(135deg, #0d0f2c, #1c2a48);
+  background: linear-gradient(135deg, #0c1028 0%, #151238 30%, #1a0e2e 60%, #201428 100%);
   background-attachment: fixed;
   background-size: cover;
   background-repeat: no-repeat;
-  transition: filter 2.5s ease;
+  transition: filter 2.5s ease, background 2s ease, color 2s ease;
   overflow-x: hidden;
   min-height: 100vh;
   animation: pageFadeIn 0.6s ease-out forwards;
@@ -57,23 +76,25 @@ a {
 
 /* Glass Card Base */
 .glass-card {
-  background: rgba(0, 255, 204, 0.05);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 16px;
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 255, 204, 0.4);
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  border: 1px solid rgba(0, 212, 170, 0.25);
+  border-top-color: rgba(255, 255, 255, 0.15);
   padding: 24px;
   margin: 12px;
-  box-shadow: 0 4px 15px rgba(0, 255, 204, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease, background 1.5s ease;
   color: #eaeaea;
 }
 .glass-card h3 {
-  color: #a0a0ff;
+  color: #00d4aa;
 }
 .glass-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 255, 204, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(0, 255, 204, 0.6);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 212, 170, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  border-color: rgba(0, 212, 170, 0.45);
 }
 
 /* Hero Section — Sunrise */
@@ -558,6 +579,28 @@ section h2 {
 @media (max-width: 600px) {
   .title { font-size: 2.2rem; }
   .manifest { font-size: 1rem; }
+
+  /* Mobile-only controls (hidden on desktop) */
+  .menu-trigger {
+    display: flex;
+  }
+  .quick-menu .menu-controls {
+    display: flex;
+  }
+}
+
+@media (max-width: 768px) {
+  .desktop-controls {
+    display: none;
+  }
+}
+@media (min-width: 769px) {
+  .quick-menu .menu-controls {
+    display: none;
+  }
+  .menu-trigger {
+    display: none;
+  }
 }
 
 /* Quick‑menu and button styles */
@@ -701,10 +744,10 @@ section h2 {
 /* Extra spacing for offers section */
 .offers { margin-top: 4rem; }
 
-/* Dark / Night Mode */
+/* Dark / Night Mode — Deep Ocean */
 body.grayscale-mode {
-  background: #0a0a0f;
-  color: #d0d0e0;
+  background: linear-gradient(135deg, #050810 0%, #08101e 30%, #0a0818 60%, #0c0610 100%);
+  color: #d8d8f0;
 }
 
 body, .glass-card, .btn-primary, .btn-primary-yellow, h2, h3 {
@@ -715,49 +758,49 @@ body.grayscale-mode .hero {
   /* Removed static background to allow crossfade via .night-overlay */
 }
 
-
-
 body.grayscale-mode .glass-card {
-  background: rgba(20, 20, 40, 0.6) !important;
-  border: 1px solid rgba(0, 255, 204, 0.3) !important;
-  box-shadow: 0 4px 15px rgba(0, 255, 204, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
+  background: rgba(10, 15, 30, 0.65) !important;
+  border: 1px solid rgba(0, 212, 170, 0.2) !important;
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
   color: #e0e0f0;
 }
 
 body.grayscale-mode h2,
 body.grayscale-mode .glass-card h3 {
-  color: #a0a0ff;
+  color: #00d4aa;
 }
 
 body.grayscale-mode .shop-header {
-  background: linear-gradient(135deg, #050510, #101020);
+  background: linear-gradient(135deg, #050510, #0a0818);
 }
 
 body.grayscale-mode .product-card {
-  background: rgba(20, 20, 40, 0.6);
-  border: 1px solid rgba(100, 100, 255, 0.1);
+  background: rgba(10, 15, 30, 0.6);
+  border: 1px solid rgba(0, 212, 170, 0.1);
 }
 
 body.grayscale-mode .btn-primary,
 body.grayscale-mode .btn-primary-yellow {
-  background: rgba(100, 100, 255, 0.15) !important;
-  color: #a0a0ff !important;
-  border-color: rgba(100, 100, 255, 0.3) !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  background: rgba(0, 212, 170, 0.12) !important;
+  color: #00d4aa !important;
+  border-color: rgba(0, 212, 170, 0.3) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 12px rgba(0, 212, 170, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 body.grayscale-mode .btn-primary:hover,
 body.grayscale-mode .btn-primary-yellow:hover {
-  background: rgba(100, 100, 255, 0.3) !important;
-  border-color: rgba(100, 100, 255, 0.5) !important;
+  background: rgba(0, 212, 170, 0.22) !important;
+  border-color: rgba(0, 212, 170, 0.5) !important;
   color: #fff !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 212, 170, 0.15);
 }
 
 body.grayscale-mode .cloud-top,
 body.grayscale-mode .cloud-top-2,
 body.grayscale-mode .cloud-bottom,
 body.grayscale-mode .cloud-bottom-2 {
-  opacity: 0.2;
+  opacity: 0.15;
   filter: invert(1) hue-rotate(180deg);
 }
 
@@ -808,17 +851,6 @@ body:not(.main-page) .theme-toggle {
   left: 10.5rem;
   top: calc(1.5rem + 14px);
   transform: translateY(-50%);
-}
-
-@media (max-width: 768px) {
-  .desktop-controls {
-    display: none;
-  }
-}
-@media (min-width: 769px) {
-  .quick-menu .menu-controls {
-    display: none;
-  }
 }
 
 .home-icon {
@@ -2479,4 +2511,694 @@ body.grayscale-mode .preview-card {
 .tg-fallback-btn:hover {
   background: rgba(59, 130, 246, 0.25);
   transform: translateY(-1px);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   UPCOMING EVENTS — HORIZONTAL STRIP
+   ═══════════════════════════════════════════════════════════ */
+
+.upcoming-strip {
+  margin-bottom: 28px;
+  animation: fadeSlideUp 0.6s var(--ease-out) 0.1s both;
+}
+
+.upcoming-strip__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.upcoming-strip__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  position: relative;
+  padding-left: 14px;
+}
+
+.upcoming-strip__title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--glow-blue), var(--glow-green));
+}
+
+.upcoming-strip__track {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  padding: 4px 4px 16px 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.06) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.upcoming-strip__track::-webkit-scrollbar { height: 4px; }
+.upcoming-strip__track::-webkit-scrollbar-track { background: transparent; }
+.upcoming-strip__track::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+}
+
+/* ── Upcoming Card ── */
+.upcoming-card {
+  flex: 0 0 260px;
+  scroll-snap-align: start;
+  border-radius: 16px;
+  background: rgba(10, 10, 14, 0.55);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out);
+  position: relative;
+  animation: stripCardIn 0.5s var(--ease-out) both;
+}
+
+@keyframes stripCardIn {
+  from { opacity: 0; transform: translateX(20px) scale(0.96); }
+  to   { opacity: 1; transform: translateX(0)    scale(1);    }
+}
+
+.upcoming-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.upcoming-card--locked {
+  opacity: 0.65;
+}
+
+/* Colored accent bar at top */
+.upcoming-card__accent {
+  height: 3px;
+  width: 100%;
+}
+.upcoming-card__accent--public {
+  background: linear-gradient(90deg, var(--glow-blue), rgba(59, 130, 246, 0.2));
+}
+.upcoming-card__accent--club {
+  background: linear-gradient(90deg, var(--glow-green), rgba(16, 185, 129, 0.2));
+}
+.upcoming-card__accent--internal {
+  background: linear-gradient(90deg, var(--glow-yellow), rgba(250, 204, 21, 0.2));
+}
+
+.upcoming-card__body {
+  padding: 16px 18px 18px;
+}
+
+.upcoming-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.upcoming-card__badge {
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.upcoming-card__badge--public { background: rgba(59, 130, 246, 0.15); color: #93B4F8; }
+.upcoming-card__badge--club   { background: rgba(16, 185, 129, 0.15); color: #6EE7B7; }
+.upcoming-card__badge--internal { background: rgba(250, 204, 21, 0.15); color: #FDE68A; }
+
+.upcoming-card__time {
+  font-size: 0.7rem;
+  color: var(--fg-muted);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.upcoming-card__title {
+  font-size: 0.92rem;
+  font-weight: 650;
+  line-height: 1.3;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.upcoming-card__date {
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+  font-weight: 400;
+}
+
+.upcoming-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  width: 100%;
+}
+.upcoming-empty p {
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  opacity: 0.6;
+}
+
+/* ── Hover glow per type ── */
+.upcoming-card--public:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35), 0 0 20px rgba(59, 130, 246, 0.08);
+}
+.upcoming-card--club:hover {
+  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35), 0 0 20px rgba(16, 185, 129, 0.08);
+}
+.upcoming-card--internal:hover {
+  border-color: rgba(250, 204, 21, 0.3);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35), 0 0 20px rgba(250, 204, 21, 0.08);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CALENDAR — 3D GLASS DESK AESTHETIC
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Theme toggle on calendar nav ── */
+.cal-theme-btn {
+  width: 52px;
+  height: 28px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px;
+  transition: all 0.3s;
+}
+.cal-theme-btn .icon-sun,
+.cal-theme-btn .icon-moon {
+  font-size: 0.7rem;
+  line-height: 1;
+  z-index: 1;
+}
+.cal-theme-btn .toggle-thumb {
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+body.grayscale-mode .cal-theme-btn .toggle-thumb {
+  transform: translateX(24px);
+  background: rgba(0, 255, 204, 0.8);
+}
+
+/* ── Glass Card — 3D floating glass table ── */
+.cal-card.glass-card {
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 40%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  backdrop-filter: blur(40px) saturate(1.4);
+  -webkit-backdrop-filter: blur(40px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-top-color: rgba(255, 255, 255, 0.35);
+  border-radius: 24px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.02);
+  position: relative;
+  overflow: hidden;
+  transform: perspective(1200px) rotateX(1deg);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Glass reflection shimmer */
+.cal-card.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 60%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Rainbow refraction edge */
+.cal-card.glass-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 100, 100, 0.3) 15%,
+    rgba(255, 200, 100, 0.3) 30%,
+    rgba(100, 255, 100, 0.3) 50%,
+    rgba(100, 200, 255, 0.3) 70%,
+    rgba(200, 100, 255, 0.3) 85%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cal-card.glass-card:hover {
+  transform: perspective(1200px) rotateX(0deg);
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.55),
+    0 6px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+}
+
+/* ── Weekday headers — bright glass labels ── */
+.cal-weekdays span {
+  color: rgba(255, 255, 255, 0.55) !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  padding: 12px 0 !important;
+  letter-spacing: 0.1em !important;
+}
+
+/* ── Day numbers — HIGH READABILITY ── */
+.cal-day__num {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  z-index: 1;
+  position: relative;
+}
+
+.cal-day--empty .cal-day__num {
+  color: transparent !important;
+  text-shadow: none;
+}
+
+/* Day cells — frosted glass tiles */
+.cal-day {
+  aspect-ratio: 1;
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.cal-day:not(.cal-day--empty):hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.cal-day:not(.cal-day--empty):hover .cal-day__num {
+  color: #fff !important;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+}
+
+/* Today — glowing glass orb */
+.cal-day--today {
+  background: radial-gradient(
+    circle at center,
+    rgba(59, 130, 246, 0.25) 0%,
+    rgba(59, 130, 246, 0.08) 60%,
+    rgba(59, 130, 246, 0.03) 100%
+  ) !important;
+  border-color: rgba(59, 130, 246, 0.5) !important;
+  box-shadow:
+    0 0 20px rgba(59, 130, 246, 0.2),
+    0 0 40px rgba(59, 130, 246, 0.08),
+    inset 0 0 12px rgba(59, 130, 246, 0.1);
+  animation: todayGlassGlow 3s ease-in-out infinite;
+}
+
+.cal-day--today .cal-day__num {
+  color: #fff !important;
+  font-weight: 800 !important;
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+}
+
+@keyframes todayGlassGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.2), 0 0 40px rgba(59, 130, 246, 0.08), inset 0 0 12px rgba(59, 130, 246, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.35), 0 0 60px rgba(59, 130, 246, 0.12), inset 0 0 16px rgba(59, 130, 246, 0.15);
+  }
+}
+
+/* Selected — bright frosted highlight */
+.cal-day--selected {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  box-shadow:
+    0 0 20px rgba(255, 255, 255, 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+  backdrop-filter: blur(8px);
+}
+
+.cal-day--selected .cal-day__num {
+  font-weight: 800 !important;
+  color: #fff !important;
+}
+
+/* Has-events glow under dots */
+.cal-day--has-events::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 8px;
+  border-radius: 4px;
+  background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cal-day--has-events .cal-day__num {
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+
+/* Event dots — glass beads */
+.cal-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.cal-day:hover .cal-dot {
+  transform: scale(1.5);
+}
+.cal-dot--public { background: #60a5fa; box-shadow: 0 0 8px rgba(96, 165, 250, 0.5); }
+.cal-dot--club { background: #34d399; box-shadow: 0 0 8px rgba(52, 211, 153, 0.5); }
+.cal-dot--internal { background: #fbbf24; box-shadow: 0 0 8px rgba(251, 191, 36, 0.5); }
+
+/* Month navigation — glass buttons */
+.cal-ctrl-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.cal-ctrl-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.cal-ctrl-btn:active {
+  transform: scale(0.95);
+}
+
+/* Month label — bright gradient text */
+.cal-month-label {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #fff 0%, rgba(200, 220, 255, 0.9) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Events Panel — 3D glass card ── */
+.cal-events-panel.glass-card {
+  background: linear-gradient(
+    170deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.02) 50%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  backdrop-filter: blur(40px) saturate(1.3);
+  -webkit-backdrop-filter: blur(40px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top-color: rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.45),
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+  transform: perspective(1200px) rotateX(1deg);
+}
+
+/* Panel glass reflection */
+.cal-events-panel.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.events-panel-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
+  /* reset gradient text for readability */
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
+}
+
+/* Event card in panel — glass tiles */
+.cal-events-panel .event-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+}
+
+.cal-events-panel .event-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Event card text readability */
+.event-card__title {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.event-card__time {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.event-card__desc {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ── Upcoming cards — glass upgrade ── */
+.upcoming-card {
+  background: linear-gradient(
+    165deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  ) !important;
+  backdrop-filter: blur(32px) saturate(1.3) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(1.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-top-color: rgba(255, 255, 255, 0.25) !important;
+  border-radius: 18px !important;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.upcoming-card:hover {
+  transform: translateY(-6px) scale(1.02) !important;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+.upcoming-card__title {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.upcoming-card__date {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ── Calendar Nav — frosted glass bar ── */
+#cal-nav {
+  background: rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(40px) saturate(1.4) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(1.4) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.cal-back-btn {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.cal-back-btn:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ── Page header — readable ── */
+.cal-header h1 {
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.cal-subtitle {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ── Ambient background — deeper glass surface ── */
+.cal-bg {
+  background: linear-gradient(135deg, #080812 0%, #0c1020 40%, #101428 100%) !important;
+}
+
+.cal-bg__orb--blue { opacity: 0.2; }
+.cal-bg__orb--green { opacity: 0.12; }
+.cal-bg__orb--yellow { opacity: 0.1; }
+
+/* ── Guest CTA — glass ── */
+.guest-cta.glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(32px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* ── Popup glass ── */
+.popup-container {
+  background: rgba(12, 14, 24, 0.75) !important;
+  backdrop-filter: blur(48px) saturate(1.5) !important;
+  -webkit-backdrop-filter: blur(48px) saturate(1.5) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-top-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.6),
+    0 8px 24px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+/* ── Lang switcher — glass ── */
+.lang-switcher--inline {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(12px);
+}
+
+.lang-switcher--inline .lang-btn {
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.2s;
+}
+
+.lang-switcher--inline .lang-btn:hover,
+.lang-switcher--inline .lang-btn.active {
+  color: #fff;
+}
+
+/* ── Events empty state ── */
+.events-empty {
+  position: relative;
+  z-index: 1;
+}
+.events-empty p {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* ── Responsive for strip ── */
+@media (max-width: 600px) {
+  .upcoming-card {
+    flex: 0 0 220px;
+  }
+
+  .upcoming-strip__title {
+    font-size: 0.95rem;
+  }
+
+  .upcoming-card__title {
+    font-size: 0.85rem;
+  }
+
+  .upcoming-card__body {
+    padding: 12px 14px 14px;
+  }
+
+  .cal-card.glass-card,
+  .cal-events-panel.glass-card {
+    transform: none;
+    border-radius: 18px;
+  }
+
+  .cal-theme-btn {
+    width: 44px;
+    height: 24px;
+  }
+  .cal-theme-btn .toggle-thumb {
+    width: 16px;
+    height: 16px;
+  }
+  body.grayscale-mode .cal-theme-btn .toggle-thumb {
+    transform: translateX(20px);
+  }
 }

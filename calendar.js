@@ -67,8 +67,8 @@ window.onTelegramAuth = function(user) {
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
-      if (typeof MA3_TRANSLATIONS !== 'undefined' && MA3_TRANSLATIONS[key] && MA3_TRANSLATIONS[key][lang]) {
-        el.textContent = MA3_TRANSLATIONS[key][lang];
+      if (typeof translations !== 'undefined' && translations[lang] && translations[lang][key]) {
+        el.textContent = translations[lang][key];
       }
     });
 
@@ -101,10 +101,12 @@ window.onTelegramAuth = function(user) {
   const eventPopupContent = document.getElementById('event-popup-content');
   const eventPopupClose = document.getElementById('event-popup-close');
   const clubGateClose = document.getElementById('club-gate-close');
+  const clubGatePopup = document.getElementById('club-gate-popup');
   const userBadge = document.getElementById('user-badge');
   const guestCta = document.getElementById('guest-cta');
   const tgLoginContainer = document.getElementById('tg-login-container');
   const logoutBtn = document.getElementById('logout-btn');
+  const upcomingTrack = document.getElementById('upcoming-track');
 
   // ═══════════════════════════════════════════════════════════
   //  CALENDAR RENDERING
@@ -193,6 +195,7 @@ window.onTelegramAuth = function(user) {
       // Fallback: use demo data if Supabase is not connected
       eventsCache = getDemoEvents();
       renderCalendar();
+      renderUpcomingStrip();
       return;
     }
 
@@ -230,6 +233,85 @@ window.onTelegramAuth = function(user) {
     }
 
     renderCalendar();
+    renderUpcomingStrip();
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  UPCOMING EVENTS HORIZONTAL STRIP
+  // ═══════════════════════════════════════════════════════════
+
+  function renderUpcomingStrip() {
+    if (!upcomingTrack) return;
+    upcomingTrack.innerHTML = '';
+
+    const now = new Date();
+    const upcoming = eventsCache
+      .filter(e => new Date(e.start_time) >= now)
+      .sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
+
+    if (upcoming.length === 0) {
+      upcomingTrack.innerHTML = '<div class="upcoming-empty"><p data-i18n="calNoUpcoming">No upcoming events this month</p></div>';
+      return;
+    }
+
+    const monthNames = MONTH_NAMES[currentLang] || MONTH_NAMES.en;
+    const dayNames = {
+      en: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+      cz: ['Ne','Po','Út','St','Čt','Pá','So'],
+      ru: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
+      ua: ['Нд','Пн','Вт','Ср','Чт','Пт','Сб'],
+    };
+
+    const typeLabels = {
+      public: { en: 'Public', cz: 'Veřejné', ru: 'Публичное', ua: 'Публічне' },
+      club: { en: 'Club', cz: 'Klub', ru: 'Клуб', ua: 'Клуб' },
+      internal: { en: 'Internal', cz: 'Interní', ru: 'Внутреннее', ua: 'Внутрішнє' },
+    };
+
+    upcoming.forEach((event, idx) => {
+      const startTime = new Date(event.start_time);
+      const endTime = new Date(event.end_time);
+      const isClub = event.type === 'club';
+      const isLocked = isClub && currentUser.role === 'guest';
+
+      const card = document.createElement('div');
+      card.className = `upcoming-card upcoming-card--${event.type}${isLocked ? ' upcoming-card--locked' : ''}`;
+      card.style.animationDelay = `${idx * 0.06}s`;
+
+      const dayOfWeek = (dayNames[currentLang] || dayNames.en)[startTime.getDay()];
+      const dateLabel = `${dayOfWeek}, ${startTime.getDate()} ${monthNames[startTime.getMonth()]}`;
+      const timeStr = `${formatTime(startTime)} — ${formatTime(endTime)}`;
+      const typeBadge = typeLabels[event.type] ? (typeLabels[event.type][currentLang] || typeLabels[event.type].en) : event.type;
+
+      const title = isLocked ? '🔒 Club Event' : event.title;
+
+      card.innerHTML = `
+        <div class="upcoming-card__accent upcoming-card__accent--${event.type}"></div>
+        <div class="upcoming-card__body">
+          <div class="upcoming-card__top">
+            <span class="upcoming-card__badge upcoming-card__badge--${event.type}">${typeBadge}</span>
+            <span class="upcoming-card__time">${timeStr}</span>
+          </div>
+          <h4 class="upcoming-card__title">${title}</h4>
+          <p class="upcoming-card__date">${dateLabel}</p>
+        </div>
+      `;
+
+      card.addEventListener('click', () => {
+        if (isLocked) {
+          openClubGate();
+        } else {
+          // Select the day on calendar and open popup
+          const day = startTime.getDate();
+          if (startTime.getMonth() === currentMonth && startTime.getFullYear() === currentYear) {
+            selectDay(day);
+          }
+          openEventPopup(event);
+        }
+      });
+
+      upcomingTrack.appendChild(card);
+    });
   }
 
   function getEventsForDay(day) {
@@ -643,10 +725,19 @@ window.onTelegramAuth = function(user) {
   });
 
   // ── INIT ──
-  function init() {
+  async function init() {
     applyTranslations(currentLang);
     updateUserBadge();
-    fetchEventsForMonth();
+    // Auto-select today on load
+    const today = new Date();
+    if (currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
+      selectedDay = today.getDate();
+    }
+    await fetchEventsForMonth();
+    // After calendar renders, show today's events
+    if (selectedDay !== null) {
+      renderEventsForDay(selectedDay);
+    }
   }
 
   if (document.readyState !== 'loading') {

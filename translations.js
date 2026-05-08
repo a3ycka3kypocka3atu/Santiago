@@ -272,7 +272,9 @@ const translations = {
     "gateBtn": "Подать заявку через Telegram →",
     "ctaTitle": "Хотите видеть больше событий?",
     "ctaDesc": "Участники клуба получают доступ к эксклюзивным занятиям, воркшопам и встречам сообщества.",
-    "ctaBtn": "Вступить в клуб →"
+    "ctaBtn": "Вступить в клуб →",
+    "calUpcoming": "Ближайшие события",
+    "calNoUpcoming": "Нет предстоящих событий в этом месяце"
   },
   en: {
     "nav.home": "Home",
@@ -528,7 +530,9 @@ const translations = {
     "gateBtn": "Apply via Telegram →",
     "ctaTitle": "See more events?",
     "ctaDesc": "Club members get access to exclusive sessions, workshops, and community meetups.",
-    "ctaBtn": "Join the Club →"
+    "ctaBtn": "Join the Club →",
+    "calUpcoming": "Upcoming Events",
+    "calNoUpcoming": "No upcoming events this month"
   },
   cz: {
     "nav.home": "Domů",
@@ -784,7 +788,9 @@ const translations = {
     "gateBtn": "Podat žádost přes Telegram →",
     "ctaTitle": "Chcete vidět více událostí?",
     "ctaDesc": "Členové klubu získají přístup k exkluzivním lekcím, workshopům a komunitním setkáním.",
-    "ctaBtn": "Vstoupit do klubu →"
+    "ctaBtn": "Vstoupit do klubu →",
+    "calUpcoming": "Nadcházející události",
+    "calNoUpcoming": "Žádné nadcházející události tento měsíc"
   },
   ua: {
     "nav.home": "Головна",
@@ -1042,7 +1048,9 @@ const translations = {
     "gateBtn": "Подати заявку через Telegram →",
     "ctaTitle": "Хочете бачити більше подій?",
     "ctaDesc": "Учасники клубу отримують доступ до ексклюзивних занять, воркшопів та зустрічей спільноти.",
-    "ctaBtn": "Вступити до клубу →"
+    "ctaBtn": "Вступити до клубу →",
+    "calUpcoming": "Найближчі події",
+    "calNoUpcoming": "Немає майбутніх подій у цьому місяці"
   }
 };
 

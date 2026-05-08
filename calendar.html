@@ -28,6 +28,13 @@
     </a>
 
     <div class="cal-nav-right">
+      <!-- Theme toggle -->
+      <button class="theme-toggle theme-toggle-btn cal-theme-btn" title="Toggle theme" type="button">
+        <span class="icon-sun">☀️</span>
+        <span class="icon-moon">🌙</span>
+        <span class="toggle-thumb"></span>
+      </button>
+
       <!-- User status badge (hidden by default until auth) -->
       <div id="user-badge" class="user-badge user-badge--guest" style="display: none;">
         <span class="user-badge__dot"></span>
@@ -43,7 +50,7 @@
         <!-- Fallback Button for Local Development/Testing -->
         <a href="https://t.me/santioago_bot" target="_blank" class="tg-fallback-btn" id="tg-fallback-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
-          <span>Login via Bot</span>
+          <span>Login via Telegram</span>
         </a>
       </div>
 
@@ -65,6 +72,17 @@
       <h1 data-i18n="calTitle">Studio Schedule</h1>
       <p class="cal-subtitle" data-i18n="calSubtitle">Book a session, join community events, or reserve studio space.</p>
     </header>
+
+    <!-- ═══ UPCOMING EVENTS HORIZONTAL STRIP ═══ -->
+    <section class="upcoming-strip">
+      <div class="upcoming-strip__header">
+        <h2 class="upcoming-strip__title" data-i18n="calUpcoming">Upcoming Events</h2>
+        <div class="upcoming-strip__fade-right"></div>
+      </div>
+      <div class="upcoming-strip__track" id="upcoming-track">
+        <!-- JS fills this -->
+      </div>
+    </section>
 
     <!-- Calendar + Events Panel -->
     <div class="cal-layout">
@@ -156,5 +174,18 @@
   <!-- Scripts -->
   <script src="translations.js"></script>
   <script src="calendar.js"></script>
+  <script>
+    // Theme toggle for calendar page
+    const body = document.body;
+    if (localStorage.getItem('grayscale') === 'enabled') {
+      body.classList.add('grayscale-mode');
+    }
+    document.querySelectorAll('.theme-toggle-btn').forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        body.classList.toggle('grayscale-mode');
+        localStorage.setItem('grayscale', body.classList.contains('grayscale-mode') ? 'enabled' : 'disabled');
+      });
+    });
+  </script>
 </body>
 </html>
