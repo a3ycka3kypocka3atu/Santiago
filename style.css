@@ -2067,27 +2067,26 @@ body.grayscale-mode .preview-card {
 /* ── Events Side Panel ── */
 .cal-events-panel {
   padding: 24px;
-  max-height: 520px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.08) transparent;
+  overflow-y: visible;
+  max-height: none;
+  align-self: start;
 }
 
 .cal-events-panel::-webkit-scrollbar { width: 5px; }
 .cal-events-panel::-webkit-scrollbar-track { background: transparent; }
 .cal-events-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
 
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .events-panel-title {
   font-size: 1.1rem;
   font-weight: 700;
   margin-bottom: 16px;
   letter-spacing: -0.01em;
-}
-
-.events-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
 
 .events-empty {
@@ -2418,6 +2417,16 @@ body.grayscale-mode .preview-card {
   .event-detail__meta {
     flex-direction: column;
     gap: 8px;
+  }
+
+  .cal-events-panel {
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .events-list {
+    max-height: none;
+    overflow-y: visible;
   }
 }
 
