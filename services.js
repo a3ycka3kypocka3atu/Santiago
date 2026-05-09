@@ -60,10 +60,10 @@
       const ctaLabelEl = card.querySelector('.preview-card__cta span');
       const badgeEl = card.querySelector('.preview-badge');
       const formatEl = card.querySelector('.preview-format');
-      if (titleEl) titleEl.textContent = service.title || '';
-      if (priceEl) priceEl.textContent = service.price || '';
-      if (descEl) descEl.textContent = service.description || '';
-      if (masterEl) masterEl.textContent = service.instructor_name || '';
+      if (titleEl) titleEl.textContent = t(service.title) || '';
+      if (priceEl) priceEl.textContent = t(service.price) || '';
+      if (descEl) descEl.textContent = t(service.description) || '';
+      if (masterEl) masterEl.textContent = t(service.instructor_name) || '';
       if (ctaLabelEl) ctaLabelEl.textContent = t('btn.details');
       if (badgeEl) badgeEl.textContent = catLabel;
       if (formatEl) formatEl.textContent = formatLabel;
@@ -124,11 +124,11 @@
           <span class="preview-badge">${catLabel}</span>
           <span class="preview-format">${formatLabel}</span>
         </div>
-        <h3 class="preview-card__title">${service.title || ''}</h3>
-        <span class="preview-price">${service.price || ''}</span>
-        <p class="preview-desc">${service.description || ''}</p>
+        <h3 class="preview-card__title">${t(service.title) || ''}</h3>
+        <span class="preview-price">${t(service.price) || ''}</span>
+        <p class="preview-desc">${t(service.description) || ''}</p>
         <div class="preview-card__footer">
-          <span class="preview-master">${service.instructor_name || ''}</span>
+          <span class="preview-master">${t(service.instructor_name) || ''}</span>
           <span class="preview-card__cta">
             <span>${t('btn.details')}</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
