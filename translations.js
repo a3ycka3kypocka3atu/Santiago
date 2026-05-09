@@ -1068,10 +1068,11 @@ function applyTranslations(lang) {
 document.addEventListener('DOMContentLoaded', () => {
   const currentLang = localStorage.getItem('language') || 'ru';
   applyTranslations(currentLang);
-  
-  // Highlight active lang button if language switcher exists
-  const activeBtn = document.querySelector(`.lang-btn[data-lang="${currentLang}"]`);
-  if (activeBtn) activeBtn.classList.add('active');
+
+  // Highlight active lang button in ALL language switchers
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === currentLang);
+  });
 });
 
 // Setup lang switchers globally
@@ -1080,9 +1081,10 @@ document.addEventListener('click', (e) => {
     const lang = e.target.getAttribute('data-lang');
     localStorage.setItem('language', lang);
     applyTranslations(lang);
-    
-    // Update active UI
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    e.target.classList.add('active');
+
+    // Update active UI in ALL lang switchers
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.lang === lang);
+    });
   }
 });
