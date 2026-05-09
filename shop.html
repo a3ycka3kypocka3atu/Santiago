@@ -143,26 +143,27 @@
     </svg>
   </a>
 
-  <!-- Back to main -->
-  <a href="index.html" class="home-icon" aria-label="На главную" title="На главную">
-    <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="svg-home">
-      <path d="M19 12H5"></path>
-      <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
-  </a>
-  <!-- Theme Toggle Switcher -->
-  <button class="theme-toggle" id="theme-toggle" title="Переключить дзен-режим" style="left: 6rem;">
-    <span class="icon-sun">☀️</span>
-    <span class="icon-moon">🌙</span>
-    <span class="toggle-thumb"></span>
-  </button>
+  <!-- Desktop Controls -->
+  <div class="desktop-controls">
+    <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" title="Login via Telegram">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
+      <span class="tg-text">Login via Telegram</span>
+    </a>
 
-  <!-- Language Switcher -->
-  <div class="lang-switcher" style="left: 9.5rem;">
-    <button class="lang-btn" data-lang="ru">RU</button>
-    <button class="lang-btn" data-lang="en">EN</button>
-    <button class="lang-btn" data-lang="cz">CZ</button>
-    <button class="lang-btn" data-lang="ua">UA</button>
+    <div class="lang-switcher">
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="cz">CZ</button>
+      <button class="lang-btn" data-lang="ru">RU</button>
+      <button class="lang-btn" data-lang="ua">UA</button>
+    </div>
+
+    <button class="theme-toggle theme-toggle-btn" title="Toggle theme">
+      <span class="icon-sun">☀️</span>
+      <span class="icon-moon">🌙</span>
+      <span class="toggle-thumb"></span>
+    </button>
+    
+    <button class="menu-trigger" aria-label="Open menu">☰</button>
   </div>
 
   <header class="shop-header">
@@ -334,21 +335,22 @@
   </footer>
 
   <script src="translations.js?v=2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="auth.js"></script>
+  <script src="menu.js"></script>
   <script>
-    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggles = document.querySelectorAll('.theme-toggle-btn');
     const body = document.body;
 
     if (localStorage.getItem('grayscale') === 'enabled') {
       body.classList.add('grayscale-mode');
     }
 
-    themeToggle.addEventListener('click', () => {
-      body.classList.toggle('grayscale-mode');
-      if (body.classList.contains('grayscale-mode')) {
-        localStorage.setItem('grayscale', 'enabled');
-      } else {
-        localStorage.setItem('grayscale', 'disabled');
-      }
+    themeToggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        body.classList.toggle('grayscale-mode');
+        localStorage.setItem('grayscale', body.classList.contains('grayscale-mode') ? 'enabled' : 'disabled');
+      });
     });
   </script>
 </body>

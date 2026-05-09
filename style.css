@@ -680,9 +680,9 @@ section {
   .quick-menu .menu-controls {
     display: none;
   }
-  .desktop-controls .menu-trigger {
+  /* .desktop-controls .menu-trigger {
     display: none;
-  }
+  } */
 }
 
 /* Quick‑menu and button styles */
@@ -913,12 +913,12 @@ body.grayscale-mode .cloud-bottom-2 {
 .desktop-controls {
   position: fixed;
   top: 1.5rem;
-  right: 1.5rem;
+  right: 2rem;
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 16px;
+  gap: 20px;
 }
 .desktop-controls .theme-toggle {
   position: static;
