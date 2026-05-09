@@ -111,8 +111,6 @@
       <p class="cal-subtitle" data-i18n="calSubtitle">Book a session, join community events, or reserve studio space.</p>
     </header>
 
-    <!-- Location Filter moved down -->
-
     <!-- Always Available Section (Evergreen Services) -->
     <div class="always-available" id="always-available" style="display:none;">
       <div class="always-available__header">
@@ -134,14 +132,6 @@
       </div>
     </section>
 
-    <!-- Location Filter Tabs -->
-    <div class="location-filter" id="location-filter" style="margin-bottom: 8px;">
-      <button class="filter-tab active" data-filter="all" data-i18n="filter.all">All</button>
-      <button class="filter-tab" data-filter="online" data-i18n="filter.online">Online</button>
-      <button class="filter-tab" data-filter="offline_studio" data-i18n="filter.offlineStudio">At Studio</button>
-      <button class="filter-tab" data-filter="offline_external" data-i18n="filter.offlineExternal">Offsite</button>
-    </div>
-
     <!-- Calendar + Events Panel -->
     <div class="cal-layout">
 
@@ -155,6 +145,14 @@
           <button id="cal-next" class="cal-ctrl-btn" type="button" aria-label="Next month">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
           </button>
+        </div>
+
+        <!-- Location Filter Tabs -->
+        <div class="location-filter location-filter--cal" id="location-filter" style="margin-bottom: 16px; justify-content: center;">
+          <button class="filter-tab active" data-filter="all" data-i18n="filter.all">All</button>
+          <button class="filter-tab" data-filter="online" data-i18n="filter.online">Online</button>
+          <button class="filter-tab" data-filter="offline_studio" data-i18n="filter.offlineStudio">At Studio</button>
+          <button class="filter-tab" data-filter="offline_external" data-i18n="filter.offlineExternal">Offsite</button>
         </div>
 
         <!-- Weekday headers -->

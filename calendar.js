@@ -195,10 +195,7 @@ window.onTelegramAuth = function(user) {
     if (!sb) {
       // Fallback: use demo data if Supabase is not connected
       eventsCache = getDemoEvents();
-      renderCalendar();
-      renderUpcomingStrip();
-      return;
-    }
+    } else {
 
     const startOfMonth = new Date(currentYear, currentMonth, 1).toISOString();
     const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59).toISOString();
@@ -229,12 +226,13 @@ window.onTelegramAuth = function(user) {
       console.warn('Network error, using demo data:', err);
       eventsCache = getDemoEvents();
     }
+    } // end of else (sb exists)
 
-    // Role-based filtering logic
+    // Role-based filtering logic (applies to both demo and real data)
     eventsCache = eventsCache.filter(e => {
       if (currentUser.role === 'admin' || currentUser.role === 'instructor') return true;
       if (currentUser.role === 'resident') return e.type === 'public' || e.type === 'club';
-      return e.type === 'public'; // Guest/Visitor
+      return e.type === 'public'; // Guest/Visitor — shows public, hides club/internal
     });
 
     renderCalendar();
@@ -614,55 +612,55 @@ window.onTelegramAuth = function(user) {
         id: 'demo-1', title: 'Morning Yoga', description: 'Open session for everyone. Bring your own mat.',
         start_time: new Date(y, m, 5, 9, 0).toISOString(),
         end_time: new Date(y, m, 5, 10, 30).toISOString(),
-        type: 'public', status: 'confirmed',
+        type: 'public', location_type: 'offline_studio', status: 'confirmed',
       },
       {
         id: 'demo-2', title: 'Community Networking', description: 'Monthly meetup for conscious entrepreneurs and creators.',
-        start_time: new Date(y, m, 8, 18, 0).toISOString(),
-        end_time: new Date(y, m, 8, 20, 0).toISOString(),
-        type: 'public', status: 'confirmed',
+        start_time: new Date(y, m, 10, 18, 0).toISOString(),
+        end_time: new Date(y, m, 10, 20, 0).toISOString(),
+        type: 'public', location_type: 'offline_studio', status: 'confirmed',
       },
       {
         id: 'demo-3', title: 'Breathwork & Cold Exposure', description: 'Deep breathing session followed by ice bath experience. Led by instructor Alex.',
         start_time: new Date(y, m, 12, 7, 0).toISOString(),
         end_time: new Date(y, m, 12, 8, 30).toISOString(),
-        type: 'club', status: 'confirmed',
+        type: 'club', location_type: 'offline_studio', status: 'confirmed',
       },
       {
         id: 'demo-4', title: 'Startup Pitch Night', description: 'Present your project to the community and get feedback.',
         start_time: new Date(y, m, 15, 19, 0).toISOString(),
         end_time: new Date(y, m, 15, 21, 0).toISOString(),
-        type: 'public', status: 'confirmed',
+        type: 'public', location_type: 'offline_external', status: 'confirmed',
       },
       {
         id: 'demo-5', title: 'Private Meditation Circle', description: 'Guided meditation with sound healing. Residents only.',
         start_time: new Date(y, m, 15, 8, 0).toISOString(),
         end_time: new Date(y, m, 15, 9, 0).toISOString(),
-        type: 'club', status: 'confirmed',
+        type: 'club', location_type: 'offline_studio', status: 'confirmed',
       },
       {
         id: 'demo-6', title: 'Open Mic & Jam Session', description: 'Bring your instrument or voice. All genres welcome!',
         start_time: new Date(y, m, 20, 20, 0).toISOString(),
         end_time: new Date(y, m, 20, 22, 30).toISOString(),
-        type: 'public', status: 'confirmed',
+        type: 'public', location_type: 'offline_studio', status: 'confirmed',
       },
       {
         id: 'demo-7', title: 'Inner Circle Strategy Meeting', description: 'Monthly planning session for club leaders and coordinators.',
         start_time: new Date(y, m, 22, 16, 0).toISOString(),
         end_time: new Date(y, m, 22, 17, 30).toISOString(),
-        type: 'club', status: 'confirmed',
+        type: 'club', location_type: 'online', status: 'confirmed',
       },
       {
         id: 'demo-8', title: 'Partner Yoga Workshop', description: 'Fun and connecting partner yoga for beginners.',
         start_time: new Date(y, m, 25, 10, 0).toISOString(),
         end_time: new Date(y, m, 25, 12, 0).toISOString(),
-        type: 'public', status: 'confirmed',
+        type: 'public', location_type: 'offline_studio', status: 'confirmed',
       },
       {
         id: 'demo-9', title: 'Eco Lecture: Sustainable Living in Prague', description: 'Guest speaker on practical sustainability.',
         start_time: new Date(y, m, 28, 18, 30).toISOString(),
         end_time: new Date(y, m, 28, 20, 0).toISOString(),
-        type: 'public', status: 'confirmed',
+        type: 'public', location_type: 'online', status: 'confirmed',
       },
     ];
   }
@@ -784,15 +782,14 @@ window.onTelegramAuth = function(user) {
     fetchEventsForMonth();
   });
 
-  // Calendar Header Expand/Collapse logic
-  const calControls = document.querySelector('.cal-controls');
-  if (calControls) {
-    calControls.addEventListener('click', (e) => {
-      // Toggle collapse on calendar layout when clicking header row
-      const layout = calControls.closest('.cal-layout');
-      if (layout) {
-        layout.classList.toggle('collapsed');
-      }
+  // Calendar card: clicking ANYWHERE on the card expands/collapses
+  const calCard = document.querySelector('.cal-card');
+  if (calCard) {
+    calCard.style.cursor = 'pointer';
+    calCard.addEventListener('click', (e) => {
+      // Don't toggle when clicking on specific interactive elements inside
+      if (e.target.closest('.cal-day') || e.target.closest('.filter-tab') || e.target.closest('.cal-ctrl-btn')) return;
+      calCard.classList.toggle('collapsed');
     });
   }
 
