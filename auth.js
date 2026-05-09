@@ -18,21 +18,24 @@ const Auth = {
   },
 
   async syncProfile(telegramId) {
-    if (!supabaseClient) return null;
+    console.log('[Auth] Syncing profile for TG ID:', telegramId);
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .select('*')
+      .eq('telegram_id', telegramId)
+      .single();
 
-    try {
-      const { data: profile, error } = await supabaseClient
-        .from('profiles')
-        .select('*')
-        .eq('telegram_id', telegramId)
-        .single();
+    if (error) {
+      console.error('[Auth] Sync error:', error.message, error.details);
+      return null;
+    }
 
-      if (!error && profile) {
-        this.saveSession(profile);
-        return profile;
-      }
-    } catch (err) {
-      console.error('Auth sync error:', err);
+    if (data) {
+      console.log('[Auth] Profile found:', data.role);
+      this.user = data;
+      localStorage.setItem('ma3_user', JSON.stringify(data));
+      document.dispatchEvent(new CustomEvent('ma3-auth-changed', { detail: data }));
+      return data;
     }
     return null;
   },
@@ -63,18 +66,33 @@ const Auth = {
     // Handle URL login from bot
     const params = new URLSearchParams(window.location.search);
     const userId = params.get('userId');
-    console.log('[Auth] Checking URL for userId:', userId);
+    const urlRole = params.get('role');
+    
+    console.log('[Auth] Checking URL for userId:', userId, 'role:', urlRole);
+    
     if (userId) {
-      this.syncProfile(userId).then((profile) => {
-        if (profile) {
-          console.log('[Auth] Successfully synced profile for userId:', userId);
-          // Clean URL
-          const newUrl = window.location.pathname + window.location.hash;
-          window.history.replaceState({}, document.title, newUrl);
-        } else {
-          console.warn('[Auth] Failed to sync profile for userId:', userId);
-        }
-      });
+      if (urlRole) {
+        // Direct role bypass for speed and convenience
+        console.log('[Auth] Using role from URL:', urlRole);
+        const tempUser = { 
+          telegram_id: userId, 
+          role: urlRole, 
+          full_name: 'Resident' 
+        };
+        this.saveSession(tempUser);
+        
+        // Clean URL
+        const newUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, newUrl);
+      } else {
+        // Fallback to DB sync if no role in URL
+        this.syncProfile(userId).then((profile) => {
+          if (profile) {
+            const newUrl = window.location.pathname + window.location.hash;
+            window.history.replaceState({}, document.title, newUrl);
+          }
+        });
+      }
     }
 
     // Refresh UI on load

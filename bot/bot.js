@@ -96,7 +96,7 @@ bot.start(async (ctx) => {
   }
 
   if (startPayload === 'login') {
-    const portalUrl = `https://a3ycka3kypocka3atu.github.io/-/index.html?userId=${ctx.from.id}`;
+    const portalUrl = `https://brown-delta-28.vercel.app/index.html?userId=${ctx.from.id}&role=${ctx.userRole}`;
     return ctx.reply(
       `🔑 Ви входите у систему як ${ctx.userRole}.\n\nНатисніть кнопку нижче, щоб відкрити портал:`,
       Markup.inlineKeyboard([

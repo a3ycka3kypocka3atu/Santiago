@@ -65,11 +65,20 @@ section h2,
   text-decoration: none;
 }
 .top-logo-svg {
-  width: clamp(70px, 12vw, 90px);
+  width: clamp(60px, 10vw, 85px);
   height: auto;
   color: #ffcc00;
   filter: drop-shadow(0 0 6px rgba(255, 204, 0, 0.6));
   transition: color 0.5s ease, filter 0.5s ease;
+}
+
+@media (max-width: 768px) {
+  .top-logo-container {
+    top: 0.2rem;
+  }
+  .calendar-page {
+    padding-top: 70px !important;
+  }
 }
 
 @keyframes pageFadeIn {
