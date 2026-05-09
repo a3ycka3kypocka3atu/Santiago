@@ -1897,7 +1897,8 @@ body.grayscale-mode .preview-card {
 .cal-nav-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 1rem;
+  flex-wrap: nowrap;
 }
 
 .lang-switcher--inline {
@@ -1907,6 +1908,7 @@ body.grayscale-mode .preview-card {
   border-radius: 14px;
   background: rgba(10, 10, 14, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
 }
 
 /* ── User Badge ── */
@@ -1962,6 +1964,7 @@ body.grayscale-mode .preview-card {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 
@@ -2511,6 +2514,16 @@ body.grayscale-mode .preview-card {
   .events-list {
     max-height: none;
     overflow-y: visible;
+  }
+
+  .cal-nav-right {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .cal-theme-btn {
+    order: -1;
   }
 }
 
