@@ -1,0 +1,16 @@
+# Ignore large video files
+*.mov
+*.MOV
+man_videos/
+woman_videos/
+
+# Ignore accidental directories
+offer:/
+profile:/
+
+# macOS
+.DS_Store
+
+# Bot environment variables
+bot/.env
+bot/node_modules/

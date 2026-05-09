@@ -213,12 +213,46 @@
     </div>
   </div>
 
+  <!-- Quick‑menu trigger and panel -->
+  <button class="menu-trigger" aria-label="Open menu">☰</button>
+  <nav class="quick-menu" aria-label="Navigation">
+    <ul>
+      <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+      <li><a href="services.html" data-i18n="nav.services">Services</a></li>
+      <li><a href="masters.html" data-i18n="nav.masters">Masters</a></li>
+    </ul>
+    
+    <div class="menu-controls">
+      <!-- Telegram Login -->
+      <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" style="width: 100%; justify-content: center; margin-bottom: 1rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
+        <span>Login via Telegram</span>
+      </a>
+
+      <!-- Language Switcher -->
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="cz">CZ</button>
+        <button class="lang-btn" data-lang="ru">RU</button>
+        <button class="lang-btn" data-lang="ua">UA</button>
+      </div>
+
+      <!-- Theme Toggle -->
+      <button class="theme-toggle theme-toggle-btn" title="Toggle theme">
+        <span class="icon-sun">☀️</span>
+        <span class="icon-moon">🌙</span>
+        <span class="toggle-thumb"></span>
+      </button>
+    </div>
+  </nav>
+
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- rrule library for recurrence expansion -->
   <script src="https://cdn.jsdelivr.net/npm/rrule@2.7.2/dist/es5/rrule.min.js"></script>
   <!-- Scripts -->
   <script src="translations.js"></script>
+  <script src="menu.js"></script>
   <script src="calendar.js"></script>
   <script>
     // Theme toggle for calendar page
