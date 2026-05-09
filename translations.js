@@ -294,7 +294,19 @@ const translations = {
     "filter.instructor": "Мастер",
     "filter.allInstructors": "Все мастера",
     "services.empty.text": "За цими критеріями послуг не знайдено",
-    "services.empty.reset": "Скинути фільтри"
+    "services.empty.reset": "Скинути фільтри",
+    
+    // Cabinet.html
+    "cabinet.title": "Личный кабинет",
+    "cabinet.subtitle": "Пространство для управления вашими проектами и услугами в Santiago Studio.",
+    "cabinet.profile.title": "Мой Профиль",
+    "cabinet.profile.desc": "Настройка публичной страницы, контактов и биографии.",
+    "cabinet.services.title": "Мои Услуги",
+    "cabinet.services.desc": "Управление вашими офферами, ценами и описанием практик.",
+    "cabinet.projects.title": "Мои Проекты",
+    "cabinet.projects.desc": "Глобальные инициативы, события и долгосрочные коллаборации.",
+    "cabinet.admin.title": "Администрирование",
+    "cabinet.admin.desc": "Управление всеми резидентами, событиями и настройками платформы."
   },
   en: {
     "nav.home": "Home",
@@ -571,7 +583,19 @@ const translations = {
     "filter.instructor": "Instructor",
     "filter.allInstructors": "All Instructors",
     "services.empty.text": "No services match your criteria",
-    "services.empty.reset": "Reset Filters"
+    "services.empty.reset": "Reset Filters",
+
+    // Cabinet.html
+    "cabinet.title": "Resident Cabinet",
+    "cabinet.subtitle": "Space for managing your projects and services in Santiago Studio.",
+    "cabinet.profile.title": "My Profile",
+    "cabinet.profile.desc": "Configure your public page, contacts, and bio.",
+    "cabinet.services.title": "My Services",
+    "cabinet.services.desc": "Manage your offers, prices, and practice descriptions.",
+    "cabinet.projects.title": "My Projects",
+    "cabinet.projects.desc": "Global initiatives, events, and long-term collaborations.",
+    "cabinet.admin.title": "Administration",
+    "cabinet.admin.desc": "Manage all residents, events, and platform settings."
   },
   cz: {
     "nav.home": "Domů",
@@ -845,8 +869,19 @@ const translations = {
     "filter.group": "Skupinové",
     "filter.instructor": "Mistra",
     "filter.allInstructors": "Všichni mistři",
-    "services.empty.text": "Žádné služby neodpovídají vašim kritériím",
-    "services.empty.reset": "Resetovat filtry",
+    "services.empty.text": "Podle těchto kritérií nebyly nalezeny žádné služby",
+    "services.empty.reset": "Obnovit filtry",
+
+    "cabinet.title": "Osobní kabinet",
+    "cabinet.subtitle": "Prostor pro správu vašich projektů a služeb v Santiago Studio.",
+    "cabinet.profile.title": "Můj Profil",
+    "cabinet.profile.desc": "Nastavení veřejné stránky, kontaktů a biografie.",
+    "cabinet.services.title": "Moje Služby",
+    "cabinet.services.desc": "Správa vašich nabídek, cen a popisu praxí.",
+    "cabinet.projects.title": "Moje Projekty",
+    "cabinet.projects.desc": "Globální iniciativy, události a dlouhodobé spolupráce.",
+    "cabinet.admin.title": "Administrace",
+    "cabinet.admin.desc": "Správa všech rezidentů, událostí a nastavení platformy.",
     "event.viewService": "Zobrazit detaily služby →"
   },
   ua: {
