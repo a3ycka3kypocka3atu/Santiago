@@ -29,6 +29,14 @@
       align-items: center;
       gap: 15px;
       cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .cabinet-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--glow-yellow);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 20px rgba(255,204,0,0.1);
     }
     .cabinet-card .icon {
       font-size: 3rem;
@@ -53,6 +61,39 @@
       font-weight: 700;
       text-transform: uppercase;
       margin-bottom: 10px;
+    }
+    /* Add Button Styling */
+    .add-btn-wrapper {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      opacity: 0.6;
+      transition: all 0.3s ease;
+    }
+    .cabinet-card:hover .add-btn-wrapper {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    .add-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: var(--glow-yellow);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .add-btn:hover {
+      background: var(--glow-yellow);
+      color: #000;
+      box-shadow: 0 0 20px var(--glow-yellow);
     }
   </style>
 </head>
@@ -159,6 +200,9 @@
         <div class="icon">✨</div>
         <h3 data-i18n="cabinet.services.title">Мои Услуги</h3>
         <p data-i18n="cabinet.services.desc">Управление вашими офферами, ценами и описанием практик.</p>
+        <div class="add-btn-wrapper">
+          <div class="add-btn" title="Create New Service">+</div>
+        </div>
       </div>
 
       <!-- Projects Card -->
@@ -166,6 +210,9 @@
         <div class="icon">🏗️</div>
         <h3 data-i18n="cabinet.projects.title">Мои Проекты</h3>
         <p data-i18n="cabinet.projects.desc">Глобальные инициативы, события и долгосрочные коллаборации.</p>
+        <div class="add-btn-wrapper">
+          <div class="add-btn" title="Create New Project">+</div>
+        </div>
       </div>
 
       <!-- Admin Tools (Hidden if not admin) -->
