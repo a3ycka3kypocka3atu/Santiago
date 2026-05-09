@@ -21,8 +21,8 @@
   let allCards = [];
 
   // ── i18n ──────────────────────────────────────────────────
-  const STORAGE_KEY = 'ma3-lang';
-  const DEFAULT_LANG = 'en';
+  const STORAGE_KEY = 'language';
+  const DEFAULT_LANG = 'ru';
   const SUPPORTED = ['en', 'cz', 'ru', 'ua'];
 
   function detectLanguage() {
@@ -62,11 +62,25 @@
   }
 
   // ── Card Rendering ────────────────────────────────────────
+  const CATEGORY_ICONS = {
+    body: '💆',
+    mind: '🧘',
+    incubator: '🚀',
+    space: '🏛️'
+  };
+
+  const FORMAT_LABELS = {
+    individual: { ru: 'Индивидуально', en: 'Individual', cz: 'Individuálně', ua: 'Індивідуально' },
+    group: { ru: 'Групповое', en: 'Group', cz: 'Skupinové', ua: 'Групове' }
+  };
+
+  function fmt(key) {
+    return FORMAT_LABELS[key] ? (FORMAT_LABELS[key][currentLang] || FORMAT_LABELS[key]['en']) : key;
+  }
+
   function createCard(service) {
-    const icon = service.icon_emoji || '✨';
-    const categoryLabel = t(`filter.${service.category}`) || service.category || '';
-    const formatLabel = t(`filter.${service.format}`) || service.format || '';
-    const instructorLabel = service.instructor_name || '';
+    const icon = service.icon_emoji || CATEGORY_ICONS[service.category] || '✨';
+    const formatLabel = fmt(service.format) || '';
 
     const a = document.createElement('a');
     a.href = service.detail_page || '#';
@@ -77,16 +91,27 @@
       ? service.instructor_name.toLowerCase().replace(/\s+/g, '')
       : '';
 
+    // Category badge
+    const catKey = `filter.${service.category}`;
+    const catLabel = t(catKey) || service.category || '';
+
     a.innerHTML = `
       <div class="preview-card__icon">${icon}</div>
       <div class="preview-card__body">
-        <h3>${service.title || ''}</h3>
-        <span class="preview-role">${service.price || ''}</span>
-        <p>${service.description || ''}</p>
-        <span class="preview-card__cta">
-          <span>${t('btn.details')}</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-        </span>
+        <div class="preview-card__meta">
+          <span class="preview-badge">${catLabel}</span>
+          <span class="preview-format">${formatLabel}</span>
+        </div>
+        <h3 class="preview-card__title">${service.title || ''}</h3>
+        <span class="preview-price">${service.price || ''}</span>
+        <p class="preview-desc">${service.description || ''}</p>
+        <div class="preview-card__footer">
+          <span class="preview-master">${service.instructor_name || ''}</span>
+          <span class="preview-card__cta">
+            <span>${t('btn.details')}</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+          </span>
+        </div>
       </div>
     `;
     return a;
@@ -239,9 +264,9 @@
     const staticServices = [
       {
         slug: 'deep-massage',
-        title: t('services.massage.name') || 'Глубокий массаж и чайная церемония',
-        description: t('services.massage.short') || 'Терапевтический массаж с диагностикой тела, мужские и женские программы. Включает 30–60 мин чайной церемонии.',
-        price: t('services.massage.price') || '1200 CZK · ≈ 48–50 EUR',
+        title: t('services.massage.name') || 'Deep Recovery Massage & Tea Ceremony',
+        description: t('services.massage.short') || 'Therapeutic massage with body diagnostics, male and female programs. Includes 30–60 min tea ceremony.',
+        price: t('services.massage.price') || '1200 CZK',
         icon_emoji: '💆',
         category: 'body',
         format: 'individual',
@@ -250,9 +275,9 @@
       },
       {
         slug: 'wellness-katerina',
-        title: t('services.kat.wellness.name') || 'Wellness-программы и SPA-ретриты',
-        description: t('services.kat.wellness.short') || 'Телесные практики, ароматерапия, лимфодренажные тренировки, камерные SPA-ретриты с арома-ритуалами.',
-        price: t('services.kat.wellness.price') || 'Индивидуально',
+        title: t('services.kat.wellness.name') || 'Wellness Programs & SPA Retreats',
+        description: t('services.kat.wellness.short') || 'Body practices, aromatherapy, lymphatic drainage training, intimate SPA retreats with aroma rituals.',
+        price: t('services.kat.wellness.price') || 'Individual',
         icon_emoji: '🌿',
         category: 'body',
         format: 'individual',
