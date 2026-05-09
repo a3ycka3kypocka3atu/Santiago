@@ -302,6 +302,11 @@
 
   // ── Static Fallback Cards (when no Supabase data) ────────
   function showStaticCards() {
+    if (!GRID) {
+      console.warn('[services] GRID not ready, retrying...');
+      setTimeout(showStaticCards, 100);
+      return;
+    }
     const staticServices = [
       {
         slug: 'deep-massage',
@@ -326,8 +331,14 @@
         detail_page: 'offer-katerina.html'
       }
     ];
-    renderCards(staticServices);
-    applyFilters();
+    try {
+      renderCards(staticServices);
+      applyFilters();
+    } catch (e) {
+      console.error('[services] renderCards failed:', e);
+      GRID.style.display = 'none';
+      if (EMPTY_STATE) EMPTY_STATE.hidden = false;
+    }
   }
 
   // ── CSS animation for card entrance ─────────────────────
