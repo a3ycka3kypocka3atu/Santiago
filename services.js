@@ -6,9 +6,8 @@
 (function () {
   'use strict';
 
-  const GRID = document.getElementById('services-grid');
-  const EMPTY_STATE = document.getElementById('services-empty');
-  const RESET_BTN = document.getElementById('reset-filters');
+  // ── DOM references (resolved after DOMContentLoaded) ──
+  let GRID, EMPTY_STATE, RESET_BTN;
 
   // Active filters state
   const state = {
@@ -42,11 +41,33 @@
     if (window.translations && window.translations[lang] && window.translations[lang][key]) {
       return window.translations[lang][key];
     }
-    // Fallback to English
     if (window.translations && window.translations['en'] && window.translations['en'][key]) {
       return window.translations['en'][key];
     }
     return key;
+  }
+
+  function refreshCardText() {
+    allCards.forEach((card, i) => {
+      const service = card._serviceData;
+      if (!service) return;
+      const catLabel = t(`filter.${service.category}`) || service.category || '';
+      const formatLabel = fmt(service.format) || '';
+      const titleEl = card.querySelector('.preview-card__title');
+      const priceEl = card.querySelector('.preview-price');
+      const descEl = card.querySelector('.preview-desc');
+      const masterEl = card.querySelector('.preview-master');
+      const ctaLabelEl = card.querySelector('.preview-card__cta span');
+      const badgeEl = card.querySelector('.preview-badge');
+      const formatEl = card.querySelector('.preview-format');
+      if (titleEl) titleEl.textContent = service.title || '';
+      if (priceEl) priceEl.textContent = service.price || '';
+      if (descEl) descEl.textContent = service.description || '';
+      if (masterEl) masterEl.textContent = service.instructor_name || '';
+      if (ctaLabelEl) ctaLabelEl.textContent = t('btn.details');
+      if (badgeEl) badgeEl.textContent = catLabel;
+      if (formatEl) formatEl.textContent = formatLabel;
+    });
   }
 
   // ── Supabase Client ──────────────────────────────────────
@@ -132,6 +153,7 @@
 
     services.forEach((service, i) => {
       const card = createCard(service);
+      card._serviceData = service; // Store for language refresh
       card.style.animationDelay = `${i * 60}ms`;
       GRID.appendChild(card);
       allCards.push(card);
@@ -229,10 +251,30 @@
   }
 
   // ── Init: Fetch Services from Supabase ───────────────────
+  function waitForTranslations(timeout) {
+    return new Promise((resolve) => {
+      const deadline = Date.now() + (timeout || 3000);
+      function check() {
+        if (window.translations) { resolve(true); return; }
+        if (Date.now() > deadline) { resolve(false); return; }
+        setTimeout(check, 50);
+      }
+      check();
+    });
+  }
+
   async function init() {
+    // Resolve DOM references
+    GRID = document.getElementById('services-grid');
+    EMPTY_STATE = document.getElementById('services-empty');
+    RESET_BTN = document.getElementById('reset-filters');
+
+    // Detect current language from page (set by translations.js)
+    const pageLang = localStorage.getItem('language') || DEFAULT_LANG;
+    if (SUPPORTED.includes(pageLang)) currentLang = pageLang;
+
     const sb = getClient();
     if (!sb) {
-      console.warn('[services] Supabase client not ready, showing static fallback');
       showStaticCards();
       return;
     }
@@ -254,7 +296,6 @@
       renderCards(data);
       applyFilters();
     } catch (err) {
-      console.warn('[services] Supabase fetch failed, showing static fallback:', err.message);
       showStaticCards();
     }
   }
@@ -319,12 +360,22 @@
   // Listen for language changes
   document.addEventListener('ma3-lang-change', (e) => {
     currentLang = e.detail?.lang || DEFAULT_LANG;
-    // Re-render cards with fresh translations
-    const hidden = Array.from(document.querySelectorAll('.preview-card.is-hidden'));
-    const visible = Array.from(document.querySelectorAll('.preview-card:not(.is-hidden)'));
-    // Simple: just reinit to get fresh labels
-    if (visible.length === 0 && allCards.length > 0) {
-      EMPTY_STATE.querySelector('.services-empty__text').textContent = t('services.empty.text');
+    if (allCards.length > 0) refreshCardText();
+    // Update empty state text
+    const emptyText = EMPTY_STATE ? EMPTY_STATE.querySelector('.services-empty__text') : null;
+    if (emptyText) emptyText.textContent = t('services.empty.text');
+  });
+
+  // Also listen for clicks on .lang-btn (same mechanism as translations.js)
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('lang-btn')) {
+      const lang = e.target.getAttribute('data-lang');
+      if (lang && SUPPORTED.includes(lang)) {
+        currentLang = lang;
+        if (allCards.length > 0) refreshCardText();
+        const emptyText = EMPTY_STATE ? EMPTY_STATE.querySelector('.services-empty__text') : null;
+        if (emptyText) emptyText.textContent = t('services.empty.text');
+      }
     }
   });
 
