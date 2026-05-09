@@ -909,13 +909,6 @@ body.grayscale-mode .cloud-bottom-2 {
   padding: 0 4px;
 }
 
-/* Shop Header toggle stays fixed */
-body:not(.main-page) .theme-toggle {
-  position: fixed;
-  top: calc(1.5rem + 14px);
-  right: 1.5rem;
-}
-
 /* Desktop vs Mobile Controls */
 .desktop-controls {
   display: flex;
