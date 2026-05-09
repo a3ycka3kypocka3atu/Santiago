@@ -1,6 +1,6 @@
 -- 1. PROFILES TABLE
 CREATE TABLE IF NOT EXISTS public.profiles (
-    id UUID PRIMARY KEY DEFAULT auth.uid(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     telegram_id BIGINT UNIQUE NOT NULL,
     username TEXT,
     full_name TEXT,

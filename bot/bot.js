@@ -1,6 +1,8 @@
 require('dotenv').config();
+console.log('[Bot] Script started');
 const { Telegraf, Markup, session } = require('telegraf');
 const { createClient } = require('@supabase/supabase-js');
+const crypto = require('crypto');
 
 // ── ENV CONFIG ──
 const BOT_TOKEN = process.env.BOT_TOKEN;
@@ -20,41 +22,37 @@ bot.use(session());
 
 // ── MIDDLEWARE: UPSERT USER IN DB ──
 bot.use(async (ctx, next) => {
-  if (ctx.from && ctx.chat?.type === 'private') {
-    // First, try to fetch to avoid unnecessary updates if role exists
-    const { data: profile, error: fetchError } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('telegram_id', ctx.from.id)
-      .single();
+  try {
+    if (ctx.from) {
+      const isAdmin = ctx.from.username && ctx.from.username.toLowerCase() === 'andrisav';
+      const initialRole = isAdmin ? 'admin' : 'guest';
+      
+      let { data: profile, error: fetchError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('telegram_id', ctx.from.id)
+        .single();
 
-    // Check if user is the known admin
-    const isAdmin = ctx.from.username === 'andrisav';
-    const initialRole = isAdmin ? 'admin' : 'guest';
-
-    if (fetchError && fetchError.code === 'PGRST116') {
-      // Create profile
-      const { data: newProfile, error: insertError } = await supabase.from('profiles').upsert({
-        telegram_id: ctx.from.id,
-        username: ctx.from.username,
-        full_name: ctx.from.first_name + (ctx.from.last_name ? ' ' + ctx.from.last_name : ''),
-        role: initialRole
-      }, { onConflict: 'telegram_id' }).select().single();
-
-      ctx.userRole = initialRole;
-      ctx.dbUser = newProfile;
-    } else if (profile) {
-      // If user is andrisav but role isn't admin, upgrade it
-      if (isAdmin && profile.role !== 'admin') {
-        await supabase.from('profiles').update({ role: 'admin' }).eq('telegram_id', ctx.from.id);
-        ctx.userRole = 'admin';
+      if (fetchError && fetchError.code === 'PGRST116') {
+        console.log(`[Bot] No profile for @${ctx.from.username}, will create/ask later`);
+        ctx.userRole = initialRole;
+        ctx.isNewUser = true;
+      } else if (profile) {
+        if (isAdmin && profile.role !== 'admin') {
+          console.log(`[Bot] Upgrading @${ctx.from.username} to admin`);
+          const { data: updated } = await supabase.from('profiles').update({ role: 'admin' }).eq('telegram_id', ctx.from.id).select().single();
+          ctx.userRole = 'admin';
+          ctx.dbUser = updated;
+        } else {
+          ctx.userRole = profile.role;
+          ctx.dbUser = profile;
+        }
       } else {
-        ctx.userRole = profile.role;
+        ctx.userRole = 'guest';
       }
-      ctx.dbUser = profile;
-    } else {
-      ctx.userRole = 'guest'; // Fallback
     }
+  } catch (err) {
+    console.error('[Bot] Middleware error:', err);
   }
   return next();
 });
@@ -71,9 +69,34 @@ const mainMenu = Markup.inlineKeyboard([
 bot.start(async (ctx) => {
   const startPayload = ctx.startPayload;
   
+  // If user is new and not admin, ask who they are
+  if (ctx.isNewUser && ctx.userRole !== 'admin') {
+    return ctx.reply(
+      'Вітаємо! Хто ви у нашому просторі?',
+      Markup.inlineKeyboard([
+        [Markup.button.callback('🌟 Клубний учасник', 'set_role_resident')],
+        [Markup.button.callback('🧘 Інструктор', 'set_role_instructor')],
+        [Markup.button.callback('👀 Гість / Відвідувач', 'set_role_guest')]
+      ])
+    );
+  }
+
+  // If new admin, create profile immediately
+  if (ctx.isNewUser && ctx.userRole === 'admin') {
+    const { data: newProfile, error } = await supabase.from('profiles').insert({
+      id: crypto.randomUUID(),
+      telegram_id: ctx.from.id,
+      username: ctx.from.username,
+      full_name: ctx.from.first_name + (ctx.from.last_name ? ' ' + ctx.from.last_name : ''),
+      role: 'admin'
+    }).select().single();
+    
+    if (error) console.error('[Bot] Admin creation error:', error);
+    ctx.dbUser = newProfile;
+  }
+
   if (startPayload === 'login') {
-    // User coming from web to login
-    const portalUrl = `https://a3ycka3kypocka3atu.github.io/-/?userId=${ctx.from.id}`;
+    const portalUrl = `https://a3ycka3kypocka3atu.github.io/-/index.html?userId=${ctx.from.id}`;
     return ctx.reply(
       `🔑 Ви входите у систему як ${ctx.userRole}.\n\nНатисніть кнопку нижче, щоб відкрити портал:`,
       Markup.inlineKeyboard([
@@ -86,6 +109,27 @@ bot.start(async (ctx) => {
     `Вітаємо у боті студії Santiago! 👋\n\nТут ви можете дізнатися більше про нас, подати заявку до клубу або керувати розкладом (для інструкторів).`,
     mainMenu
   );
+});
+
+// Role selection handlers
+bot.action(/set_role_(resident|instructor|guest)/, async (ctx) => {
+  const role = ctx.match[1];
+  const { data, error } = await supabase.from('profiles').insert({
+    id: crypto.randomUUID(),
+    telegram_id: ctx.from.id,
+    username: ctx.from.username,
+    full_name: ctx.from.first_name + (ctx.from.last_name ? ' ' + ctx.from.last_name : ''),
+    role: role
+  }).select().single();
+
+  if (error) {
+    console.error('[Bot] Role selection error:', error);
+    return ctx.answerCbQuery('Помилка при збереженні профілю.');
+  }
+
+  ctx.reply(`✅ Дякуємо! Тепер ви зареєстровані як ${role}. Ви можете увійти на платформу.`);
+  ctx.reply('Виберіть дію:', mainMenu);
+  ctx.answerCbQuery();
 });
 
 // ── FAQ BRANCH ──

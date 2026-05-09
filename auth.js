@@ -63,11 +63,17 @@ const Auth = {
     // Handle URL login from bot
     const params = new URLSearchParams(window.location.search);
     const userId = params.get('userId');
+    console.log('[Auth] Checking URL for userId:', userId);
     if (userId) {
-      this.syncProfile(userId).then(() => {
-        // Clean URL
-        const newUrl = window.location.pathname + window.location.hash;
-        window.history.replaceState({}, document.title, newUrl);
+      this.syncProfile(userId).then((profile) => {
+        if (profile) {
+          console.log('[Auth] Successfully synced profile for userId:', userId);
+          // Clean URL
+          const newUrl = window.location.pathname + window.location.hash;
+          window.history.replaceState({}, document.title, newUrl);
+        } else {
+          console.warn('[Auth] Failed to sync profile for userId:', userId);
+        }
       });
     }
 
@@ -75,6 +81,7 @@ const Auth = {
     document.dispatchEvent(new CustomEvent('ma3-auth-changed', { detail: this.user }));
   }
 };
+
 
 Auth.init();
 window.MA3Auth = Auth;
