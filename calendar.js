@@ -213,9 +213,6 @@ window.onTelegramAuth = function(user) {
         .eq('status', 'confirmed')
         .order('start_time', { ascending: true });
 
-      // Guest can only see public events; club events are fetched but shown as "locked"
-      // We fetch ALL events and filter display client-side based on role
-      // RLS will handle the security server-side
       const { data, error } = await query;
 
       if (error) {
@@ -232,6 +229,13 @@ window.onTelegramAuth = function(user) {
       console.warn('Network error, using demo data:', err);
       eventsCache = getDemoEvents();
     }
+
+    // Role-based filtering logic
+    eventsCache = eventsCache.filter(e => {
+      if (currentUser.role === 'admin' || currentUser.role === 'instructor') return true;
+      if (currentUser.role === 'resident') return e.type === 'public' || e.type === 'club';
+      return e.type === 'public'; // Guest/Visitor
+    });
 
     renderCalendar();
     renderUpcomingStrip();
@@ -366,18 +370,19 @@ window.onTelegramAuth = function(user) {
       const startTime = new Date(event.start_time);
       const endTime = new Date(event.end_time);
       const isClub = event.type === 'club';
-      const isLocked = isClub && currentUser.role === 'guest';
-
+      
       const card = document.createElement('div');
-      card.className = `upcoming-card upcoming-card--${event.type}${isLocked ? ' upcoming-card--locked' : ''}`;
+      card.className = `upcoming-card upcoming-card--${event.type}`;
       card.style.animationDelay = `${idx * 0.06}s`;
 
       const dayOfWeek = (dayNames[currentLang] || dayNames.en)[startTime.getDay()];
       const dateLabel = `${dayOfWeek}, ${startTime.getDate()} ${monthNames[startTime.getMonth()]}`;
       const timeStr = `${formatTime(startTime)} — ${formatTime(endTime)}`;
-      const typeBadge = typeLabels[event.type] ? (typeLabels[event.type][currentLang] || typeLabels[event.type].en) : event.type;
+      
+      let typeBadge = typeLabels[event.type] ? (typeLabels[event.type][currentLang] || typeLabels[event.type].en) : event.type;
+      if (isClub) typeBadge = '🔒 ' + typeBadge; // Add lock icon to Club badge
 
-      const title = isLocked ? '🔒 Club Event' : event.title;
+      const title = event.title;
 
       card.innerHTML = `
         <div class="upcoming-card__accent upcoming-card__accent--${event.type}"></div>
@@ -392,16 +397,12 @@ window.onTelegramAuth = function(user) {
       `;
 
       card.addEventListener('click', () => {
-        if (isLocked) {
-          openClubGate();
-        } else {
-          // Select the day on calendar and open popup
-          const day = startTime.getDate();
-          if (startTime.getMonth() === currentMonth && startTime.getFullYear() === currentYear) {
-            selectDay(day);
-          }
-          openEventPopup(event);
+        // Select the day on calendar and open popup
+        const day = startTime.getDate();
+        if (startTime.getMonth() === currentMonth && startTime.getFullYear() === currentYear) {
+          selectDay(day);
         }
+        openEventPopup(event);
       });
 
       upcomingTrack.appendChild(card);
@@ -453,9 +454,8 @@ window.onTelegramAuth = function(user) {
     events.forEach(event => {
       const card = document.createElement('div');
       const isClub = event.type === 'club';
-      const isLocked = isClub && currentUser.role === 'guest';
 
-      card.className = `event-card event-card--${event.type}${isLocked ? ' event-card--locked' : ''}`;
+      card.className = `event-card event-card--${event.type}`;
 
       const startTime = new Date(event.start_time);
       const endTime = new Date(event.end_time);
@@ -468,23 +468,11 @@ window.onTelegramAuth = function(user) {
         internal: { en: 'Internal', cz: 'Interní', ru: 'Внутреннее', ua: 'Внутрішнє' },
       };
 
-      const lockedTitle = {
-        en: 'Club Activity (Residents Only)',
-        cz: 'Klubová aktivita (pouze pro rezidenty)',
-        ru: 'Клубная активность (только для резидентов)',
-        ua: 'Клубна активність (тільки для резидентів)',
-      };
-
-      const lockedDesc = {
-        en: 'Join the club to see full details',
-        cz: 'Vstupte do klubu pro zobrazení podrobností',
-        ru: 'Вступите в клуб для просмотра деталей',
-        ua: 'Вступіть до клубу для перегляду деталей',
-      };
-
-      const title = isLocked ? (lockedTitle[currentLang] || lockedTitle.en) : event.title;
-      const desc = isLocked ? (lockedDesc[currentLang] || lockedDesc.en) : (event.description || '');
-      const typeBadge = typeLabels[event.type] ? (typeLabels[event.type][currentLang] || typeLabels[event.type].en) : event.type;
+      const title = event.title;
+      const desc = event.description || '';
+      
+      let typeBadge = typeLabels[event.type] ? (typeLabels[event.type][currentLang] || typeLabels[event.type].en) : event.type;
+      if (isClub) typeBadge = '🔒 ' + typeBadge;
 
       card.innerHTML = `
         <div class="event-card__header">
@@ -493,15 +481,10 @@ window.onTelegramAuth = function(user) {
         </div>
         <h4 class="event-card__title">${title}</h4>
         ${desc ? `<p class="event-card__desc">${desc}</p>` : ''}
-        ${isLocked ? '<div class="event-card__lock"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>' : ''}
       `;
 
       card.addEventListener('click', () => {
-        if (isLocked) {
-          openClubGate();
-        } else {
-          openEventPopup(event);
-        }
+        openEventPopup(event);
       });
 
       eventsList.appendChild(card);
@@ -785,19 +768,33 @@ window.onTelegramAuth = function(user) {
   //  EVENT LISTENERS & INIT
   // ═══════════════════════════════════════════════════════════
 
-  prevBtn.addEventListener('click', () => {
+  prevBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     currentMonth--;
     if (currentMonth < 0) { currentMonth = 11; currentYear--; }
     selectedDay = null;
     fetchEventsForMonth();
   });
 
-  nextBtn.addEventListener('click', () => {
+  nextBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     currentMonth++;
     if (currentMonth > 11) { currentMonth = 0; currentYear++; }
     selectedDay = null;
     fetchEventsForMonth();
   });
+
+  // Calendar Header Expand/Collapse logic
+  const calControls = document.querySelector('.cal-controls');
+  if (calControls) {
+    calControls.addEventListener('click', (e) => {
+      // Toggle collapse on calendar layout when clicking header row
+      const layout = calControls.closest('.cal-layout');
+      if (layout) {
+        layout.classList.toggle('collapsed');
+      }
+    });
+  }
 
   // Popup close handlers
   eventPopupClose.addEventListener('click', () => closePopup(eventPopup));

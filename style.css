@@ -670,7 +670,9 @@ section {
 }
 
 @media (max-width: 768px) {
-  .desktop-controls {
+  .desktop-controls .tg-login-btn,
+  .desktop-controls .lang-switcher,
+  .desktop-controls .theme-toggle {
     display: none;
   }
 }
@@ -678,7 +680,7 @@ section {
   .quick-menu .menu-controls {
     display: none;
   }
-  .menu-trigger {
+  .desktop-controls .menu-trigger {
     display: none;
   }
 }
@@ -700,9 +702,7 @@ section {
 
 /* Trigger button */
 .menu-trigger {
-  position: fixed;
-  right: 1.5rem;
-  top: 1.5rem;
+  /* position removed */
   background: rgba(255,255,255,0.12);
   border: none;
   color: #fff;
@@ -926,7 +926,7 @@ body.grayscale-mode .cloud-bottom-2 {
 .desktop-controls .lang-switcher {
   position: static;
 }
-.desktop-controls .tg-login-btn {
+.tg-login-btn {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -940,7 +940,7 @@ body.grayscale-mode .cloud-bottom-2 {
   font-weight: 500;
   transition: background 0.2s, color 0.2s;
 }
-.desktop-controls .tg-login-btn:hover {
+.tg-login-btn:hover {
   background: rgba(255, 255, 255, 0.12);
   color: #34b7f1;
 }
@@ -2730,6 +2730,10 @@ body.grayscale-mode .preview-card {
 .upcoming-strip {
   margin-bottom: 28px;
   animation: fadeSlideUp 0.6s var(--ease-out) 0.1s both;
+  opacity: 1;
+  display: block;
+  position: relative;
+  z-index: 10;
 }
 
 .upcoming-strip__header {
@@ -3412,4 +3416,24 @@ body.grayscale-mode .cal-theme-btn .toggle-thumb {
   body.grayscale-mode .cal-theme-btn .toggle-thumb {
     transform: translateX(20px);
   }
+}
+
+/* Login button dynamic states */
+.tg-login-btn.logged-in .tg-text {
+  display: none;
+}
+.tg-login-btn.logged-in {
+  padding: 8px;
+  border-radius: 50%;
+  justify-content: center;
+}
+
+/* ── Calendar Expansion fix ── */
+.cal-controls {
+  cursor: pointer;
+  user-select: none;
+}
+.cal-layout.collapsed .cal-weekdays,
+.cal-layout.collapsed #cal-grid {
+  display: none !important;
 }

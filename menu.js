@@ -1,11 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const trigger = document.querySelector('.menu-trigger');
+  const triggers = document.querySelectorAll('.menu-trigger');
   const menu = document.querySelector('.quick-menu');
   const links = menu.querySelectorAll('a');
 
   // toggle menu open/close
-  trigger.addEventListener('click', () => {
-    menu.classList.toggle('open');
+  triggers.forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      menu.classList.toggle('open');
+    });
   });
 
   // handle navigation clicks
@@ -30,5 +32,20 @@ document.addEventListener('DOMContentLoaded', function() {
         menu.classList.remove('open');
       }
     });
+  });
+
+  // Global Auth Logic for Telegram Login Button
+  const isLoggedIn = !!localStorage.getItem('ma3-user-id');
+  const tgBtns = document.querySelectorAll('.tg-login-btn');
+  
+  tgBtns.forEach(btn => {
+    if (isLoggedIn) {
+      btn.classList.add('logged-in');
+      btn.href = 'https://t.me/santioago_bot'; // Direct link when logged in
+    } else {
+      btn.classList.remove('logged-in');
+      // When logged out, act as login trigger (here simply redirecting to bot to start the login flow, or if there's a login script, it will handle it)
+      btn.href = 'https://t.me/santioago_bot?start=login';
+    }
   });
 });

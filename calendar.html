@@ -58,26 +58,38 @@
       <text x="100" y="205" text-anchor="middle" font-family="DM Sans, Inter, sans-serif" font-weight="700" font-size="14" fill="currentColor" letter-spacing="6">WAY</text>
     </svg>
   </a>
+  
+  <!-- Shop Link -->
+  <a href="shop.html" class="home-icon" aria-label="Shop" title="Shop">
+    <svg viewBox="0 0 24 24" width="34" height="34" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="svg-home">
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <path d="M16 10a4 4 0 0 1-8 0"></path>
+    </svg>
+  </a>
 
   <!-- Desktop Controls -->
-  <div class="desktop-controls">
-    <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" id="tg-login-btn" title="Login via Telegram">
+    <div class="desktop-controls">
+    <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" title="Login via Telegram">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
-      <span>Login via Telegram</span>
+      <span class="tg-text">Login via Telegram</span>
     </a>
 
     <div class="lang-switcher">
-      <button class="lang-btn" data-lang="en" type="button">EN</button>
-      <button class="lang-btn" data-lang="cz" type="button">CZ</button>
-      <button class="lang-btn" data-lang="ru" type="button">RU</button>
-      <button class="lang-btn" data-lang="ua" type="button">UA</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="cz">CZ</button>
+      <button class="lang-btn" data-lang="ru">RU</button>
+      <button class="lang-btn" data-lang="ua">UA</button>
     </div>
 
-    <button class="theme-toggle theme-toggle-btn" title="Toggle theme" type="button">
+    <button class="theme-toggle theme-toggle-btn" title="Toggle theme">
       <span class="icon-sun">☀️</span>
       <span class="icon-moon">🌙</span>
       <span class="toggle-thumb"></span>
     </button>
+    
+    <button class="menu-trigger" aria-label="Open menu">☰</button>
+  </div>
   </div>
 
   <!-- ═══ TOP NAV ═══ -->
@@ -99,13 +111,7 @@
       <p class="cal-subtitle" data-i18n="calSubtitle">Book a session, join community events, or reserve studio space.</p>
     </header>
 
-    <!-- Location Filter Tabs -->
-    <div class="location-filter" id="location-filter">
-      <button class="filter-tab active" data-filter="all" data-i18n="filter.all">All</button>
-      <button class="filter-tab" data-filter="online" data-i18n="filter.online">Online</button>
-      <button class="filter-tab" data-filter="offline_studio" data-i18n="filter.offlineStudio">At Studio</button>
-      <button class="filter-tab" data-filter="offline_external" data-i18n="filter.offlineExternal">Offsite</button>
-    </div>
+    <!-- Location Filter moved down -->
 
     <!-- Always Available Section (Evergreen Services) -->
     <div class="always-available" id="always-available" style="display:none;">
@@ -127,6 +133,14 @@
         <!-- JS fills this -->
       </div>
     </section>
+
+    <!-- Location Filter Tabs -->
+    <div class="location-filter" id="location-filter" style="margin-bottom: 8px;">
+      <button class="filter-tab active" data-filter="all" data-i18n="filter.all">All</button>
+      <button class="filter-tab" data-filter="online" data-i18n="filter.online">Online</button>
+      <button class="filter-tab" data-filter="offline_studio" data-i18n="filter.offlineStudio">At Studio</button>
+      <button class="filter-tab" data-filter="offline_external" data-i18n="filter.offlineExternal">Offsite</button>
+    </div>
 
     <!-- Calendar + Events Panel -->
     <div class="cal-layout">
@@ -213,8 +227,7 @@
     </div>
   </div>
 
-  <!-- Quick‑menu trigger and panel -->
-  <button class="menu-trigger" aria-label="Open menu">☰</button>
+  <!-- Quick‑menu panel -->
   <nav class="quick-menu" aria-label="Navigation">
     <ul>
       <li><a href="index.html" data-i18n="nav.home">Home</a></li>
@@ -222,11 +235,11 @@
       <li><a href="masters.html" data-i18n="nav.masters">Masters</a></li>
     </ul>
     
-    <div class="menu-controls">
+        <div class="menu-controls">
       <!-- Telegram Login -->
       <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" style="width: 100%; justify-content: center; margin-bottom: 1rem;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
-        <span>Login via Telegram</span>
+        <span class="tg-text">Login via Telegram</span>
       </a>
 
       <!-- Language Switcher -->
