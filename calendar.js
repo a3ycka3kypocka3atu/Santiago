@@ -41,6 +41,8 @@ window.onTelegramAuth = function(user) {
   let currentMonth = currentDate.getMonth();
   let selectedDay = null;
   let eventsCache = []; // All events for the current month
+  let servicesCache = []; // Evergreen services for Always Available section
+  let currentFilter = 'all'; // 'all' | 'online' | 'offline_studio' | 'offline_external'
 
   // ── i18n (reuse from main site) ──
   const STORAGE_KEY = 'ma3-lang';
@@ -104,7 +106,6 @@ window.onTelegramAuth = function(user) {
   const clubGatePopup = document.getElementById('club-gate-popup');
   const userBadge = document.getElementById('user-badge');
   const guestCta = document.getElementById('guest-cta');
-  const tgLoginContainer = document.getElementById('tg-login-container');
   const logoutBtn = document.getElementById('logout-btn');
   const upcomingTrack = document.getElementById('upcoming-track');
 
@@ -236,6 +237,88 @@ window.onTelegramAuth = function(user) {
     renderUpcomingStrip();
   }
 
+  async function fetchEvergreenServices() {
+    if (!sb) return;
+    try {
+      const { data, error } = await sb
+        .from('services')
+        .select('*')
+        .eq('is_evergreen', true)
+        .eq('status', 'published')
+        .eq('location_type', 'online');
+      if (!error && data) {
+        servicesCache = data || [];
+        renderAlwaysAvailable();
+      }
+    } catch (e) {
+      // Silently fail - evergreen section is optional
+    }
+  }
+
+  function expandRecurrence(event, startOfMonth, endOfMonth) {
+    if (!event.recurrence_rule) return [event];
+    try {
+      const { RRule } = window;
+      if (!RRule) return [event];
+      const rule = RRule.fromString(event.recurrence_rule);
+      const occurrences = rule.between(startOfMonth, endOfMonth, true);
+      return occurrences.map(date => {
+        const duration = event.duration_minutes || 60;
+        return {
+          ...event,
+          id: `${event.id}_${date.getTime()}`,
+          start_time: date.toISOString(),
+          end_time: new Date(date.getTime() + duration * 60000).toISOString()
+        };
+      });
+    } catch (e) {
+      return [event];
+    }
+  }
+
+  function renderAlwaysAvailable() {
+    const section = document.getElementById('always-available');
+    const track = document.getElementById('always-available-track');
+    if (!section || !track) return;
+
+    if (servicesCache.length === 0 || currentFilter !== 'online') {
+      section.style.display = 'none';
+      return;
+    }
+
+    section.style.display = 'block';
+    track.innerHTML = '';
+
+    const typeLabels = {
+      en: 'Online Course',
+      cz: 'Online kurz',
+      ru: 'Онлайн курс',
+      ua: 'Онлайн курс',
+    };
+
+    servicesCache.forEach((service, idx) => {
+      const card = document.createElement('div');
+      card.className = 'upcoming-card upcoming-card--public';
+      card.style.animationDelay = `${idx * 0.06}s`;
+      card.innerHTML = `
+        <div class="upcoming-card__accent upcoming-card__accent--public"></div>
+        <div class="upcoming-card__body">
+          <div class="upcoming-card__top">
+            <span class="upcoming-card__badge upcoming-card__badge--public">${typeLabels[currentLang] || typeLabels.en}</span>
+          </div>
+          <h4 class="upcoming-card__title">${service.title}</h4>
+          <p class="upcoming-card__date">${service.price || ''}</p>
+        </div>
+      `;
+      card.addEventListener('click', () => {
+        if (service.detail_page) {
+          window.location.href = service.detail_page;
+        }
+      });
+      track.appendChild(card);
+    });
+  }
+
   // ═══════════════════════════════════════════════════════════
   //  UPCOMING EVENTS HORIZONTAL STRIP
   // ═══════════════════════════════════════════════════════════
@@ -245,11 +328,22 @@ window.onTelegramAuth = function(user) {
     upcomingTrack.innerHTML = '';
 
     const now = new Date();
-    const upcoming = eventsCache
+    const startOfMonth = new Date(currentYear, currentMonth, 1);
+    const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
+
+    // Expand recurrence and filter by location type
+    const expandedAll = [];
+    eventsCache.forEach(event => {
+      const expanded = expandRecurrence(event, startOfMonth, endOfMonth);
+      expanded.forEach(e => expandedAll.push(e));
+    });
+
+    const filtered = expandedAll
       .filter(e => new Date(e.start_time) >= now)
+      .filter(e => currentFilter === 'all' || e.location_type === currentFilter)
       .sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
 
-    if (upcoming.length === 0) {
+    if (filtered.length === 0) {
       upcomingTrack.innerHTML = '<div class="upcoming-empty"><p data-i18n="calNoUpcoming">No upcoming events this month</p></div>';
       return;
     }
@@ -268,7 +362,7 @@ window.onTelegramAuth = function(user) {
       internal: { en: 'Internal', cz: 'Interní', ru: 'Внутреннее', ua: 'Внутрішнє' },
     };
 
-    upcoming.forEach((event, idx) => {
+    filtered.forEach((event, idx) => {
       const startTime = new Date(event.start_time);
       const endTime = new Date(event.end_time);
       const isClub = event.type === 'club';
@@ -315,11 +409,19 @@ window.onTelegramAuth = function(user) {
   }
 
   function getEventsForDay(day) {
+    const startOfMonth = new Date(currentYear, currentMonth, 1);
+    const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
     return eventsCache.filter(event => {
-      const eventDate = new Date(event.start_time);
-      return eventDate.getDate() === day &&
-             eventDate.getMonth() === currentMonth &&
-             eventDate.getFullYear() === currentYear;
+      // Expand recurrence
+      const expanded = expandRecurrence(event, startOfMonth, endOfMonth);
+      return expanded.some(e => {
+        const eventDate = new Date(e.start_time);
+        const matchesDay = eventDate.getDate() === day &&
+                           eventDate.getMonth() === currentMonth &&
+                           eventDate.getFullYear() === currentYear;
+        const matchesFilter = currentFilter === 'all' || e.location_type === currentFilter;
+        return matchesDay && matchesFilter;
+      });
     });
   }
 
@@ -451,6 +553,7 @@ window.onTelegramAuth = function(user) {
           </div>
         </div>
         ${event.description ? `<p class="event-detail__desc">${event.description}</p>` : ''}
+        ${event.service_id ? `<a href="${event.detail_page || 'services.html'}" class="event-detail__service-link" target="_blank" data-i18n="event.viewService">View Service Details →</a>` : ''}
         ${currentUser.isLoggedIn 
           ? `<button class="event-detail__book-btn" onclick="submitBooking('${event.id}')">${bookBtnLabel[currentLang] || bookBtnLabel.en}</button>`
           : `<button class="event-detail__book-btn" onclick="alert('Please log in via Telegram first.')">Log in to book</button>`
@@ -721,6 +824,22 @@ window.onTelegramAuth = function(user) {
       applyTranslations(btn.dataset.lang);
       updateMonthLabel();
       updateUserBadge();
+      renderAlwaysAvailable();
+    });
+  });
+
+  // Location filter tabs
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentFilter = tab.dataset.filter;
+      renderCalendar();
+      renderUpcomingStrip();
+      renderAlwaysAvailable();
+      if (selectedDay !== null) {
+        renderEventsForDay(selectedDay);
+      }
     });
   });
 
@@ -734,6 +853,7 @@ window.onTelegramAuth = function(user) {
       selectedDay = today.getDate();
     }
     await fetchEventsForMonth();
+    await fetchEvergreenServices();
     // After calendar renders, show today's events
     if (selectedDay !== null) {
       renderEventsForDay(selectedDay);

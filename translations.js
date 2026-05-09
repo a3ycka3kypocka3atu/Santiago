@@ -274,7 +274,13 @@ const translations = {
     "ctaDesc": "Участники клуба получают доступ к эксклюзивным занятиям, воркшопам и встречам сообщества.",
     "ctaBtn": "Вступить в клуб →",
     "calUpcoming": "Ближайшие события",
-    "calNoUpcoming": "Нет предстоящих событий в этом месяце"
+    "calNoUpcoming": "Нет предстоящих событий в этом месяце",
+    "filter.all": "Все",
+    "filter.online": "Онлайн",
+    "filter.offlineStudio": "В студии",
+    "filter.offlineExternal": "Выездное",
+    "filter.alwaysAvailable": "Всегда доступно",
+    "event.viewService": "Подробнее об услуге →"
   },
   en: {
     "nav.home": "Home",
@@ -532,7 +538,13 @@ const translations = {
     "ctaDesc": "Club members get access to exclusive sessions, workshops, and community meetups.",
     "ctaBtn": "Join the Club →",
     "calUpcoming": "Upcoming Events",
-    "calNoUpcoming": "No upcoming events this month"
+    "calNoUpcoming": "No upcoming events this month",
+    "filter.all": "All",
+    "filter.online": "Online",
+    "filter.offlineStudio": "At Studio",
+    "filter.offlineExternal": "Offsite",
+    "filter.alwaysAvailable": "Always Available",
+    "event.viewService": "View Service Details →"
   },
   cz: {
     "nav.home": "Domů",
@@ -790,7 +802,13 @@ const translations = {
     "ctaDesc": "Členové klubu získají přístup k exkluzivním lekcím, workshopům a komunitním setkáním.",
     "ctaBtn": "Vstoupit do klubu →",
     "calUpcoming": "Nadcházející události",
-    "calNoUpcoming": "Žádné nadcházející události tento měsíc"
+    "calNoUpcoming": "Žádné nadcházející události tento měsíc",
+    "filter.all": "Vše",
+    "filter.online": "Online",
+    "filter.offlineStudio": "Ve studiu",
+    "filter.offlineExternal": "Mimo studio",
+    "filter.alwaysAvailable": "Vždy k dispozici",
+    "event.viewService": "Zobrazit detaily služby →"
   },
   ua: {
     "nav.home": "Головна",
@@ -1050,7 +1068,13 @@ const translations = {
     "ctaDesc": "Учасники клубу отримують доступ до ексклюзивних занять, воркшопів та зустрічей спільноти.",
     "ctaBtn": "Вступити до клубу →",
     "calUpcoming": "Найближчі події",
-    "calNoUpcoming": "Немає майбутніх подій у цьому місяці"
+    "calNoUpcoming": "Немає майбутніх подій у цьому місяці",
+    "filter.all": "Все",
+    "filter.online": "Онлайн",
+    "filter.offlineStudio": "У студії",
+    "filter.offlineExternal": "Виїзне",
+    "filter.alwaysAvailable": "Завжди доступно",
+    "event.viewService": "Детальніше про послугу →"
   }
 };
 

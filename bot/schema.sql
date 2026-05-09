@@ -25,6 +25,9 @@ CREATE TABLE IF NOT EXISTS public.events (
     type TEXT DEFAULT 'public' CHECK (type IN ('public', 'club', 'internal')),
     status TEXT DEFAULT 'confirmed' CHECK (status IN ('pending', 'confirmed', 'cancelled')),
     instructor_id UUID REFERENCES public.profiles(id),
+    location_type TEXT DEFAULT 'offline_studio' CHECK (location_type IN ('online', 'offline_studio', 'offline_external')),
+    service_id UUID REFERENCES public.services(id) ON DELETE SET NULL,
+    recurrence_rule TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -41,7 +44,28 @@ CREATE TABLE IF NOT EXISTS public.bookings (
 
 ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
 
--- 4. RLS POLICIES
+-- 4. SERVICES TABLE
+CREATE TABLE IF NOT EXISTS public.services (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    slug TEXT UNIQUE NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    price TEXT,
+    duration_minutes INTEGER,
+    instructor_id UUID REFERENCES public.profiles(id),
+    location_type TEXT DEFAULT 'offline_studio' CHECK (location_type IN ('online', 'offline_studio', 'offline_external')),
+    type TEXT DEFAULT 'public' CHECK (type IN ('public', 'club', 'internal')),
+    status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'archived')),
+    is_evergreen BOOLEAN DEFAULT false,
+    recurrence_rule TEXT,
+    detail_page TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
+
+-- 5. RLS POLICIES
 
 -- Profiles: Users can read their own profile, admins can read all
 CREATE POLICY "Users can read own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
@@ -78,3 +102,18 @@ CREATE POLICY "Staff can see all bookings" ON public.bookings FOR SELECT USING (
 CREATE POLICY "Residents can book" ON public.bookings FOR INSERT WITH CHECK (
     EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('resident', 'instructor', 'admin'))
 );
+
+-- Services:
+-- 1. Anyone can see published services
+CREATE POLICY "Anyone can see published services" ON public.services FOR SELECT USING (status = 'published');
+-- 2. Staff can manage services
+CREATE POLICY "Staff can manage services" ON public.services FOR ALL USING (
+    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('instructor', 'admin'))
+);
+
+-- 6. INDEXES
+CREATE INDEX IF NOT EXISTS idx_events_service_id ON public.events(service_id);
+CREATE INDEX IF NOT EXISTS idx_events_location_type ON public.events(location_type);
+CREATE INDEX IF NOT EXISTS idx_events_recurrence ON public.events(recurrence_rule) WHERE recurrence_rule IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_services_slug ON public.services(slug);
+CREATE INDEX IF NOT EXISTS idx_services_location_type ON public.services(location_type);

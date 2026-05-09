@@ -94,7 +94,8 @@ bot.action('instructor_menu', async (ctx) => {
   ctx.reply(
     'Панель Інструктора',
     Markup.inlineKeyboard([
-      [Markup.button.callback('➕ Створити нову подію', 'create_event')]
+      [Markup.button.callback('➕ Створити нову подію', 'create_event')],
+      [Markup.button.callback('🛒 Створити послугу', 'create_service')]
     ])
   );
   ctx.answerCbQuery();
@@ -222,6 +223,154 @@ bot.action(/event_type_(public|club|internal)/, async (ctx) => {
   }
   
   ctx.session = null;
+  ctx.answerCbQuery();
+});
+
+// ── SERVICE CREATION WIZARD ──
+bot.action('create_service', (ctx) => {
+  if (ctx.userRole !== 'instructor' && ctx.userRole !== 'admin') return ctx.answerCbQuery('Доступ заборонено.', { show_alert: true });
+
+  ctx.session = { state: 'service_title' };
+  ctx.reply('Створення послуги: Крок 1/8\n\nВведіть назву послуги (напр. "Курс Медитації"):');
+  ctx.answerCbQuery();
+});
+
+bot.on('text', async (ctx, next) => {
+  if (!ctx.session || !ctx.session.state) return next();
+
+  const state = ctx.session.state;
+  const text = ctx.message.text;
+
+  // Service Creation States
+  if (state === 'service_title') {
+    ctx.session.serviceTitle = text;
+    ctx.session.state = 'service_desc';
+    ctx.reply('Крок 2/8\n\nВведіть опис послуги:');
+    return;
+  }
+  if (state === 'service_desc') {
+    ctx.session.serviceDesc = text;
+    ctx.session.state = 'service_price';
+    ctx.reply('Крок 3/8\n\nВведіть ціну (напр. "1200 CZK" або "Індивідуально"):');
+    return;
+  }
+  if (state === 'service_price') {
+    ctx.session.servicePrice = text;
+    ctx.session.state = 'service_duration';
+    ctx.reply('Крок 4/8\n\nВведіть тривалість у хвилинах (напр. "60"):');
+    return;
+  }
+  if (state === 'service_duration') {
+    const duration = parseInt(text, 10);
+    if (isNaN(duration) || duration <= 0) {
+      ctx.reply('❌ Неправильне значення. Введіть число хвилин (напр. "60"):');
+      return;
+    }
+    ctx.session.serviceDuration = duration;
+    ctx.session.state = 'service_location_type';
+    ctx.reply('Крок 5/8\n\nОберіть тип локації:', Markup.inlineKeyboard([
+      [Markup.button.callback('💻 Онлайн (Zoom, курси)', 'service_loc_online')],
+      [Markup.button.callback('🏠 У студії', 'service_loc_offline_studio')],
+      [Markup.button.callback('🏢 Виїзне (оренда)', 'service_loc_offline_external')]
+    ]));
+    return;
+  }
+  if (state === 'service_recurrence_yes') {
+    ctx.session.state = 'service_rrule';
+    ctx.reply('Крок 7/8\n\nНалаштуйте повторення:\n\nПриклади:\n• Щоп\'ятниці о 09:30 — FREQ=WEEKLY;BYDAY=FR;BYHOUR=9;BYMINUTE=30\n• ЩоMonday о 18:00 — FREQ=WEEKLY;BYDAY=MO;BYHOUR=18;BYMINUTE=0\n• Кожного 15-го числа — FREQ=MONTHLY;BYMONTHDAY=15;BYHOUR=10;BYMINUTE=0\n\nВведіть RRULE规则的 частину (після "RRULE:"):');
+    return;
+  }
+  if (state === 'service_rrule') {
+    ctx.session.serviceRrule = text.trim().toUpperCase();
+    ctx.session.state = 'service_slug';
+    ctx.reply('Крок 8/8\n\nВведіть slug для URL (напр. "meditation-course"). Це буде частиною посилання на сторінку послуги:');
+    return;
+  }
+  if (state === 'service_slug') {
+    ctx.session.serviceSlug = text.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+    ctx.session.state = null;
+
+    // Get instructor ID
+    const { data: profile } = await supabase.from('profiles').select('id').eq('telegram_id', ctx.from.id).single();
+
+    const { error } = await supabase.from('services').insert({
+      slug: ctx.session.serviceSlug,
+      title: ctx.session.serviceTitle,
+      description: ctx.session.serviceDesc,
+      price: ctx.session.servicePrice,
+      duration_minutes: ctx.session.serviceDuration,
+      location_type: ctx.session.serviceLocationType || 'offline_studio',
+      recurrence_rule: ctx.session.serviceRrule || null,
+      is_evergreen: ctx.session.serviceIsEvergreen || false,
+      detail_page: `offer-${ctx.session.serviceSlug}.html`,
+      instructor_id: profile ? profile.id : null,
+      status: 'published'
+    });
+
+    if (error) {
+      console.error('Error creating service:', error);
+      ctx.reply('❌ Помилка при створенні послуги.');
+    } else {
+      ctx.reply(`✅ Послугу "${ctx.session.serviceTitle}" успішно створено!`);
+    }
+
+    ctx.session = null;
+    return;
+  }
+
+  return next();
+});
+
+// ── SERVICE LOCATION TYPE ──
+bot.action(/service_loc_(online|offline_studio|offline_external)/, (ctx) => {
+  if (ctx.userRole !== 'instructor' && ctx.userRole !== 'admin') return ctx.answerCbQuery('Доступ заборонено.', { show_alert: true });
+  if (!ctx.session || ctx.session.state !== 'service_location_type') return ctx.answerCbQuery('Помилка сесії.', { show_alert: true });
+
+  const locType = ctx.match[1];
+  ctx.session.serviceLocationType = locType;
+  ctx.session.state = 'service_evergreen';
+
+  ctx.reply('Крок 6/8\n\nЧи це постійна послуга без фіксованих дат (напр. курс у записі)?', Markup.inlineKeyboard([
+    [Markup.button.callback('✅ Так, always available', 'service_evergreen_yes')],
+    [Markup.button.callback('❌ Ні, є розклад', 'service_evergreen_no')]
+  ]));
+  ctx.answerCbQuery();
+});
+
+// ── SERVICE EVERGREEN CHOICE ──
+bot.action(/service_evergreen_(yes|no)/, (ctx) => {
+  if (ctx.userRole !== 'instructor' && ctx.userRole !== 'admin') return ctx.answerCbQuery('Доступ заборонено.', { show_alert: true });
+  if (!ctx.session || ctx.session.state !== 'service_evergreen') return ctx.answerCbQuery('Помилка сесії.', { show_alert: true });
+
+  const isEvergreen = ctx.match[1] === 'yes';
+  ctx.session.serviceIsEvergreen = isEvergreen;
+
+  if (isEvergreen) {
+    ctx.session.state = 'service_slug';
+    ctx.reply('Крок 8/8\n\nВведіть slug для URL (напр. "meditation-course"):');
+  } else {
+    ctx.session.state = 'service_recurrence_yes';
+    ctx.reply('Крок 7/8\n\nЧи повторюється послуга регулярно?', Markup.inlineKeyboard([
+      [Markup.button.callback('🔄 Так, регулярне заняття', 'service_recurring_yes')],
+      [Markup.button.callback('📅 Одноразова послуга', 'service_recurring_no')]
+    ]));
+  }
+  ctx.answerCbQuery();
+});
+
+// ── SERVICE RECURRENCE CHOICE ──
+bot.action(/service_recurring_(yes|no)/, (ctx) => {
+  if (ctx.userRole !== 'instructor' && ctx.userRole !== 'admin') return ctx.answerCbQuery('Доступ заборонено.', { show_alert: true });
+  if (!ctx.session || ctx.session.state !== 'service_recurrence_yes') return ctx.answerCbQuery('Помилка сесії.', { show_alert: true });
+
+  if (ctx.match[1] === 'yes') {
+    ctx.session.state = 'service_rrule';
+    ctx.reply('Крок 7/8 (RRULE)\n\nНалаштуйте повторення:\n\nПриклади:\n• Щоп\'ятниці о 09:30 — FREQ=WEEKLY;BYDAY=FR;BYHOUR=9;BYMINUTE=30\n• ЩоMonday о 18:00 — FREQ=WEEKLY;BYDAY=MO;BYHOUR=18;BYMINUTE=0\n• Кожного 15-го числа — FREQ=MONTHLY;BYMONTHDAY=15;BYHOUR=10;BYMINUTE=0\n\nВведіть RRULE правило (після "RRULE:"):');
+  } else {
+    ctx.session.serviceRrule = null;
+    ctx.session.state = 'service_slug';
+    ctx.reply('Крок 8/8\n\nВведіть slug для URL (напр. "meditation-course"):');
+  }
   ctx.answerCbQuery();
 });
 

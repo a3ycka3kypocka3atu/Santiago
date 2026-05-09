@@ -59,13 +59,12 @@
     </svg>
   </a>
 
-  <!-- Desktop Controls (same as home page) -->
+  <!-- Desktop Controls -->
   <div class="desktop-controls">
-    <button class="theme-toggle theme-toggle-btn" title="Toggle theme" type="button">
-      <span class="icon-sun">☀️</span>
-      <span class="icon-moon">🌙</span>
-      <span class="toggle-thumb"></span>
-    </button>
+    <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" id="tg-login-btn" title="Login via Telegram">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
+      <span>Login via Telegram</span>
+    </a>
 
     <div class="lang-switcher">
       <button class="lang-btn" data-lang="en" type="button">EN</button>
@@ -73,21 +72,16 @@
       <button class="lang-btn" data-lang="ru" type="button">RU</button>
       <button class="lang-btn" data-lang="ua" type="button">UA</button>
     </div>
+
+    <button class="theme-toggle theme-toggle-btn" title="Toggle theme" type="button">
+      <span class="icon-sun">☀️</span>
+      <span class="icon-moon">🌙</span>
+      <span class="toggle-thumb"></span>
+    </button>
   </div>
 
   <!-- ═══ TOP NAV ═══ -->
   <nav id="cal-nav">
-    <div id="tg-login-container">
-      <!-- Note: Replace 'SantiagoStudioBot' with your actual bot username -->
-      <script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-login="santioago_bot" data-size="medium" data-onauth="onTelegramAuth(user)" data-request-access="write"></script>
-
-      <!-- Fallback Button for Local Development/Testing -->
-      <a href="https://t.me/santioago_bot" target="_blank" class="tg-fallback-btn" id="tg-fallback-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
-        <span>Login via Telegram</span>
-      </a>
-    </div>
-
     <!-- User status badge (hidden by default until auth) -->
     <div id="user-badge" class="user-badge user-badge--guest" style="display: none;">
       <span class="user-badge__dot"></span>
@@ -104,6 +98,24 @@
       <h1 data-i18n="calTitle">Studio Schedule</h1>
       <p class="cal-subtitle" data-i18n="calSubtitle">Book a session, join community events, or reserve studio space.</p>
     </header>
+
+    <!-- Location Filter Tabs -->
+    <div class="location-filter" id="location-filter">
+      <button class="filter-tab active" data-filter="all" data-i18n="filter.all">All</button>
+      <button class="filter-tab" data-filter="online" data-i18n="filter.online">Online</button>
+      <button class="filter-tab" data-filter="offline_studio" data-i18n="filter.offlineStudio">At Studio</button>
+      <button class="filter-tab" data-filter="offline_external" data-i18n="filter.offlineExternal">Offsite</button>
+    </div>
+
+    <!-- Always Available Section (Evergreen Services) -->
+    <div class="always-available" id="always-available" style="display:none;">
+      <div class="always-available__header">
+        <h2 class="always-available__title" data-i18n="filter.alwaysAvailable">Always Available</h2>
+      </div>
+      <div class="always-available__track" id="always-available-track">
+        <!-- JS fills evergreen services here -->
+      </div>
+    </div>
 
     <!-- ═══ UPCOMING EVENTS HORIZONTAL STRIP ═══ -->
     <section class="upcoming-strip">
@@ -203,6 +215,8 @@
 
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- rrule library for recurrence expansion -->
+  <script src="https://cdn.jsdelivr.net/npm/rrule@2.7.2/dist/es5/rrule.min.js"></script>
   <!-- Scripts -->
   <script src="translations.js"></script>
   <script src="calendar.js"></script>
