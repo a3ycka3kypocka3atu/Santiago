@@ -35,17 +35,27 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Global Auth Logic for Telegram Login Button
-  const isLoggedIn = !!localStorage.getItem('ma3-user-id');
-  const tgBtns = document.querySelectorAll('.tg-login-btn');
-  
-  tgBtns.forEach(btn => {
-    if (isLoggedIn) {
-      btn.classList.add('logged-in');
-      btn.href = 'https://t.me/santioago_bot'; // Direct link when logged in
-    } else {
-      btn.classList.remove('logged-in');
-      // When logged out, act as login trigger (here simply redirecting to bot to start the login flow, or if there's a login script, it will handle it)
-      btn.href = 'https://t.me/santioago_bot?start=login';
-    }
+  function updateAuthUI(user) {
+    const tgBtns = document.querySelectorAll('.tg-login-btn');
+    tgBtns.forEach(btn => {
+      if (user.isLoggedIn) {
+        btn.classList.add('logged-in');
+        btn.href = 'https://t.me/santioago_bot'; // Direct link to bot
+      } else {
+        btn.classList.remove('logged-in');
+        btn.href = 'https://t.me/santioago_bot?start=login';
+      }
+    });
+  }
+
+  // Initial check
+  if (window.MA3Auth) {
+    updateAuthUI(window.MA3Auth.user);
+  }
+
+  // Listen for changes
+  document.addEventListener('ma3-auth-changed', (e) => {
+    updateAuthUI(e.detail);
   });
 });
+

@@ -14,26 +14,10 @@ window.onTelegramAuth = function(user) {
 
   'use strict';
 
-  // ── SUPABASE SETUP ──
-  const SUPABASE_URL = 'https://ccwvyjszlrrluzplizsu.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_41TaV7iEZxB2Gp7qaUx29w_xo1MeUs1';
-
-  let sb = null;
-  if (window.supabase) {
-    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  } else {
-    console.error('Supabase library not loaded.');
-  }
-
-  // ── USER STATE ──
-  // For MVP: role is stored in localStorage or fetched from Supabase
-  // Roles: 'guest', 'resident', 'instructor', 'admin'
-  let currentUser = {
-    role: localStorage.getItem('ma3-user-role') || 'guest',
-    id: localStorage.getItem('ma3-user-id') || null,
-    name: localStorage.getItem('ma3-user-name') || null,
-    isLoggedIn: !!localStorage.getItem('ma3-user-id')
-  };
+  // ── AUTH & USER STATE ──
+  const Auth = window.MA3Auth;
+  let currentUser = Auth ? Auth.user : { role: 'guest', id: null, isLoggedIn: false };
+  let sb = window.supabaseClient;
 
   // ── CALENDAR STATE ──
   let currentDate = new Date();
@@ -108,6 +92,7 @@ window.onTelegramAuth = function(user) {
   const guestCta = document.getElementById('guest-cta');
   const logoutBtn = document.getElementById('logout-btn');
   const upcomingTrack = document.getElementById('upcoming-track');
+  const tgLoginContainer = document.getElementById('telegram-login-container');
 
   // ═══════════════════════════════════════════════════════════
   //  CALENDAR RENDERING
@@ -665,6 +650,14 @@ window.onTelegramAuth = function(user) {
     ];
   }
 
+  // Listen for global auth changes
+  document.addEventListener('ma3-auth-changed', (e) => {
+    currentUser = e.detail;
+    updateUserBadge();
+    fetchEventsForMonth();
+    fetchEvergreenServices();
+  });
+
   // ═══════════════════════════════════════════════════════════
   //  USER ROLE UI
   // ═══════════════════════════════════════════════════════════
@@ -753,12 +746,7 @@ window.onTelegramAuth = function(user) {
 
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
-      currentUser = { role: 'guest', id: null, name: null, isLoggedIn: false };
-      localStorage.removeItem('ma3-user-id');
-      localStorage.removeItem('ma3-user-role');
-      localStorage.removeItem('ma3-user-name');
-      updateUserBadge();
-      fetchEventsForMonth();
+      if (Auth) Auth.logout();
     });
   }
 

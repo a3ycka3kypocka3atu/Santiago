@@ -28,17 +28,30 @@ bot.use(async (ctx, next) => {
       .eq('telegram_id', ctx.from.id)
       .single();
 
+    // Check if user is the known admin
+    const isAdmin = ctx.from.username === 'andrisav';
+    const initialRole = isAdmin ? 'admin' : 'guest';
+
     if (fetchError && fetchError.code === 'PGRST116') {
-      // Create guest profile
-      await supabase.from('profiles').insert({
+      // Create profile
+      const { data: newProfile, error: insertError } = await supabase.from('profiles').upsert({
         telegram_id: ctx.from.id,
         username: ctx.from.username,
         full_name: ctx.from.first_name + (ctx.from.last_name ? ' ' + ctx.from.last_name : ''),
-        role: 'guest'
-      });
-      ctx.userRole = 'guest';
+        role: initialRole
+      }, { onConflict: 'telegram_id' }).select().single();
+
+      ctx.userRole = initialRole;
+      ctx.dbUser = newProfile;
     } else if (profile) {
-      ctx.userRole = profile.role;
+      // If user is andrisav but role isn't admin, upgrade it
+      if (isAdmin && profile.role !== 'admin') {
+        await supabase.from('profiles').update({ role: 'admin' }).eq('telegram_id', ctx.from.id);
+        ctx.userRole = 'admin';
+      } else {
+        ctx.userRole = profile.role;
+      }
+      ctx.dbUser = profile;
     } else {
       ctx.userRole = 'guest'; // Fallback
     }
@@ -55,7 +68,20 @@ const mainMenu = Markup.inlineKeyboard([
   [Markup.button.callback('⚙️ Панель Інструктора/Адміна', 'instructor_menu')]
 ]);
 
-bot.start((ctx) => {
+bot.start(async (ctx) => {
+  const startPayload = ctx.startPayload;
+  
+  if (startPayload === 'login') {
+    // User coming from web to login
+    const portalUrl = `https://a3ycka3kypocka3atu.github.io/-/?userId=${ctx.from.id}`;
+    return ctx.reply(
+      `🔑 Ви входите у систему як ${ctx.userRole}.\n\nНатисніть кнопку нижче, щоб відкрити портал:`,
+      Markup.inlineKeyboard([
+        [Markup.button.url('🔓 Відкрити портал', portalUrl)]
+      ])
+    );
+  }
+
   ctx.reply(
     `Вітаємо у боті студії Santiago! 👋\n\nТут ви можете дізнатися більше про нас, подати заявку до клубу або керувати розкладом (для інструкторів).`,
     mainMenu
