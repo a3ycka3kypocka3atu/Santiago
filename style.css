@@ -2599,6 +2599,8 @@ body.grayscale-mode .preview-card {
   font-size: 0.82rem;
   font-weight: 600;
   transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .tg-fallback-btn:hover {
@@ -2790,12 +2792,13 @@ body.grayscale-mode .preview-card {
 .cal-theme-btn {
   width: 52px;
   height: 28px;
+  min-width: 52px;
+  flex-shrink: 0;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
   position: relative;
   cursor: pointer;
-  padding: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
