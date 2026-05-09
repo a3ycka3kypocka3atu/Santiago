@@ -2106,6 +2106,8 @@ body.grayscale-mode .preview-card {
 
 /* ── Event Card ── */
 .event-card {
+  width: 100%;
+  box-sizing: border-box;
   padding: 16px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.03);
@@ -2113,6 +2115,8 @@ body.grayscale-mode .preview-card {
   cursor: pointer;
   transition: all 0.25s var(--ease-out);
   position: relative;
+  flex-shrink: 1;
+  margin: 0;
 }
 
 .event-card:hover {
@@ -2993,7 +2997,7 @@ body.grayscale-mode .cal-theme-btn .toggle-thumb {
     0 4px 16px rgba(0, 0, 0, 0.25),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   transform: perspective(1200px) rotateX(1deg);
 }
 
