@@ -72,14 +72,15 @@
 
   // ── Supabase Client ──────────────────────────────────────
   function getClient() {
+    // Use the client already initialized by auth.js
     if (window.supabaseClient) return window.supabaseClient;
+    // Fallback: use CDN namespace (but it won't have real credentials)
     const sb = window.supabase;
     if (!sb) return null;
-    window.supabaseClient = sb.createClient(
-      'https://placeholder.supabase.co',
-      'placeholder-anon-key'
+    return sb.createClient(
+      'https://ccwvyjszlrrluzplizsu.supabase.co',
+      'sb_publishable_41TaV7iEZxB2Gp7qaUx29w_xo1MeUs1'
     );
-    return window.supabaseClient;
   }
 
   // ── Card Rendering ────────────────────────────────────────
