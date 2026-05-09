@@ -41,7 +41,7 @@ const Auth = {
   },
 
   saveSession(profile) {
-    this.user.id = profile.id;
+    this.user.id = profile.id || profile.telegram_id;
     this.user.role = profile.role;
     this.user.name = profile.full_name;
     this.user.isLoggedIn = true;
@@ -95,8 +95,15 @@ const Auth = {
       }
     }
 
-    // Refresh UI on load
-    document.dispatchEvent(new CustomEvent('ma3-auth-changed', { detail: this.user }));
+    // Initialize UI on load
+    document.addEventListener('DOMContentLoaded', () => {
+      // Small delay to ensure all scripts are ready
+      setTimeout(() => {
+        if (window.MA3Auth) {
+          MA3Menu.updateAuthUI(window.MA3Auth.user);
+        }
+      }, 100);
+    });
   }
 };
 

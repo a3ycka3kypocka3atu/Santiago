@@ -68,40 +68,50 @@
       <p data-i18n="services.page.desc">Всё, что мы предлагаем для вашего тела, разума и развития — в одном месте.</p>
     </div>
 
-    <div class="gallery-grid">
-
-      <!-- Service Card: Massage -->
-      <a href="offer.html" class="preview-card" id="card-massage">
-        <div class="preview-card__icon">💆</div>
-        <div class="preview-card__body">
-          <h3 data-i18n="services.massage.name">Глубокий массаж и чайная церемония</h3>
-          <span class="preview-role" data-i18n="services.massage.price">1200 CZK · ≈ 48–50 EUR</span>
-          <p data-i18n="services.massage.short">Терапевтический массаж с диагностикой тела, мужские и женские программы. Включает 30–60 мин чайной церемонии.</p>
-          <span class="preview-card__cta">
-            <span data-i18n="btn.details">Подробнее</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-          </span>
+    <!-- Service Filters -->
+    <div class="services-filters" id="services-filters">
+      <div class="filter-group">
+        <div class="filter-label" data-i18n="filter.category">Category</div>
+        <div class="filter-tabs" role="tablist" aria-label="Service category">
+          <button class="filter-tab active" data-filter="category" data-value="all" role="tab" aria-selected="true" data-i18n="filter.all">All</button>
+          <button class="filter-tab" data-filter="category" data-value="body" role="tab" aria-selected="false" data-i18n="filter.body">Body</button>
+          <button class="filter-tab" data-filter="category" data-value="mind" role="tab" aria-selected="false" data-i18n="filter.mind">Mind</button>
+          <button class="filter-tab" data-filter="category" data-value="incubator" role="tab" aria-selected="false" data-i18n="filter.incubator">Incubator</button>
+          <button class="filter-tab" data-filter="category" data-value="space" role="tab" aria-selected="false" data-i18n="filter.space">Space</button>
         </div>
-      </a>
-
-      <!-- Service Card: Kateryna Wellness -->
-      <a href="offer-katerina.html" class="preview-card" id="card-kateryna-wellness">
-        <div class="preview-card__icon">🌿</div>
-        <div class="preview-card__body">
-          <h3 data-i18n="services.kat.wellness.name">Wellness-программы и SPA-ретриты</h3>
-          <span class="preview-role" data-i18n="services.kat.wellness.price">Индивидуально</span>
-          <p data-i18n="services.kat.wellness.short">Телесные практики, ароматерапия, лимфодренажные тренировки, камерные SPA-ретриты с арома-ритуалами.</p>
-          <span class="preview-card__cta">
-            <span data-i18n="btn.details">Подробнее</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-          </span>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label" data-i18n="filter.format">Format</div>
+        <div class="filter-tabs" role="tablist" aria-label="Service format">
+          <button class="filter-tab active" data-filter="format" data-value="all" role="tab" aria-selected="true" data-i18n="filter.all">All</button>
+          <button class="filter-tab" data-filter="format" data-value="individual" role="tab" aria-selected="false" data-i18n="filter.individual">Individual</button>
+          <button class="filter-tab" data-filter="format" data-value="group" role="tab" aria-selected="false" data-i18n="filter.group">Group</button>
         </div>
-      </a>
-
-      <!-- Placeholder for future services -->
-
+      </div>
+      <div class="filter-group filter-group--instructor">
+        <div class="filter-label" data-i18n="filter.instructor">Instructor</div>
+        <div class="filter-select-wrap">
+          <select class="filter-select" id="instructor-filter" data-filter="instructor" aria-label="Select instructor">
+            <option value="all" data-i18n="filter.allInstructors">All Instructors</option>
+            <option value="ivan">Иван Протиняк</option>
+            <option value="katerina">Катерина</option>
+          </select>
+          <svg class="select-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
     </div>
 
+    <!-- Empty State -->
+    <div class="services-empty" id="services-empty" hidden>
+      <div class="services-empty__icon">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6"/></svg>
+      </div>
+      <p class="services-empty__text" data-i18n="services.empty.text">No services match your criteria</p>
+      <button class="services-empty__reset" id="reset-filters" data-i18n="services.empty.reset">Reset Filters</button>
+    </div>
+
+    <div class="gallery-grid" id="services-grid">
+    </div>
   </div>
 
   <nav class="quick-menu" aria-label="Навигация">
@@ -144,6 +154,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="auth.js"></script>
   <script src="menu.js"></script>
+  <script src="services.js"></script>
   <script>
     const themeToggles = document.querySelectorAll('.theme-toggle-btn');
     if (localStorage.getItem('grayscale') === 'enabled') document.body.classList.add('grayscale-mode');

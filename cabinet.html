@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Кабинет Резидента | Сантьяго</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .cabinet-page {
+      padding: 100px 20px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+    .cabinet-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .cabinet-card {
+      padding: 30px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      cursor: pointer;
+    }
+    .cabinet-card .icon {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+    .cabinet-card h3 {
+      font-size: 1.4rem;
+      color: var(--glow-yellow);
+    }
+    .cabinet-card p {
+      color: var(--fg-muted);
+      font-size: 0.95rem;
+    }
+    .admin-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(255, 204, 0, 0.2);
+      border: 1px solid var(--glow-yellow);
+      color: var(--glow-yellow);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body class="calendar-page">
+  <div class="cal-bg">
+    <div class="cal-bg__orb cal-bg__orb--blue"></div>
+    <div class="cal-bg__orb cal-bg__orb--green"></div>
+    <div class="cal-bg__orb cal-bg__orb--yellow"></div>
+    <div class="cal-bg__noise"></div>
+  </div>
+
+  <!-- Header Logo -->
+  <a href="index.html" class="top-logo-container" aria-label="На главную">
+    <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" class="top-logo-svg">
+      <g stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="100" cy="90" r="50"/>
+        <path d="M100 70 Q105 76 100 87 Q94 80 100 70" fill="currentColor" stroke="none"/>
+        <line x1="52" y1="105" x2="148" y2="105"/>
+      </g>
+      <text x="100" y="180" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="28" fill="currentColor" letter-spacing="2">SANTIAGO</text>
+    </svg>
+  </a>
+
+  <!-- Desktop Controls -->
+  <div class="desktop-controls">
+    <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn logged-in" title="Portal Profile">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
+    </a>
+    <button class="menu-trigger" aria-label="Open menu">☰</button>
+  </div>
+
+  <main class="cabinet-page">
+    <div class="gallery-header">
+      <div id="role-badge-container"></div>
+      <h1 data-i18n="cabinet.title">Личный кабинет</h1>
+      <p data-i18n="cabinet.subtitle">Пространство для управления вашими проектами и услугами в Santiago Studio.</p>
+    </div>
+
+    <div class="cabinet-grid">
+      <!-- Profile Card -->
+      <div class="glass-card cabinet-card">
+        <div class="icon">👤</div>
+        <h3 data-i18n="cabinet.profile.title">Мой Профиль</h3>
+        <p data-i18n="cabinet.profile.desc">Настройка публичной страницы, контактов и биографии.</p>
+      </div>
+
+      <!-- Services Card -->
+      <div class="glass-card cabinet-card">
+        <div class="icon">✨</div>
+        <h3 data-i18n="cabinet.services.title">Мои Услуги</h3>
+        <p data-i18n="cabinet.services.desc">Управление вашими офферами, ценами и описанием практик.</p>
+      </div>
+
+      <!-- Projects Card -->
+      <div class="glass-card cabinet-card">
+        <div class="icon">🏗️</div>
+        <h3 data-i18n="cabinet.projects.title">Мои Проекты</h3>
+        <p data-i18n="cabinet.projects.desc">Глобальные инициативы, события и долгосрочные коллаборации.</p>
+      </div>
+
+      <!-- Admin Tools (Hidden if not admin) -->
+      <div class="glass-card cabinet-card" id="admin-tools" style="display: none;">
+        <div class="icon">⚙️</div>
+        <h3 data-i18n="cabinet.admin.title">Администрирование</h3>
+        <p data-i18n="cabinet.admin.desc">Управление всеми резидентами, событиями и настройками платформы.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Quick Menu -->
+  <nav class="quick-menu" aria-label="Навигация">
+    <ul>
+      <li><a href="index.html">Главная</a></li>
+      <li><a href="calendar.html">Расписание</a></li>
+      <li><a href="masters.html">Мастера</a></li>
+    </ul>
+  </nav>
+
+  <script src="translations.js?v=5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="auth.js"></script>
+  <script src="menu.js"></script>
+  <script>
+    // Role handling for Cabinet
+    document.addEventListener('ma3-auth-changed', (e) => {
+      const user = e.detail;
+      const adminTools = document.getElementById('admin-tools');
+      const badgeContainer = document.getElementById('role-badge-container');
+      
+      if (user && (user.role === 'admin' || user.role === 'instructor')) {
+        if (user.role === 'admin') {
+          adminTools.style.display = 'flex';
+          badgeContainer.innerHTML = '<span class="admin-badge">Administrator</span>';
+        } else {
+          badgeContainer.innerHTML = '<span class="admin-badge" style="border-color: #00ffcc; color: #00ffcc; background: rgba(0, 255, 204, 0.1);">Instructor</span>';
+        }
+      } else {
+        // Redirect if not authorized
+        // window.location.href = 'index.html';
+      }
+    });
+  </script>
+</body>
+</html>

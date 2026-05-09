@@ -38,12 +38,25 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateAuthUI(user) {
     const tgBtns = document.querySelectorAll('.tg-login-btn');
     tgBtns.forEach(btn => {
+      const tgText = btn.querySelector('.tg-text');
       if (user.isLoggedIn) {
         btn.classList.add('logged-in');
-        btn.href = 'https://t.me/santioago_bot'; // Direct link to bot
+        btn.href = 'https://t.me/santioago_bot';
+        if (tgText) tgText.style.display = 'none';
       } else {
         btn.classList.remove('logged-in');
         btn.href = 'https://t.me/santioago_bot?start=login';
+        if (tgText) tgText.style.display = 'inline';
+      }
+    });
+
+    // Handle Cabinet button visibility
+    const cabinetBtns = document.querySelectorAll('.cabinet-btn');
+    cabinetBtns.forEach(btn => {
+      if (user && (user.role === 'admin' || user.role === 'instructor')) {
+        btn.style.display = 'flex';
+      } else {
+        btn.style.display = 'none';
       }
     });
   }

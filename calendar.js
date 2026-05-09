@@ -27,6 +27,22 @@ window.onTelegramAuth = function(user) {
   let eventsCache = []; // All events for the current month
   let servicesCache = []; // Evergreen services for Always Available section
   let currentFilter = 'all'; // 'all' | 'online' | 'offline_studio' | 'offline_external'
+  let preselectedServiceId = null;  // Pre-filter from URL param ?service=ID
+  let preselectedInstructor = null; // Pre-filter from URL param ?instructor=NAME
+
+  // ── Parse URL pre-filter params ──
+  (function parseUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const svc = params.get('service');
+    const instr = params.get('instructor');
+    if (svc) {
+      preselectedServiceId = svc.trim();
+      currentFilter = 'all'; // Don't override location filter, just scroll/highlight
+    }
+    if (instr) {
+      preselectedInstructor = instr.trim().toLowerCase();
+    }
+  })();
 
   // ── i18n (reuse from main site) ──
   const STORAGE_KEY = 'ma3-lang';
@@ -839,6 +855,35 @@ window.onTelegramAuth = function(user) {
     // After calendar renders, show today's events
     if (selectedDay !== null) {
       renderEventsForDay(selectedDay);
+    }
+
+    // ── Pre-filter from URL params ──
+    if (preselectedInstructor) {
+      // Highlight the instructor filter tab if one matches
+      const instrLower = preselectedInstructor.toLowerCase();
+      const tabMap = {
+        'ivan protinak': 'ivan',
+        'иван протиняк': 'ivan',
+        'katerina': 'katerina',
+        'катерина': 'katerina',
+      };
+      const instrKey = Object.keys(tabMap).find(k => instrLower.includes(k));
+      const instrValue = instrKey ? tabMap[instrKey] : instrLower;
+
+      // Scroll to upcoming strip to show instructor's events
+      const upcoming = document.querySelector('.upcoming-strip');
+      if (upcoming) {
+        upcoming.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    if (preselectedServiceId) {
+      // Highlight service filter
+      const svcTab = document.querySelector(`.filter-tab[data-service-id="${preselectedServiceId}"]`);
+      if (svcTab) {
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        svcTab.classList.add('active');
+      }
     }
   }
 
