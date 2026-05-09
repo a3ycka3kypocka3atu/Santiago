@@ -12,7 +12,7 @@ const translations = {
     "btn.details": "Подробнее",
     
     // Index.html - Hero
-    "hero.title": "Сантьяго – Цифровой Дзен",
+    "hero.title": "Santiago Way — Твой Путь",
     "hero.manifest": "Больше, чем студия. Клуб, инкубатор, пространство для совместного роста.",
     "hero.cta1": "Посмотреть услуги",
     "hero.cta2": "Программа событий",
@@ -319,7 +319,7 @@ const translations = {
     "footer.text": "© 2026 Santiago – Digital Zen. All rights reserved.",
     "btn.details": "Learn More",
     
-    "hero.title": "Santiago – Digital Zen",
+    "hero.title": "Santiago Way — Your Path",
     "hero.manifest": "More than a studio. A club, an incubator, a space for shared growth.",
     "hero.cta1": "View Services",
     "hero.cta2": "Browse Event Program",
@@ -608,7 +608,7 @@ const translations = {
     "footer.text": "© 2026 Santiago – Digitální Zen. Všechna práva vyhrazena.",
     "btn.details": "Více informací",
     
-    "hero.title": "Santiago – Digitální Zen",
+    "hero.title": "Santiago Way — Tvoje Cesta",
     "hero.manifest": "Více než studio. Klub, inkubátor, prostor pro společný růst.",
     "hero.cta1": "Zobrazit služby",
     "hero.cta2": "Prohlédnout program událostí",
