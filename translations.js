@@ -1,4 +1,4 @@
-const translations = {
+window.translations = {
   ru: {
     // Shared
     "nav.home": "Главная",
