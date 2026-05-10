@@ -16,7 +16,7 @@ window.translations = {
     "hero.manifest": "Больше, чем студия. Клуб, инкубатор, пространство для совместного роста.",
     "hero.cta1": "Посмотреть услуги",
     "hero.cta2": "Программа событий",
-    "hero.cta3": "Присоединиться к коллективу",
+    "hero.cta3": "Присоединиться к сообществу",
     
     // Index.html - Events
     "events.title": "Ближайшие события",
@@ -323,7 +323,7 @@ window.translations = {
     "hero.manifest": "More than a studio. A club, an incubator, a space for shared growth.",
     "hero.cta1": "View Services",
     "hero.cta2": "Browse Event Program",
-    "hero.cta3": "Join the Team",
+    "hero.cta3": "Join our Community",
     
     "events.title": "Upcoming Events",
     "events.1.title": "Social Game \"Echo\"",
@@ -612,7 +612,7 @@ window.translations = {
     "hero.manifest": "Více než studio. Klub, inkubátor, prostor pro společný růst.",
     "hero.cta1": "Zobrazit služby",
     "hero.cta2": "Prohlédnout program událostí",
-    "hero.cta3": "Připojit se ke kolektivu",
+    "hero.cta3": "Připojit se ke komunitě",
     
     "events.title": "Nadcházející události",
     "events.1.title": "Sociální hra \"Echo\"",
@@ -899,7 +899,7 @@ window.translations = {
     "hero.manifest": "Більше, ніж студія. Клуб, інкубатор, простір для спільного зростання.",
     "hero.cta1": "Подивитися послуги",
     "hero.cta2": "Розглянути програму подій",
-    "hero.cta3": "Приєднатися до колективу",
+    "hero.cta3": "Приєднатися до спільноти",
     
     "events.title": "Найближчі події",
     "events.1.title": "Соціальна гра \"Ехо\"",
