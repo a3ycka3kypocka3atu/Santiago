@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Open Mic & Santiago Talks — майданчик для ваших ідей, проєктів та самовираження у підтримуючому колі однодумців." />
+  <title>Open Mic & Santiago Talks | Сантьяго</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-clouds">
+    <div class="cloud-global c1"></div>
+    <div class="cloud-global c2"></div>
+    <div class="cloud-global c3"></div>
+  </div>
+
+  <a href="index.html" class="top-logo-container" aria-label="На главную" title="На главную">
+    <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" class="top-logo-svg">
+      <g stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="100" cy="90" r="50"/><line x1="100" y1="15" x2="100" y2="30"/><line x1="135" y1="25" x2="125" y2="40"/><line x1="165" y1="50" x2="150" y2="60"/><line x1="180" y1="90" x2="165" y2="90"/><line x1="65" y1="25" x2="75" y2="40"/><line x1="35" y1="50" x2="50" y2="60"/><line x1="20" y1="90" x2="35" y2="90"/>
+        <circle cx="100" cy="80" r="14"/><path d="M100 70 Q105 76 100 87 Q94 80 100 70" fill="currentColor" stroke="none"/>
+        <line x1="100" y1="65" x2="100" y2="40"/><line x1="115" y1="80" x2="140" y2="80"/><line x1="85" y1="80" x2="60" y2="80"/>
+        <line x1="52" y1="105" x2="148" y2="105"/>
+        <path d="M98 105 Q115 115 90 125 T95 140 L105 140 Q85 125 110 115 T103 105 Z" fill="currentColor" stroke="none"/>
+      </g>
+      <text x="100" y="180" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="28" fill="currentColor" letter-spacing="2">SANTIAGO</text>
+      <text x="100" y="205" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="14" fill="currentColor" letter-spacing="6">WAY</text>
+    </svg>
+  </a>
+
+  <a href="shop.html" class="home-icon" aria-label="Магазин" title="Магазин">
+    <svg viewBox="0 0 24 24" width="34" height="34" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="svg-home">
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path>
+    </svg>
+  </a>
+
+  <div class="desktop-controls">
+    <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" title="Login via Telegram">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
+      <span class="tg-text">Login via Telegram</span>
+    </a>
+    <div class="lang-switcher">
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="cz">CZ</button>
+      <button class="lang-btn" data-lang="ru">RU</button>
+      <button class="lang-btn" data-lang="ua">UA</button>
+    </div>
+    <button class="theme-toggle theme-toggle-btn" title="Toggle theme">
+      <span class="icon-sun">☀️</span>
+      <span class="icon-moon">🌙</span>
+      <span class="toggle-thumb"></span>
+    </button>
+    <button class="menu-trigger" aria-label="Open menu">☰</button>
+  </div>
+
+  <!-- ═══ PAGE CONTENT ═══ -->
+  <div class="page-wrapper">
+
+    <!-- Hero -->
+    <section class="om-hero">
+      <div class="om-hero__eyebrow">
+        <span class="om-eyebrow-line"></span>
+        <span data-i18n="om.eyebrow">Open Stage Platform</span>
+      </div>
+      <h1 class="om-hero__title" data-i18n="om.title">Open Mic &amp; Santiago Talks</h1>
+      <p class="om-hero__subtitle" data-i18n="om.subtitle">Майданчик для ваших ідей, проєктів та самовираження у підтримуючому колі однодумців.</p>
+      <p class="om-hero__desc" data-i18n="om.desc">Безпечний та відкритий простір для тих, хто хоче поділитися своїм баченням світу, знайти команду, протестувати новий формат або просто попрактикуватися у публічних виступах.</p>
+      <div class="om-hero__actions">
+        <a href="https://t.me/santioago_bot?start=openmic" class="om-btn om-btn--primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.4-1.08.4-.23 0-.42-.19-.52-.42l-.04-.12c-.14-.82-.37-2.56.14-3.88.36-.94 1.02-1.68 1.76-2.27.47-.38.92-.53 1.3-.58.63-.1 1.22.22 1.55.62.38.45.57 1.12.52 1.84-.06.9-.6 3.07.46 4.52.58.79 1.24 1.33 1.73 1.67.26.18.52.27.78.27.22 0 .52-.1.82-.4l.2-.2c.13-.15.12-.27.09-.38z"/></svg>
+          <span data-i18n="om.cta">Подати заявку на виступ</span>
+        </a>
+      </div>
+      <div class="om-hero__glow"></div>
+    </section>
+
+    <!-- Formats Section -->
+    <section class="om-section om-formats">
+      <div class="om-section__header">
+        <span class="om-section__label" data-i18n="om.formats.label">Stage Formats</span>
+        <h2 class="om-section__title" data-i18n="om.formats.title">Формати виступів</h2>
+      </div>
+      <div class="om-formats__grid">
+
+        <div class="om-format-card">
+          <div class="om-format-card__icon">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="om-format-card__body">
+            <h3 data-i18n="om.format.talks.title">Santiago Talks (TED-style)</h3>
+            <p class="om-format-card__duration" data-i18n="om.format.talks.duration">15–20 хвилин</p>
+            <p data-i18n="om.format.talks.desc">Короткі лекції на 15-20 хвилин. Тематика: усвідомленість, ментальне та фізичне здоров'я, технології з душею, екологічний бізнес, філософія.</p>
+          </div>
+          <div class="om-format-card__tags">
+            <span class="om-tag" data-i18n="om.tag.lecture">Лекція</span>
+            <span class="om-tag" data-i18n="om.tag.ted">TED-style</span>
+          </div>
+        </div>
+
+        <div class="om-format-card">
+          <div class="om-format-card__icon">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <div class="om-format-card__body">
+            <h3 data-i18n="om.format.projects.title">Презентація проєктів та ідей</h3>
+            <p class="om-format-card__duration" data-i18n="om.format.projects.duration">5–10 хвилин</p>
+            <p data-i18n="om.format.projects.desc">Відкрита сцена для стартаперів та кріейторів. Розкажіть про свій проєкт наживо, щоб знайти однодумців, інвесторів або отримати чесний зворотний зв'язок від аудиторії.</p>
+          </div>
+          <div class="om-format-card__tags">
+            <span class="om-tag" data-i18n="om.tag.pitch">Пітч</span>
+            <span class="om-tag" data-i18n="om.tag.incubator">Інкубатор</span>
+          </div>
+        </div>
+
+        <div class="om-format-card">
+          <div class="om-format-card__icon">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="om-format-card__body">
+            <h3 data-i18n="om.format.networking.title">Нетворкінг-пітчинги</h3>
+            <p class="om-format-card__duration" data-i18n="om.format.networking.duration">2–3 хвилини</p>
+            <p data-i18n="om.format.networking.desc">Формат короткої самопрезентації. Хто ви, чим займаєтесь, кого шукаєте і чим можете бути корисні спільноті.</p>
+          </div>
+          <div class="om-format-card__tags">
+            <span class="om-tag" data-i18n="om.tag.network">Нетворкінг</span>
+            <span class="om-tag" data-i18n="om.tag.intro">Знайомство</span>
+          </div>
+        </div>
+
+        <div class="om-format-card">
+          <div class="om-format-card__icon">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="om-format-card__body">
+            <h3 data-i18n="om.format.performance.title">Практика та Перформанси</h3>
+            <p class="om-format-card__duration" data-i18n="om.format.performance.duration">5–20 хвилин</p>
+            <p data-i18n="om.format.performance.desc">Сцена для тестування нових авторських лекцій, усвідомленого стендапу, поетичних вечорів або інших форматів взаємодії з публікою.</p>
+          </div>
+          <div class="om-format-card__tags">
+            <span class="om-tag" data-i18n="om.tag.performance">Перформанс</span>
+            <span class="om-tag" data-i18n="om.tag.open">Open</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Video Production Section -->
+    <section class="om-section om-media">
+      <div class="om-section__header">
+        <span class="om-section__label" data-i18n="om.media.label">Media Support</span>
+        <h2 class="om-section__title" data-i18n="om.media.title">Відеопродакшн та Медіа</h2>
+        <p class="om-section__desc" data-i18n="om.media.desc">Кожен виступ — це не лише живий досвід, а й якісний контент для вашого особистого бренду.</p>
+      </div>
+      <div class="om-media__grid">
+
+        <div class="om-media-card">
+          <div class="om-media-card__number">01</div>
+          <h3 data-i18n="om.media.record.title">Професійний запис</h3>
+          <p data-i18n="om.media.record.desc">Ми забезпечуємо відео- та аудіофіксацію виступів у нашому просторі з використанням якісного обладнання.</p>
+        </div>
+
+        <div class="om-media-card">
+          <div class="om-media-card__number">02</div>
+          <h3 data-i18n="om.media.broadcast.title">Трансляція та YouTube</h3>
+          <p data-i18n="om.media.broadcast.desc">Найкращі матеріали публікуються на офіційному каналі екосистеми Сантьяго для широкої аудиторії.</p>
+        </div>
+
+        <div class="om-media-card">
+          <div class="om-media-card__number">03</div>
+          <h3 data-i18n="om.media.portfolio.title">Портфоліо спікера</h3>
+          <p data-i18n="om.media.portfolio.desc">Кожен учасник отримує якісний відеоматеріал, який може вільно використовувати для власного портфоліо, розвитку особистого бренду та соціальних мереж.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="om-section om-cta-section">
+      <div class="om-cta-card">
+        <div class="om-cta-card__glow"></div>
+        <div class="om-cta-card__content">
+          <h2 data-i18n="om.cta.title">Готові поділитися своїм досвідом?</h2>
+          <p data-i18n="om.cta.desc">Заповніть коротку анкету, і ми підберемо оптимальний формат та дату для вашого виступу.</p>
+          <a href="https://t.me/santioago_bot?start=openmic" class="om-btn om-btn--primary om-btn--large">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.4-1.08.4-.23 0-.42-.19-.52-.42l-.04-.12c-.14-.82-.37-2.56.14-3.88.36-.94 1.02-1.68 1.76-2.27.47-.38.92-.53 1.3-.58.63-.1 1.22.22 1.55.62.38.45.57 1.12.52 1.84-.06.9-.6 3.07.46 4.52.58.79 1.24 1.33 1.73 1.67.26.18.52.27.78.27.22 0 .52-.1.82-.4l.2-.2c.13-.15.12-.27.09-.38z"/></svg>
+            <span data-i18n="om.cta.btn">Подати заявку на виступ</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <nav class="quick-menu" aria-label="Навигация">
+    <ul>
+      <li><a href="index.html" data-i18n="nav.home">Главная</a></li>
+      <li><a href="index.html#events" data-i18n="nav.events">События</a></li>
+      <li><a href="index.html#studio" data-i18n="nav.studio">Студия</a></li>
+      <li><a href="index.html#instructors" data-i18n="nav.partners">Партнёры</a></li>
+      <li><a href="index.html#club" data-i18n="nav.club">Клуб</a></li>
+    </ul>
+    <div class="menu-controls">
+      <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" style="width: 100%; justify-content: center; margin-bottom: 1rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
+        <span class="tg-text">Login via Telegram</span>
+      </a>
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="cz">CZ</button>
+        <button class="lang-btn" data-lang="ru">RU</button>
+        <button class="lang-btn" data-lang="ua">UA</button>
+      </div>
+      <button class="theme-toggle theme-toggle-btn" title="Toggle theme">
+        <span class="icon-sun">☀️</span>
+        <span class="icon-moon">🌙</span>
+        <span class="toggle-thumb"></span>
+      </button>
+    </div>
+  </nav>
+
+  <footer class="footer">
+    <p data-i18n="footer.text">© 2026 Сантьяго – Цифровой Дзен. Все права защищены.</p>
+  </footer>
+
+  <script src="translations.js?v=5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="auth.js"></script>
+  <script src="menu.js"></script>
+  <script>
+    const themeToggles = document.querySelectorAll('.theme-toggle-btn');
+    if (localStorage.getItem('grayscale') === 'enabled') document.body.classList.add('grayscale-mode');
+    themeToggles.forEach(t => t.addEventListener('click', () => {
+      document.body.classList.toggle('grayscale-mode');
+      localStorage.setItem('grayscale', document.body.classList.contains('grayscale-mode') ? 'enabled' : 'disabled');
+    }));
+  </script>
+</body>
+</html>

@@ -7,33 +7,43 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=9" />
   <style>
+    :root {
+      --comm-accent: #00ffcc;
+    }
     .comm-hero {
-      padding: 180px 20px 60px;
+      padding: 220px 20px 60px; /* Increased padding even more */
       text-align: center;
       max-width: 1000px;
       margin: 0 auto;
       position: relative;
-      z-index: 10;
+      z-index: 5;
     }
     .comm-hero h1 {
-      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-size: clamp(2.2rem, 6vw, 4rem);
       margin-bottom: 24px;
       line-height: 1.2;
-      color: #ffffff;
-      text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+      color: #ffffff !important;
+      text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
     }
     .comm-hero p {
-      font-size: 1.2rem;
-      color: var(--fg-muted);
+      font-size: 1.25rem;
+      color: rgba(255,255,255,0.7);
       line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
     }
 
     .comm-section {
-      padding: 60px 20px;
+      padding: 60px 20px 100px;
       max-width: 1200px;
       margin: 0 auto;
+      position: relative;
+      z-index: 10;
     }
     .comm-grid {
       display: grid;
@@ -47,17 +57,21 @@
       flex-direction: column;
       gap: 20px;
       height: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
     }
     .comm-card h3 {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       color: var(--glow-yellow);
     }
     .comm-card p {
-      color: var(--fg-muted);
+      color: rgba(255,255,255,0.6);
       line-height: 1.6;
     }
     .comm-card .icon {
-      font-size: 2.5rem;
+      font-size: 2.8rem;
       margin-bottom: 10px;
     }
 
@@ -72,28 +86,28 @@
     }
     .audience-card {
       padding: 50px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
       gap: 25px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      backdrop-filter: blur(15px);
     }
     .audience-card.instructor {
       border-color: rgba(0, 255, 204, 0.3);
-      box-shadow: 0 0 30px rgba(0, 255, 204, 0.05);
+      box-shadow: 0 0 40px rgba(0, 255, 204, 0.05);
     }
     .audience-card.resident {
       border-color: rgba(255, 204, 0, 0.3);
-      box-shadow: 0 0 30px rgba(255, 204, 0, 0.05);
+      box-shadow: 0 0 40px rgba(255, 204, 0, 0.05);
     }
     .audience-card h2 {
-      font-size: 2rem;
+      font-size: 2.2rem;
       margin: 0;
-    }
-    .audience-card .cta-btn {
-      margin-top: auto;
-      width: 100%;
+      color: #fff;
     }
 
     .values-list {
@@ -104,22 +118,26 @@
       margin-top: 30px;
     }
     .value-tag {
-      padding: 8px 16px;
+      padding: 10px 20px;
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 30px;
-      font-size: 0.9rem;
-      color: var(--fg-muted);
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.8);
     }
 
-    /* Ecosystem explanation */
     .ecosystem-box {
       margin-top: 80px;
-      padding: 60px;
+      padding: 80px 40px;
       text-align: center;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.05) 100%);
-      border-radius: 24px;
-      border: 1px solid rgba(255,255,255,0.1);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.04) 100%);
+      border-radius: 32px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* Override for top logo to make it smaller on this page */
+    .top-logo-svg {
+      max-width: 120px;
     }
   </style>
 </head>
@@ -131,7 +149,6 @@
     <div class="cal-bg__noise"></div>
   </div>
 
-  <!-- Header Header -->
   <a href="index.html" class="top-logo-container" aria-label="На главную" title="На главную">
     <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" class="top-logo-svg">
       <g stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -159,69 +176,75 @@
   </header>
 
   <main class="comm-section">
-    <!-- Synergy Section -->
-    <div class="gallery-header">
-      <h2 data-i18n="comm.synergy.title">Синергия и Проекты</h2>
-      <p data-i18n="comm.synergy.desc">Зачем мы вместе? Объединение сил и мудрости каждого для создания новых смыслов.</p>
+    <div class="gallery-header" style="text-align: center; margin-bottom: 60px;">
+      <h2 data-i18n="comm.synergy.title" style="font-size: 2.5rem; color: #fff; margin-bottom: 15px;">Синергия и Проекты</h2>
+      <p data-i18n="comm.synergy.desc" style="color: rgba(255,255,255,0.6); font-size: 1.1rem;">Зачем мы вместе? Объединение сил и мудрости каждого для создания новых смыслов.</p>
     </div>
 
     <div class="comm-grid">
-      <div class="glass-card comm-card">
+      <div class="comm-card">
         <div class="icon">🤝</div>
         <h3 data-i18n="comm.synergy.1.title">Объединение сил</h3>
         <p data-i18n="comm.synergy.1.desc">Использование сильных сторон и мудрости каждого участника для реализации совместных инициатив, которые невозможно создать в одиночку.</p>
       </div>
-      <div class="glass-card comm-card">
+      <div class="comm-card">
         <div class="icon">🚀</div>
         <h3 data-i18n="comm.synergy.2.title">Новые возможности</h3>
         <p data-i18n="comm.synergy.2.desc">Идея сообщества заключается в том, чтобы улучшать жизнь не только через практики, но и через совместное творчество и созидательную работу.</p>
       </div>
-      <div class="glass-card comm-card">
+      <div class="comm-card">
         <div class="icon">🌿</div>
         <h3 data-i18n="comm.synergy.3.title">Осознанный бизнес</h3>
         <p data-i18n="comm.synergy.3.desc">Создание проектов, которые генерируют рабочие места в здоровом коллективе, имеющих глубокий смысл и резонирующих с душами создателей.</p>
       </div>
     </div>
 
-    <!-- Audiences -->
     <div class="audience-grid">
-      <div class="glass-card audience-card resident">
+      <div class="audience-card resident">
         <h2 data-i18n="comm.target.res.title">Для Резидентов</h2>
-        <p data-i18n="comm.target.res.desc">Фокус на личностном развитии, окружении единомышленников, доступе к уникальным практикам и возможности найти настоящих друзей и партнеров.</p>
-        <a href="https://t.me/santioago_bot?start=apply" target="_blank" class="cta-btn btn-primary" data-i18n="comm.target.res.cta">Присоединиться к клубу</a>
+        <p data-i18n="comm.target.res.desc" style="color: rgba(255,255,255,0.6);">Фокус на личностном развитии, окружении единомышленников, доступе к уникальным практикам и возможности найти настоящих друзей и партнеров.</p>
+        <a href="https://t.me/santioago_bot?start=apply" target="_blank" class="cta btn-primary" style="margin-top: auto; width: 100%; text-align: center;" data-i18n="comm.target.res.cta">Присоединиться к клубу</a>
       </div>
 
-      <div class="glass-card audience-card instructor">
+      <div class="audience-card instructor">
         <h2 data-i18n="comm.target.inst.title">Для Мастеров</h2>
-        <p data-i18n="comm.target.inst.desc">Возможность делиться опытом с подготовленной аудиторией, реализовывать идеи при поддержке экосистемы и находить команду для новых проектов.</p>
-        <a href="https://t.me/santioago_bot?start=apply" target="_blank" class="cta-btn btn-primary" style="background: rgba(0, 255, 204, 0.2); border-color: rgba(0, 255, 204, 0.4);" data-i18n="comm.target.inst.cta">Стать частью команды</a>
+        <p data-i18n="comm.target.inst.desc" style="color: rgba(255,255,255,0.6);">Возможность делиться опытом с подготовленной аудиторией, реализовывать идеи при поддержке экосистемы и находить команду для новых проектов.</p>
+        <a href="https://t.me/santioago_bot?start=apply" target="_blank" class="cta btn-primary" style="margin-top: auto; width: 100%; text-align: center; background: rgba(0, 255, 204, 0.2); border-color: rgba(0, 255, 204, 0.4);" data-i18n="comm.target.inst.cta">Стать частью команды</a>
       </div>
     </div>
 
-    <!-- Ecosystem Explanation -->
     <div class="ecosystem-box">
-      <div class="icon">🕸️</div>
-      <h3 data-i18n="comm.eco.title">Почему мы создали эту платформу?</h3>
-      <p data-i18n="comm.eco.desc" style="max-width: 800px; margin: 20px auto 0; color: var(--fg-muted); line-height: 1.6;">
-        Система профилей, управление событиями и идеология Santiago — все это инструменты для того, чтобы приглашать "своїх" людей и делать наше взаимодействие максимально продуктивным, прозрачным и эффективным.
+      <div class="icon" style="font-size: 3rem; margin-bottom: 20px;">🕸️</div>
+      <h3 data-i18n="comm.eco.title" style="font-size: 1.8rem; color: #fff;">Почему мы создали эту платформу?</h3>
+      <p data-i18n="comm.eco.desc" style="max-width: 800px; margin: 20px auto 0; color: rgba(255,255,255,0.5); line-height: 1.6;">
+        Система профилей, управление событиями и идеология Santiago — все это инструменты для того, чтобы приглашать "своих" людей и делать наше взаимодействие максимально продуктивным, прозрачным и эффективным.
       </p>
     </div>
   </main>
 
-  <!-- Footer Quick Menu -->
   <nav class="quick-menu">
     <ul>
       <li><a href="index.html" data-i18n="nav.home">Главная</a></li>
       <li><a href="calendar.html" data-i18n="nav.events">Расписание</a></li>
       <li><a href="services.html" data-i18n="nav.offers">Услуги</a></li>
+      <li><a href="community.html" data-i18n="nav.club">Клуб</a></li>
     </ul>
   </nav>
 
-  <script src="translations.js?v=7"></script>
-  <script src="menu.js?v=7"></script>
+  <script src="translations.js?v=9"></script>
+  <script src="menu.js?v=9"></script>
   <script>
-    // Grayscale handling
-    if (localStorage.getItem('grayscale') === 'enabled') document.body.classList.add('grayscale-mode');
+    // Robust translation trigger
+    function forceTranslate() {
+      const lang = localStorage.getItem('language') || 'ru';
+      if (window.applyTranslations) {
+        window.applyTranslations(lang);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', forceTranslate);
+    window.addEventListener('load', forceTranslate);
+    setTimeout(forceTranslate, 500);
+    setTimeout(forceTranslate, 2000);
   </script>
 </body>
 </html>
