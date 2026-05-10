@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   SERVICES — Dynamic Filter Engine (Stabilized)
+   SERVICES — Dynamic Filter Engine (Fully Restored & Fixed)
    ═══════════════════════════════════════════════════════════ */
 
 (function () {
@@ -31,7 +31,6 @@
     if (translations && translations[lang] && translations[lang][key]) {
       return translations[lang][key];
     }
-    // Fallback to English
     if (translations && translations['en'] && translations['en'][key]) {
       return translations['en'][key];
     }
@@ -98,20 +97,37 @@
     if (EMPTY_STATE) EMPTY_STATE.hidden = true;
 
     services.forEach((service, i) => {
-      try {
-        const card = createCard(service);
-        card._serviceData = service;
-        card.style.animationDelay = `${i * 60}ms`;
-        GRID.appendChild(card);
-        allCards.push(card);
-      } catch (e) {
-        console.error('[Services] Failed to create card:', e, service);
-      }
+      const card = createCard(service);
+      card._serviceData = service;
+      card.style.animationDelay = `${i * 60}ms`;
+      GRID.appendChild(card);
+      allCards.push(card);
     });
 
     requestAnimationFrame(() => {
       allCards.forEach(card => card.classList.add('visible'));
     });
+  }
+
+  function applyFilters() {
+    let visibleCount = 0;
+    allCards.forEach(card => {
+      const matchCategory = state.category === 'all' || card.dataset.category === state.category;
+      const matchFormat = state.format === 'all' || card.dataset.format === state.format;
+      const matchInstructor = state.instructor === 'all' || card.dataset.instructor.includes(state.instructor.toLowerCase().replace(/\s+/g, ''));
+
+      if (matchCategory && matchFormat && matchInstructor) {
+        card.style.display = '';
+        setTimeout(() => card.classList.add('visible'), 10);
+        visibleCount++;
+      } else {
+        card.classList.remove('visible');
+        card.style.display = 'none';
+      }
+    });
+
+    GRID.style.display = visibleCount === 0 ? 'none' : 'grid';
+    if (EMPTY_STATE) EMPTY_STATE.hidden = visibleCount > 0;
   }
 
   function refreshCardText() {
@@ -136,26 +152,17 @@
     });
   }
 
-  function waitForTranslations(timeout = 3000) {
-    return new Promise((resolve) => {
-      const start = Date.now();
-      const check = () => {
-        if (window.translations) return resolve(true);
-        if (Date.now() - start > timeout) return resolve(false);
-        setTimeout(check, 50);
-      };
-      check();
-    });
-  }
-
   async function init() {
-    console.log('[Services] Initializing...');
     GRID = document.getElementById('services-grid');
     EMPTY_STATE = document.getElementById('services-empty');
     RESET_BTN = document.getElementById('reset-filters');
 
-    await waitForTranslations();
-    console.log('[Services] Translations loaded:', !!window.translations);
+    // Wait for translations
+    let retry = 0;
+    while (!window.translations && retry < 20) {
+      await new Promise(r => setTimeout(r, 100));
+      retry++;
+    }
 
     currentLang = detectLanguage();
 
@@ -185,7 +192,39 @@
     ];
 
     renderCards(staticServices);
-    console.log('[Services] Static cards rendered');
+    setupFilters();
+  }
+
+  function setupFilters() {
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const filterType = tab.dataset.filter;
+        const filterValue = tab.dataset.value;
+
+        document.querySelectorAll(`.filter-tab[data-filter="${filterType}"]`).forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        state[filterType] = filterValue;
+        applyFilters();
+      });
+    });
+
+    const instSelect = document.getElementById('instructor-filter');
+    if (instSelect) {
+      instSelect.addEventListener('change', () => {
+        state.instructor = instSelect.value;
+        applyFilters();
+      });
+    }
+
+    if (RESET_BTN) {
+      RESET_BTN.addEventListener('click', () => {
+        state.category = 'all'; state.format = 'all'; state.instructor = 'all';
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.toggle('active', t.dataset.value === 'all'));
+        if (instSelect) instSelect.value = 'all';
+        applyFilters();
+      });
+    }
   }
 
   if (document.readyState === 'loading') {
