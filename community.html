@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="comm.page.title">О нас / Сообщество | Santiago Way</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .comm-hero {
+      padding: 140px 20px 80px;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .comm-hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      margin-bottom: 24px;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #fff 0%, var(--glow-yellow) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .comm-hero p {
+      font-size: 1.2rem;
+      color: var(--fg-muted);
+      line-height: 1.6;
+    }
+
+    .comm-section {
+      padding: 60px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .comm-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .comm-card {
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      height: 100%;
+    }
+    .comm-card h3 {
+      font-size: 1.5rem;
+      color: var(--glow-yellow);
+    }
+    .comm-card p {
+      color: var(--fg-muted);
+      line-height: 1.6;
+    }
+    .comm-card .icon {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .audience-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 60px;
+    }
+    @media (max-width: 768px) {
+      .audience-grid { grid-template-columns: 1fr; }
+    }
+    .audience-card {
+      padding: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 25px;
+    }
+    .audience-card.instructor {
+      border-color: rgba(0, 255, 204, 0.3);
+      box-shadow: 0 0 30px rgba(0, 255, 204, 0.05);
+    }
+    .audience-card.resident {
+      border-color: rgba(255, 204, 0, 0.3);
+      box-shadow: 0 0 30px rgba(255, 204, 0, 0.05);
+    }
+    .audience-card h2 {
+      font-size: 2rem;
+      margin: 0;
+    }
+    .audience-card .cta-btn {
+      margin-top: auto;
+      width: 100%;
+    }
+
+    .values-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 30px;
+    }
+    .value-tag {
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 30px;
+      font-size: 0.9rem;
+      color: var(--fg-muted);
+    }
+
+    /* Ecosystem explanation */
+    .ecosystem-box {
+      margin-top: 80px;
+      padding: 60px;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.05) 100%);
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+  </style>
+</head>
+<body class="calendar-page">
+  <div class="cal-bg">
+    <div class="cal-bg__orb cal-bg__orb--blue"></div>
+    <div class="cal-bg__orb cal-bg__orb--green"></div>
+    <div class="cal-bg__orb cal-bg__orb--yellow"></div>
+    <div class="cal-bg__noise"></div>
+  </div>
+
+  <!-- Header Header -->
+  <a href="index.html" class="top-logo-container" aria-label="На главную" title="На главную">
+    <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" class="top-logo-svg">
+      <g stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="100" cy="90" r="50" />
+        <circle cx="100" cy="80" r="14" />
+        <path d="M100 70 Q105 76 100 87 Q94 80 100 70" fill="currentColor" stroke="none"/>
+        <line x1="52" y1="105" x2="148" y2="105" />
+      </g>
+      <text x="100" y="180" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="28" fill="currentColor" letter-spacing="2">SANTIAGO</text>
+      <text x="100" y="205" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="14" fill="currentColor" letter-spacing="6">WAY</text>
+    </svg>
+  </a>
+
+  <header class="comm-hero">
+    <h1 data-i18n="comm.hero.title">Santiago Way — Сообщество будущего</h1>
+    <p data-i18n="comm.hero.desc">Мы больше, чем просто студия. Мы — пространство поддержки и развития, где прошлое остается в прошлом, а будущее мы создаем вместе здесь и сейчас.</p>
+    
+    <div class="values-list">
+      <span class="value-tag" data-i18n="comm.val.health">Здоровье</span>
+      <span class="value-tag" data-i18n="comm.val.meditation">Медитация</span>
+      <span class="value-tag" data-i18n="comm.val.tradition">Уважение к традициям</span>
+      <span class="value-tag" data-i18n="comm.val.music">Живой звук</span>
+      <span class="value-tag" data-i18n="comm.val.growth">Совместный рост</span>
+    </div>
+  </header>
+
+  <main class="comm-section">
+    <!-- Synergy Section -->
+    <div class="gallery-header">
+      <h2 data-i18n="comm.synergy.title">Синергия и Проекты</h2>
+      <p data-i18n="comm.synergy.desc">Зачем мы вместе? Объединение сил и мудрости каждого для создания новых смыслов.</p>
+    </div>
+
+    <div class="comm-grid">
+      <div class="glass-card comm-card">
+        <div class="icon">🤝</div>
+        <h3 data-i18n="comm.synergy.1.title">Объединение сил</h3>
+        <p data-i18n="comm.synergy.1.desc">Использование сильных сторон и мудрости каждого участника для реализации совместных инициатив, которые невозможно создать в одиночку.</p>
+      </div>
+      <div class="glass-card comm-card">
+        <div class="icon">🚀</div>
+        <h3 data-i18n="comm.synergy.2.title">Новые возможности</h3>
+        <p data-i18n="comm.synergy.2.desc">Идея сообщества заключается в том, чтобы улучшать жизнь не только через практики, но и через совместное творчество и созидательную работу.</p>
+      </div>
+      <div class="glass-card comm-card">
+        <div class="icon">🌿</div>
+        <h3 data-i18n="comm.synergy.3.title">Осознанный бизнес</h3>
+        <p data-i18n="comm.synergy.3.desc">Создание проектов, которые генерируют рабочие места в здоровом коллективе, имеющих глубокий смысл и резонирующих с душами создателей.</p>
+      </div>
+    </div>
+
+    <!-- Audiences -->
+    <div class="audience-grid">
+      <div class="glass-card audience-card resident">
+        <h2 data-i18n="comm.target.res.title">Для Резидентов</h2>
+        <p data-i18n="comm.target.res.desc">Фокус на личностном развитии, окружении единомышленников, доступе к уникальным практикам и возможности найти настоящих друзей и партнеров.</p>
+        <a href="https://t.me/santioago_bot?start=apply" target="_blank" class="cta-btn btn-primary" data-i18n="comm.target.res.cta">Присоединиться к клубу</a>
+      </div>
+
+      <div class="glass-card audience-card instructor">
+        <h2 data-i18n="comm.target.inst.title">Для Мастеров</h2>
+        <p data-i18n="comm.target.inst.desc">Возможность делиться опытом с подготовленной аудиторией, реализовывать идеи при поддержке экосистемы и находить команду для новых проектов.</p>
+        <a href="https://t.me/santioago_bot?start=apply" target="_blank" class="cta-btn btn-primary" style="background: rgba(0, 255, 204, 0.2); border-color: rgba(0, 255, 204, 0.4);" data-i18n="comm.target.inst.cta">Стать частью команды</a>
+      </div>
+    </div>
+
+    <!-- Ecosystem Explanation -->
+    <div class="ecosystem-box">
+      <div class="icon">🕸️</div>
+      <h3 data-i18n="comm.eco.title">Почему мы создали эту платформу?</h3>
+      <p data-i18n="comm.eco.desc" style="max-width: 800px; margin: 20px auto 0; color: var(--fg-muted); line-height: 1.6;">
+        Система профилей, управление событиями и идеология Santiago — все это инструменты для того, чтобы приглашать "своїх" людей и делать наше взаимодействие максимально продуктивным, прозрачным и эффективным.
+      </p>
+    </div>
+  </main>
+
+  <!-- Footer Quick Menu -->
+  <nav class="quick-menu">
+    <ul>
+      <li><a href="index.html" data-i18n="nav.home">Главная</a></li>
+      <li><a href="calendar.html" data-i18n="nav.events">Расписание</a></li>
+      <li><a href="services.html" data-i18n="nav.offers">Услуги</a></li>
+    </ul>
+  </nav>
+
+  <script src="translations.js?v=7"></script>
+  <script src="menu.js?v=7"></script>
+  <script>
+    // Grayscale handling
+    if (localStorage.getItem('grayscale') === 'enabled') document.body.classList.add('grayscale-mode');
+  </script>
+</body>
+</html>
