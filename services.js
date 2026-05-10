@@ -89,12 +89,12 @@
 
     if (!services || services.length === 0) {
       GRID.style.display = 'none';
-      if (EMPTY_STATE) EMPTY_STATE.hidden = false;
+      if (EMPTY_STATE) EMPTY_STATE.style.display = 'flex';
       return;
     }
 
     GRID.style.display = 'grid';
-    if (EMPTY_STATE) EMPTY_STATE.hidden = true;
+    if (EMPTY_STATE) EMPTY_STATE.style.display = 'none';
 
     services.forEach((service, i) => {
       const card = createCard(service);
@@ -127,7 +127,7 @@
     });
 
     GRID.style.display = visibleCount === 0 ? 'none' : 'grid';
-    if (EMPTY_STATE) EMPTY_STATE.hidden = visibleCount > 0;
+    if (EMPTY_STATE) EMPTY_STATE.style.display = visibleCount === 0 ? 'flex' : 'none';
   }
 
   function refreshCardText() {
