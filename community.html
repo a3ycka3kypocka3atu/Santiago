@@ -13,7 +13,7 @@
       --comm-accent: #00ffcc;
     }
     .comm-hero {
-      padding: 220px 20px 60px; /* Increased padding even more */
+      padding: 220px 20px 60px;
       text-align: center;
       max-width: 1000px;
       margin: 0 auto;
@@ -134,11 +134,6 @@
       border-radius: 32px;
       border: 1px solid rgba(255,255,255,0.08);
     }
-
-    /* Override for top logo to make it smaller on this page */
-    .top-logo-svg {
-      max-width: 120px;
-    }
   </style>
 </head>
 <body class="calendar-page">
@@ -149,6 +144,16 @@
     <div class="cal-bg__noise"></div>
   </div>
 
+  <!-- Shop Link -->
+  <a href="shop.html" class="home-icon" aria-label="Магазин" title="Магазин">
+    <svg viewBox="0 0 24 24" width="34" height="34" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="svg-home">
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <path d="M16 10a4 4 0 0 1-8 0"></path>
+    </svg>
+  </a>
+
+  <!-- Top Logo -->
   <a href="index.html" class="top-logo-container" aria-label="На главную" title="На главную">
     <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" class="top-logo-svg">
       <g stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -161,6 +166,32 @@
       <text x="100" y="205" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="14" fill="currentColor" letter-spacing="6">WAY</text>
     </svg>
   </a>
+
+  <!-- Top Right Controls -->
+  <div class="desktop-controls">
+    <a href="cabinet.html" class="cabinet-btn" title="Cabinet" style="display: none;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+    </a>
+    <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" title="Login via Telegram">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
+      <span class="tg-text">Login via Telegram</span>
+    </a>
+
+    <div class="lang-switcher">
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="cz">CZ</button>
+      <button class="lang-btn" data-lang="ru">RU</button>
+      <button class="lang-btn" data-lang="ua">UA</button>
+    </div>
+
+    <button class="theme-toggle theme-toggle-btn" title="Toggle theme">
+      <span class="icon-sun">☀️</span>
+      <span class="icon-moon">🌙</span>
+      <span class="toggle-thumb"></span>
+    </button>
+    
+    <button class="menu-trigger" aria-label="Open menu">☰</button>
+  </div>
 
   <header class="comm-hero">
     <h1 data-i18n="comm.hero.title">Santiago Way — Сообщество будущего</h1>
@@ -190,7 +221,7 @@
       <div class="comm-card">
         <div class="icon">🚀</div>
         <h3 data-i18n="comm.synergy.2.title">Новые возможности</h3>
-        <p data-i18n="comm.synergy.2.desc">Идея сообщества заключается в том, чтобы улучшать жизнь не только через практики, но и через совместное творчество и созидательную работу.</p>
+        <p data-i18n="comm.synergy.2.desc">Идея сообщества заключается в том, чтобы улучшать жизнь не только через практики, а й через совместное творчество и созидательную работу.</p>
       </div>
       <div class="comm-card">
         <div class="icon">🌿</div>
@@ -222,29 +253,55 @@
     </div>
   </main>
 
-  <nav class="quick-menu">
+  <!-- Side Menu Panel -->
+  <nav class="quick-menu" aria-label="Navigation">
     <ul>
-      <li><a href="index.html" data-i18n="nav.home">Главная</a></li>
-      <li><a href="calendar.html" data-i18n="nav.events">Расписание</a></li>
-      <li><a href="services.html" data-i18n="nav.offers">Услуги</a></li>
-      <li><a href="community.html" data-i18n="nav.club">Клуб</a></li>
+      <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+      <li><a href="calendar.html" data-i18n="nav.events">Schedule</a></li>
+      <li><a href="services.html" data-i18n="nav.offers">Services</a></li>
+      <li><a href="community.html" data-i18n="nav.club">Club</a></li>
     </ul>
+    
+    <div class="menu-controls">
+      <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" style="width: 100%; justify-content: center; margin-bottom: 1rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
+        <span class="tg-text">Login via Telegram</span>
+      </a>
+
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="cz">CZ</button>
+        <button class="lang-btn" data-lang="ru">RU</button>
+        <button class="lang-btn" data-lang="ua">UA</button>
+      </div>
+
+      <button class="theme-toggle theme-toggle-btn" title="Toggle theme">
+        <span class="icon-sun">☀️</span>
+        <span class="icon-moon">🌙</span>
+        <span class="toggle-thumb"></span>
+      </button>
+    </div>
   </nav>
 
+  <footer class="footer">
+    <p data-i18n="footer.text">© 2026 Сантьяго – Цифровий Дзен. Всі права захищені.</p>
+  </footer>
+
   <script src="translations.js?v=9"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="auth.js?v=9"></script>
   <script src="menu.js?v=9"></script>
   <script>
-    // Robust translation trigger
     function forceTranslate() {
       const lang = localStorage.getItem('language') || 'ru';
-      if (window.applyTranslations) {
-        window.applyTranslations(lang);
-      }
+      if (window.applyTranslations) window.applyTranslations(lang);
     }
     document.addEventListener('DOMContentLoaded', forceTranslate);
     window.addEventListener('load', forceTranslate);
     setTimeout(forceTranslate, 500);
     setTimeout(forceTranslate, 2000);
+    
+    if (localStorage.getItem('grayscale') === 'enabled') document.body.classList.add('grayscale-mode');
   </script>
 </body>
 </html>
