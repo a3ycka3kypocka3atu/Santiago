@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const tgBtns = document.querySelectorAll('.tg-login-btn');
     tgBtns.forEach(btn => {
       const tgText = btn.querySelector('.tg-text');
-      if (user.isLoggedIn) {
+      if (user && user.isLoggedIn) {
         btn.classList.add('logged-in');
         btn.href = 'https://t.me/santioago_bot';
         if (tgText) tgText.style.display = 'none';
@@ -61,6 +61,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  window.MA3Menu = { updateAuthUI };
+
   // Initial check
   if (window.MA3Auth) {
     updateAuthUI(window.MA3Auth.user);
@@ -71,4 +73,3 @@ document.addEventListener('DOMContentLoaded', function() {
     updateAuthUI(e.detail);
   });
 });
-

@@ -18,12 +18,21 @@ const Auth = {
   },
 
   async syncProfile(telegramId) {
+    if (!supabaseClient) {
+      console.warn('[Auth] Supabase client is not available.');
+      return null;
+    }
+
+    const numericTelegramId = Number(telegramId);
+    if (!Number.isSafeInteger(numericTelegramId)) {
+      console.error('[Auth] Invalid Telegram ID.');
+      return null;
+    }
+
     console.log('[Auth] Syncing profile for TG ID:', telegramId);
     const { data, error } = await supabaseClient
-      .from('profiles')
-      .select('*')
-      .eq('telegram_id', telegramId)
-      .single();
+      .rpc('get_profile_by_telegram_id', { p_telegram_id: numericTelegramId })
+      .maybeSingle();
 
     if (error) {
       console.error('[Auth] Sync error:', error.message, error.details);
@@ -32,9 +41,8 @@ const Auth = {
 
     if (data) {
       console.log('[Auth] Profile found:', data.role);
-      this.user = data;
+      this.saveSession(data);
       localStorage.setItem('ma3_user', JSON.stringify(data));
-      document.dispatchEvent(new CustomEvent('ma3-auth-changed', { detail: data }));
       return data;
     }
     return null;
@@ -46,9 +54,9 @@ const Auth = {
     this.user.name = profile.full_name;
     this.user.isLoggedIn = true;
 
-    localStorage.setItem('ma3-user-id', profile.id);
+    localStorage.setItem('ma3-user-id', this.user.id);
     localStorage.setItem('ma3-user-role', profile.role);
-    localStorage.setItem('ma3-user-name', profile.full_name);
+    localStorage.setItem('ma3-user-name', profile.full_name || '');
     
     // Dispatch event for other components to react
     document.dispatchEvent(new CustomEvent('ma3-auth-changed', { detail: this.user }));
@@ -66,41 +74,22 @@ const Auth = {
     // Handle URL login from bot
     const params = new URLSearchParams(window.location.search);
     const userId = params.get('userId');
-    const urlRole = params.get('role');
     
-    console.log('[Auth] Checking URL for userId:', userId, 'role:', urlRole);
+    console.log('[Auth] Checking URL for userId:', userId);
     
     if (userId) {
-      if (urlRole) {
-        // Direct role bypass for speed and convenience
-        console.log('[Auth] Using role from URL:', urlRole);
-        const tempUser = { 
-          telegram_id: userId, 
-          role: urlRole, 
-          full_name: 'Resident' 
-        };
-        this.saveSession(tempUser);
-        
-        // Clean URL
+      this.syncProfile(userId).finally(() => {
         const newUrl = window.location.pathname + window.location.hash;
         window.history.replaceState({}, document.title, newUrl);
-      } else {
-        // Fallback to DB sync if no role in URL
-        this.syncProfile(userId).then((profile) => {
-          if (profile) {
-            const newUrl = window.location.pathname + window.location.hash;
-            window.history.replaceState({}, document.title, newUrl);
-          }
-        });
-      }
+      });
     }
 
     // Initialize UI on load
     document.addEventListener('DOMContentLoaded', () => {
       // Small delay to ensure all scripts are ready
       setTimeout(() => {
-        if (window.MA3Auth) {
-          MA3Menu.updateAuthUI(window.MA3Auth.user);
+        if (window.MA3Auth && window.MA3Menu) {
+          window.MA3Menu.updateAuthUI(window.MA3Auth.user);
         }
       }, 100);
     });

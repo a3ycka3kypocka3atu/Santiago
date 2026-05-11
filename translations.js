@@ -1443,7 +1443,7 @@ window.applyTranslations = function(lang) {
 // Initialize language
 document.addEventListener('DOMContentLoaded', () => {
   const currentLang = localStorage.getItem('language') || 'ru';
-  applyTranslations(currentLang);
+  window.applyTranslations(currentLang);
 
   // Highlight active lang button in ALL language switchers
   document.querySelectorAll('.lang-btn').forEach(b => {
@@ -1456,7 +1456,7 @@ document.addEventListener('click', (e) => {
   if (e.target.classList.contains('lang-btn')) {
     const lang = e.target.getAttribute('data-lang');
     localStorage.setItem('language', lang);
-    applyTranslations(lang);
+    window.applyTranslations(lang);
 
     // Update active UI in ALL lang switchers
     document.querySelectorAll('.lang-btn').forEach(b => {

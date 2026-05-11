@@ -2,13 +2,13 @@ require('dotenv').config();
 console.log('[Bot] Script started');
 const { Telegraf, Markup, session } = require('telegraf');
 const { createClient } = require('@supabase/supabase-js');
-const crypto = require('crypto');
 
 // ── ENV CONFIG ──
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID || '5756186570';
+const PUBLIC_SITE_URL = process.env.PUBLIC_SITE_URL || 'https://brown-delta-28.vercel.app';
 
 const ADMINS = ['andrisav', 'waysantiago24'];
 const INSTRUCTORS = ['kateryna_mihailovna'];
@@ -23,6 +23,28 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 bot.use(session());
 
+function getFullName(from) {
+  return [from.first_name, from.last_name].filter(Boolean).join(' ') || from.username || 'Telegram User';
+}
+
+function buildPortalUrl(userId, page = 'index.html') {
+  const base = PUBLIC_SITE_URL.endsWith('/') ? PUBLIC_SITE_URL : `${PUBLIC_SITE_URL}/`;
+  const url = new URL(page, base);
+  url.searchParams.set('userId', userId);
+  return url.toString();
+}
+
+function applicationKeyboard() {
+  return Markup.inlineKeyboard([
+    [Markup.button.callback('🤝 Стати Резидентом Клубу', 'apply_role_resident')],
+    [Markup.button.callback('🧘 Стати Інструктором (Майстром)', 'apply_role_instructor')]
+  ]);
+}
+
+async function showApplicationChoices(ctx) {
+  await ctx.reply('Чудово! Ким ви хочете стати у нашій спільноті?', applicationKeyboard());
+}
+
 // ── MIDDLEWARE: UPSERT USER IN DB ──
 bot.use(async (ctx, next) => {
   try {
@@ -31,6 +53,7 @@ bot.use(async (ctx, next) => {
       const isAdmin = username && ADMINS.includes(username);
       const isInstructor = username && INSTRUCTORS.includes(username);
       const initialRole = isAdmin ? 'admin' : (isInstructor ? 'instructor' : 'guest');
+      const fullName = getFullName(ctx.from);
       
       let { data: profile, error: fetchError } = await supabase
         .from('profiles')
@@ -39,18 +62,35 @@ bot.use(async (ctx, next) => {
         .single();
 
       if (fetchError && fetchError.code === 'PGRST116') {
-        console.log(`[Bot] No profile for @${ctx.from.username}, will create/ask later`);
-        ctx.userRole = initialRole;
-        ctx.isNewUser = true;
+        console.log(`[Bot] Creating profile for @${ctx.from.username || ctx.from.id}`);
+        const { data: created, error: insertError } = await supabase
+          .from('profiles')
+          .insert({
+            telegram_id: ctx.from.id,
+            username: username || null,
+            full_name: fullName,
+            role: initialRole
+          })
+          .select()
+          .single();
+
+        if (insertError) {
+          console.error('[Bot] Profile create error:', insertError);
+          ctx.userRole = 'guest';
+        } else {
+          ctx.userRole = created.role;
+          ctx.dbUser = created;
+          ctx.isNewUser = true;
+        }
       } else if (profile) {
         if (isAdmin && profile.role !== 'admin') {
           console.log(`[Bot] Upgrading @${ctx.from.username} to admin`);
-          const { data: updated } = await supabase.from('profiles').update({ role: 'admin' }).eq('telegram_id', ctx.from.id).select().single();
+          const { data: updated } = await supabase.from('profiles').update({ role: 'admin', username: username || profile.username, full_name: fullName }).eq('telegram_id', ctx.from.id).select().single();
           ctx.userRole = 'admin';
           ctx.dbUser = updated;
         } else if (isInstructor && profile.role !== 'instructor' && profile.role !== 'admin') {
           console.log(`[Bot] Upgrading @${ctx.from.username} to instructor`);
-          const { data: updated } = await supabase.from('profiles').update({ role: 'instructor' }).eq('telegram_id', ctx.from.id).select().single();
+          const { data: updated } = await supabase.from('profiles').update({ role: 'instructor', username: username || profile.username, full_name: fullName }).eq('telegram_id', ctx.from.id).select().single();
           ctx.userRole = 'instructor';
           ctx.dbUser = updated;
         } else {
@@ -80,13 +120,22 @@ bot.start(async (ctx) => {
   const startPayload = ctx.startPayload;
 
   if (startPayload === 'login') {
-    const portalUrl = `https://brown-delta-28.vercel.app/index.html?userId=${ctx.from.id}&role=${ctx.userRole}`;
+    const portalUrl = buildPortalUrl(ctx.from.id);
     return ctx.reply(
       `🔑 Ви входите у систему як ${ctx.userRole}.\n\nНатисніть кнопку нижче, щоб відкрити портал:`,
       Markup.inlineKeyboard([
         [Markup.button.url('🔓 Відкрити портал', portalUrl)]
       ])
     );
+  }
+
+  if (startPayload === 'apply') {
+    return showApplicationChoices(ctx);
+  }
+
+  if (startPayload === 'openmic') {
+    ctx.session = { state: 'openmic_name' };
+    return ctx.reply('Open Mic & Santiago Talks 🎤\n\nЯк до вас звертатися?');
   }
 
   ctx.reply(
@@ -112,15 +161,9 @@ bot.action('faq_club', (ctx) => {
 });
 
 // ── CLUB & INSTRUCTOR APPLICATION BRANCH ──
-bot.action('apply_club', (ctx) => {
-  ctx.reply(
-    'Чудово! Ким ви хочете стати у нашій спільноті?',
-    Markup.inlineKeyboard([
-      [Markup.button.callback('🤝 Стати Резидентом Клубу', 'apply_role_resident')],
-      [Markup.button.callback('🧘 Стати Інструктором (Майстром)', 'apply_role_instructor')]
-    ])
-  );
-  ctx.answerCbQuery();
+bot.action('apply_club', async (ctx) => {
+  await showApplicationChoices(ctx);
+  await ctx.answerCbQuery();
 });
 
 bot.action(/apply_role_(resident|instructor)/, (ctx) => {
@@ -261,6 +304,26 @@ bot.on('text', async (ctx, next) => {
     return;
   }
 
+  if (state === 'openmic_name') {
+    ctx.session.openmicName = text;
+    ctx.session.state = 'openmic_topic';
+    ctx.reply('Про що ви хочете виступити? Напишіть тему або формат.');
+    return;
+  }
+
+  if (state === 'openmic_topic') {
+    ctx.session.openmicTopic = text;
+    ctx.session.state = 'openmic_contact';
+    ctx.reply('Залиште контакт для звʼязку або напишіть, коли вам зручно обговорити деталі.');
+    return;
+  }
+
+  if (state === 'openmic_contact') {
+    ctx.session.openmicContact = text;
+    await finishOpenMicApplication(ctx);
+    return;
+  }
+
   // Event Creation States
   if (state === 'event_title') {
     ctx.session.eventTitle = text;
@@ -304,7 +367,20 @@ bot.on('text', async (ctx, next) => {
 
 async function finishApplication(ctx) {
   const role = ctx.session.applyingRole || 'resident';
-  const adminId = process.env.ADMIN_CHAT_ID || '5756186570';
+  const adminId = ADMIN_CHAT_ID;
+
+  const { error: profileUpdateError } = await supabase
+    .from('profiles')
+    .update({
+      full_name: ctx.session.appName,
+      occupation: ctx.session.appOcc,
+      bio: ctx.session.appBio || null
+    })
+    .eq('telegram_id', ctx.from.id);
+
+  if (profileUpdateError) {
+    console.error('[Bot] Could not update application profile:', profileUpdateError);
+  }
 
   const summary = `🚀 **Нова заявка на роль: ${role.toUpperCase()}**\n\n` +
     `👤 **Ім'я:** ${ctx.session.appName}\n` +
@@ -329,6 +405,27 @@ async function finishApplication(ctx) {
   }
   
   ctx.session.state = null;
+  ctx.reply('Повернутися в головне меню:', mainMenu);
+}
+
+async function finishOpenMicApplication(ctx) {
+  const adminId = ADMIN_CHAT_ID;
+  const summary = `🎤 **Нова заявка на Open Mic / Santiago Talks**\n\n` +
+    `👤 **Ім'я:** ${ctx.session.openmicName}\n` +
+    `🆔 **User:** @${ctx.from.username || 'n/a'} (ID: ${ctx.from.id})\n` +
+    `🎯 **Тема/формат:** ${ctx.session.openmicTopic}\n` +
+    `📬 **Контакт/час:** ${ctx.session.openmicContact}\n` +
+    `\n🔗 [Відкрити чат](tg://user?id=${ctx.from.id})`;
+
+  try {
+    await bot.telegram.sendMessage(adminId, summary, { parse_mode: 'Markdown' });
+    await ctx.reply('Дякуємо! Заявка на Open Mic надіслана команді Santiago. Ми звʼяжемося з вами найближчим часом. ✨');
+  } catch (err) {
+    console.error('[Bot] Open Mic notification error:', err);
+    await ctx.reply('Дякуємо! Ми отримали вашу заявку, але зараз не змогли відправити сповіщення адміністратору.');
+  }
+
+  ctx.session = null;
   ctx.reply('Повернутися в головне меню:', mainMenu);
 }
 

@@ -570,10 +570,9 @@ window.onTelegramAuth = function(user) {
     btn.disabled = true;
 
     try {
-      const { error } = await sb.from('bookings').insert({
-        event_id: eventId,
-        user_id: currentUser.id,
-        status: 'pending'
+      const { error } = await sb.rpc('request_event_booking', {
+        p_event_id: eventId,
+        p_user_id: currentUser.id
       });
 
       if (error) throw error;

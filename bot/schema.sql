@@ -15,7 +15,31 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 -- Enable RLS
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
--- 2. EVENTS TABLE
+-- 2. SERVICES TABLE
+CREATE TABLE IF NOT EXISTS public.services (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    slug TEXT UNIQUE NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    price TEXT,
+    duration_minutes INTEGER,
+    instructor_id UUID REFERENCES public.profiles(id),
+    instructor_name TEXT,
+    category TEXT DEFAULT 'body' CHECK (category IN ('body', 'mind', 'incubator', 'space')),
+    format TEXT DEFAULT 'individual' CHECK (format IN ('individual', 'group')),
+    location_type TEXT DEFAULT 'offline_studio' CHECK (location_type IN ('online', 'offline_studio', 'offline_external')),
+    type TEXT DEFAULT 'public' CHECK (type IN ('public', 'club', 'internal')),
+    status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'archived')),
+    is_evergreen BOOLEAN DEFAULT false,
+    recurrence_rule TEXT,
+    detail_page TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
+
+-- 3. EVENTS TABLE
 CREATE TABLE IF NOT EXISTS public.events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title TEXT NOT NULL,
@@ -33,7 +57,7 @@ CREATE TABLE IF NOT EXISTS public.events (
 
 ALTER TABLE public.events ENABLE ROW LEVEL SECURITY;
 
--- 3. BOOKINGS TABLE
+-- 4. BOOKINGS TABLE
 CREATE TABLE IF NOT EXISTS public.bookings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     event_id UUID REFERENCES public.events(id) ON DELETE CASCADE,
@@ -43,27 +67,6 @@ CREATE TABLE IF NOT EXISTS public.bookings (
 );
 
 ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
-
--- 4. SERVICES TABLE
-CREATE TABLE IF NOT EXISTS public.services (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    slug TEXT UNIQUE NOT NULL,
-    title TEXT NOT NULL,
-    description TEXT,
-    price TEXT,
-    duration_minutes INTEGER,
-    instructor_id UUID REFERENCES public.profiles(id),
-    location_type TEXT DEFAULT 'offline_studio' CHECK (location_type IN ('online', 'offline_studio', 'offline_external')),
-    type TEXT DEFAULT 'public' CHECK (type IN ('public', 'club', 'internal')),
-    status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'archived')),
-    is_evergreen BOOLEAN DEFAULT false,
-    recurrence_rule TEXT,
-    detail_page TEXT,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
 
 -- 5. RLS POLICIES
 
@@ -111,9 +114,82 @@ CREATE POLICY "Staff can manage services" ON public.services FOR ALL USING (
     EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('instructor', 'admin'))
 );
 
+-- Public login bridge:
+-- The website receives a Telegram ID from the bot link, then asks for only
+-- the minimal profile fields needed to render the correct UI role.
+CREATE OR REPLACE FUNCTION public.get_profile_by_telegram_id(p_telegram_id BIGINT)
+RETURNS TABLE (
+    id UUID,
+    telegram_id BIGINT,
+    full_name TEXT,
+    role TEXT
+)
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+    SELECT p.id, p.telegram_id, p.full_name, p.role
+    FROM public.profiles p
+    WHERE p.telegram_id = p_telegram_id
+    LIMIT 1;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.get_profile_by_telegram_id(BIGINT) TO anon, authenticated;
+
+CREATE OR REPLACE FUNCTION public.request_event_booking(p_event_id UUID, p_user_id UUID)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_event public.events%ROWTYPE;
+    v_user_role TEXT;
+    v_booking_id UUID;
+BEGIN
+    SELECT * INTO v_event
+    FROM public.events
+    WHERE id = p_event_id
+      AND status = 'confirmed';
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'event_not_available';
+    END IF;
+
+    SELECT role INTO v_user_role
+    FROM public.profiles
+    WHERE id = p_user_id;
+
+    IF v_user_role IS NULL THEN
+        RAISE EXCEPTION 'profile_not_found';
+    END IF;
+
+    IF v_event.type = 'club' AND v_user_role NOT IN ('resident', 'instructor', 'admin') THEN
+        RAISE EXCEPTION 'not_allowed_for_event';
+    END IF;
+
+    IF v_event.type = 'internal' AND v_user_role NOT IN ('instructor', 'admin') THEN
+        RAISE EXCEPTION 'not_allowed_for_event';
+    END IF;
+
+    INSERT INTO public.bookings (event_id, user_id, status)
+    VALUES (p_event_id, p_user_id, 'pending')
+    RETURNING id INTO v_booking_id;
+
+    RETURN v_booking_id;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.request_event_booking(UUID, UUID) TO anon, authenticated;
+
 -- 6. INDEXES
+CREATE INDEX IF NOT EXISTS idx_profiles_telegram_id ON public.profiles(telegram_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_event_user ON public.bookings(event_id, user_id);
 CREATE INDEX IF NOT EXISTS idx_events_service_id ON public.events(service_id);
 CREATE INDEX IF NOT EXISTS idx_events_location_type ON public.events(location_type);
 CREATE INDEX IF NOT EXISTS idx_events_recurrence ON public.events(recurrence_rule) WHERE recurrence_rule IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_services_slug ON public.services(slug);
 CREATE INDEX IF NOT EXISTS idx_services_location_type ON public.services(location_type);
+CREATE INDEX IF NOT EXISTS idx_services_category ON public.services(category);
+CREATE INDEX IF NOT EXISTS idx_services_format ON public.services(format);
