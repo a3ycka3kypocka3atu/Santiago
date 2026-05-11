@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="favorites.css?v=1" />
   <style>
     .cabinet-page {
       padding: 100px 20px 60px;
@@ -235,6 +236,16 @@
         <p data-i18n="cabinet.admin.desc">Управление всеми резидентами, событиями и настройками платформы.</p>
       </div>
     </div>
+
+    <section class="cabinet-favorites" aria-labelledby="cabinet-favorites-title">
+      <div class="cabinet-favorites__header">
+        <h2 id="cabinet-favorites-title">Обране</h2>
+        <p>Збережені події та послуги з платформи Santiago.</p>
+      </div>
+      <div id="cabinet-favorites-list" class="cabinet-favorites__list" data-favorites-cabinet>
+        <div class="favorites-empty">Завантажуємо обране...</div>
+      </div>
+    </section>
   </main>
 
   <!-- Quick-menu panel -->
@@ -275,10 +286,15 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=6"></script>
+  <script src="favorites.js?v=1"></script>
   <script>
-    // Role handling for Cabinet
-    document.addEventListener('ma3-auth-changed', (e) => {
-      const user = e.detail;
+    function renderCabinetFavorites() {
+      if (window.MA3Favorites) {
+        window.MA3Favorites.renderCabinet('#cabinet-favorites-list');
+      }
+    }
+
+    function updateCabinetRoleUI(user) {
       const adminTools = document.getElementById('admin-tools');
       const badgeContainer = document.getElementById('role-badge-container');
       
@@ -290,9 +306,24 @@
           badgeContainer.innerHTML = '<span class="admin-badge" style="border-color: #00ffcc; color: #00ffcc; background: rgba(0, 255, 204, 0.1);">Instructor</span>';
         }
       } else {
+        if (adminTools) adminTools.style.display = 'none';
+        if (badgeContainer) badgeContainer.innerHTML = '';
         // Redirect if not authorized
         // window.location.href = 'index.html';
       }
+    }
+
+    // Role handling for Cabinet
+    document.addEventListener('ma3-auth-changed', (e) => {
+      updateCabinetRoleUI(e.detail);
+      renderCabinetFavorites();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        updateCabinetRoleUI(window.MA3Auth ? window.MA3Auth.user : null);
+        renderCabinetFavorites();
+      }, 120);
     });
   </script>
 </body>

@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle Cabinet button visibility
     const cabinetBtns = document.querySelectorAll('.cabinet-btn');
     cabinetBtns.forEach(btn => {
-      if (user && (user.role === 'admin' || user.role === 'instructor')) {
+      if (user && user.isLoggedIn) {
         btn.style.display = 'flex';
       } else {
         btn.style.display = 'none';

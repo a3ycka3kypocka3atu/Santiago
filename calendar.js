@@ -531,12 +531,34 @@ window.onTelegramAuth = function(user) {
         </div>
         ${event.description ? `<p class="event-detail__desc">${event.description}</p>` : ''}
         ${event.service_id ? `<a href="${event.detail_page || 'services.html'}" class="event-detail__service-link" target="_blank" data-i18n="event.viewService">View Service Details →</a>` : ''}
-        ${currentUser.isLoggedIn 
-          ? `<button class="event-detail__book-btn" onclick="submitBooking('${event.id}')">${bookBtnLabel[currentLang] || bookBtnLabel.en}</button>`
-          : `<button class="event-detail__book-btn" onclick="alert('Please log in via Telegram first.')">Log in to book</button>`
-        }
+        <div class="event-detail__actions">
+          <button class="event-detail__favorite-btn" type="button" data-event-favorite aria-label="Save event"></button>
+          ${currentUser.isLoggedIn
+            ? `<button class="event-detail__book-btn" onclick="submitBooking('${event.id}')">${bookBtnLabel[currentLang] || bookBtnLabel.en}</button>`
+            : `<button class="event-detail__book-btn" onclick="alert('Please log in via Telegram first.')">Log in to book</button>`
+          }
+        </div>
       </div>
     `;
+
+    const favoriteButton = eventPopupContent.querySelector('[data-event-favorite]');
+    if (favoriteButton && window.MA3Favorites) {
+      window.MA3Favorites.registerButton(favoriteButton, () => ({
+        type: 'event',
+        key: event.id || `${event.title}-${event.start_time}`,
+        title: event.title,
+        subtitle: `${dateStr} · ${timeStr}`,
+        url: 'calendar.html',
+        metadata: {
+          event_id: event.id,
+          start_time: event.start_time,
+          end_time: event.end_time,
+          type: event.type,
+          service_id: event.service_id || null,
+          location_type: event.location_type || null
+        }
+      }));
+    }
 
     eventPopup.classList.add('open');
     eventPopup.setAttribute('aria-hidden', 'false');

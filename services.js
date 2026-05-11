@@ -74,17 +74,19 @@
     const CATEGORY_ICONS = { body: '💆', mind: '🧘', incubator: '🚀', space: '🏛️' };
     const icon = service.icon_emoji || CATEGORY_ICONS[service.category] || '✨';
     const formatLabel = fmt(service.format);
+    const detailPage = service.detail_page || '#';
 
-    const a = document.createElement('a');
-    a.href = service.detail_page || '#';
-    a.className = 'preview-card';
-    a.dataset.category = service.category || 'body';
-    a.dataset.format = service.format || 'individual';
-    a.dataset.instructor = service.instructor_name ? service.instructor_name.toLowerCase().replace(/\s+/g, '') : '';
+    const card = document.createElement('article');
+    card.className = 'preview-card';
+    card.tabIndex = 0;
+    card.dataset.category = service.category || 'body';
+    card.dataset.format = service.format || 'individual';
+    card.dataset.instructor = service.instructor_name ? service.instructor_name.toLowerCase().replace(/\s+/g, '') : '';
+    card.dataset.url = detailPage;
 
     const catLabel = t(`filter.${service.category}`) || service.category || '';
 
-    a.innerHTML = `
+    card.innerHTML = `
       <div class="preview-card__icon">${icon}</div>
       <div class="preview-card__body">
         <div class="preview-card__meta">
@@ -96,14 +98,47 @@
         <p class="preview-desc">${t(service.description) || ''}</p>
         <div class="preview-card__footer">
           <span class="preview-master">${t(service.instructor_name) || ''}</span>
-          <span class="preview-card__cta">
+          <div class="preview-card__actions">
+          <button class="preview-favorite" type="button" aria-label="В избранное"></button>
+          <a class="preview-card__cta" href="${detailPage}">
             <span>${t('btn.details')}</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-          </span>
+          </a>
+          </div>
         </div>
       </div>
     `;
-    return a;
+
+    card.addEventListener('click', (event) => {
+      if (event.target.closest('a, button')) return;
+      if (detailPage && detailPage !== '#') window.location.href = detailPage;
+    });
+
+    card.addEventListener('keydown', (event) => {
+      if ((event.key === 'Enter' || event.key === ' ') && !event.target.closest('a, button')) {
+        event.preventDefault();
+        if (detailPage && detailPage !== '#') window.location.href = detailPage;
+      }
+    });
+
+    const favoriteButton = card.querySelector('.preview-favorite');
+    if (favoriteButton && window.MA3Favorites) {
+      window.MA3Favorites.registerButton(favoriteButton, () => ({
+        type: 'service',
+        key: service.slug,
+        title: t(service.title) || service.slug,
+        subtitle: [getDisplayPrice(service), t(service.instructor_name)].filter(Boolean).join(' · '),
+        url: detailPage,
+        metadata: {
+          slug: service.slug,
+          category: service.category,
+          format: service.format,
+          instructor_name: service.instructor_name
+        }
+      }));
+    }
+
+    return card;
   }
 
   function renderCards(services) {
