@@ -45,6 +45,50 @@ async function showApplicationChoices(ctx) {
   await ctx.reply('Чудово! Ким ви хочете стати у нашій спільноті?', applicationKeyboard());
 }
 
+const SUBMISSION_TYPES = {
+  profile: {
+    label: 'профіль ментора',
+    titlePrompt: 'Як має називатися ваш публічний профіль? Напишіть імʼя/назву, як на сайті.',
+    descriptionPrompt: 'Опишіть себе: практика, досвід, напрямки, для кого ви працюєте.',
+    detailsPrompt: 'Додайте посилання, контакти, Instagram/сайт/портфоліо, фото або що ще потрібно адміну для сторінки.'
+  },
+  service: {
+    label: 'послугу',
+    titlePrompt: 'Назва послуги?',
+    descriptionPrompt: 'Опишіть послугу: що людина отримує, формат, тривалість, кому підходить.',
+    detailsPrompt: 'Ціна, бажана сторінка, фото/посилання, чи це public/club/internal, і все що треба знати адміну.'
+  },
+  project: {
+    label: 'проєкт',
+    titlePrompt: 'Назва проєкту?',
+    descriptionPrompt: 'Опишіть ідею, ціль, кому це потрібно і яку роль Santiago має зіграти.',
+    detailsPrompt: 'Додайте посилання, матеріали, команду, бажаний формат на сайті і наступні кроки.'
+  },
+  event: {
+    label: 'подію',
+    titlePrompt: 'Назва події або програми?',
+    descriptionPrompt: 'Опишіть подію: тема, для кого, що буде відбуватись, хто веде.',
+    detailsPrompt: 'Напишіть бажані дати/час, тривалість, чи треба студія, public/club/internal, ціну і ліміти учасників.'
+  }
+};
+
+function canCreateContent(ctx) {
+  return ctx.userRole === 'instructor' || ctx.userRole === 'admin';
+}
+
+async function startSubmission(ctx, kind) {
+  if (!canCreateContent(ctx)) {
+    return ctx.reply('Цей розділ доступний для менторів/інструкторів та адміністраторів. Якщо ви хочете стати ментором, подайте заявку через меню клубу.');
+  }
+
+  const config = SUBMISSION_TYPES[kind] || SUBMISSION_TYPES.event;
+  ctx.session = {
+    state: 'submission_title',
+    submissionKind: kind
+  };
+  await ctx.reply(`Створюємо заявку на ${config.label}. Адмін перевірить матеріали перед публікацією.\n\n${config.titlePrompt}`);
+}
+
 // ── MIDDLEWARE: UPSERT USER IN DB ──
 bot.use(async (ctx, next) => {
   try {
@@ -138,6 +182,13 @@ bot.start(async (ctx) => {
     return ctx.reply('Open Mic & Santiago Talks 🎤\n\nЯк до вас звертатися?');
   }
 
+  if (startPayload && startPayload.startsWith('create_')) {
+    const kind = startPayload.replace('create_', '');
+    if (SUBMISSION_TYPES[kind]) {
+      return startSubmission(ctx, kind);
+    }
+  }
+
   ctx.reply(
     `Вітаємо у боті студії Santiago! 👋\n\nТут ви можете дізнатися більше про нас, подати заявку до клубу або Майстерні, або керувати розкладом (для інструкторів).`,
     mainMenu
@@ -185,24 +236,17 @@ bot.action('instructor_menu', async (ctx) => {
   ctx.reply(
     'Панель Інструктора',
     Markup.inlineKeyboard([
-      [Markup.button.callback('➕ Створити нову подію', 'create_event')],
-      [Markup.button.callback('🛒 Створити послугу', 'create_service')]
+      [Markup.button.callback('👤 Заявка на профіль', 'create_profile')],
+      [Markup.button.callback('🛒 Заявка на послугу', 'create_service')],
+      [Markup.button.callback('🏗️ Заявка на проєкт', 'create_project')],
+      [Markup.button.callback('📅 Заявка на подію', 'create_event')]
     ])
   );
   ctx.answerCbQuery();
 });
 
-bot.action('create_event', (ctx) => {
-  if (ctx.userRole !== 'instructor' && ctx.userRole !== 'admin') return ctx.answerCbQuery('Доступ заборонено.', { show_alert: true });
-  ctx.session = { state: 'event_title' };
-  ctx.reply('Створення події: Крок 1/4\n\nВведіть назву події (напр. "Ранкова Йога"):');
-  ctx.answerCbQuery();
-});
-
-bot.action('create_service', (ctx) => {
-  if (ctx.userRole !== 'instructor' && ctx.userRole !== 'admin') return ctx.answerCbQuery('Доступ заборонено.', { show_alert: true });
-  ctx.session = { state: 'service_title' };
-  ctx.reply('Створення послуги: Крок 1/8\n\nВведіть назву послуги (напр. "Курс Медитації"):');
+bot.action(/create_(profile|service|project|event)/, async (ctx) => {
+  await startSubmission(ctx, ctx.match[1]);
   ctx.answerCbQuery();
 });
 
@@ -324,6 +368,28 @@ bot.on('text', async (ctx, next) => {
     return;
   }
 
+  if (state === 'submission_title') {
+    const config = SUBMISSION_TYPES[ctx.session.submissionKind] || SUBMISSION_TYPES.event;
+    ctx.session.submissionTitle = text;
+    ctx.session.state = 'submission_description';
+    ctx.reply(config.descriptionPrompt);
+    return;
+  }
+
+  if (state === 'submission_description') {
+    const config = SUBMISSION_TYPES[ctx.session.submissionKind] || SUBMISSION_TYPES.event;
+    ctx.session.submissionDescription = text;
+    ctx.session.state = 'submission_details';
+    ctx.reply(config.detailsPrompt);
+    return;
+  }
+
+  if (state === 'submission_details') {
+    ctx.session.submissionDetails = text;
+    await finishContentSubmission(ctx);
+    return;
+  }
+
   // Event Creation States
   if (state === 'event_title') {
     ctx.session.eventTitle = text;
@@ -427,6 +493,58 @@ async function finishOpenMicApplication(ctx) {
 
   ctx.session = null;
   ctx.reply('Повернутися в головне меню:', mainMenu);
+}
+
+async function finishContentSubmission(ctx) {
+  const kind = ctx.session.submissionKind || 'event';
+  const config = SUBMISSION_TYPES[kind] || SUBMISSION_TYPES.event;
+  const adminId = ADMIN_CHAT_ID;
+  const profileId = ctx.dbUser ? ctx.dbUser.id : null;
+
+  const payload = {
+    title: ctx.session.submissionTitle,
+    description: ctx.session.submissionDescription,
+    details: ctx.session.submissionDetails,
+    telegram: {
+      id: ctx.from.id,
+      username: ctx.from.username || null,
+      name: getFullName(ctx.from)
+    }
+  };
+
+  try {
+    const { error } = await supabase.from('submissions').insert({
+      kind,
+      title: payload.title,
+      description: payload.description,
+      details: payload.details,
+      submitted_by: profileId,
+      telegram_id: ctx.from.id,
+      status: 'pending',
+      payload
+    });
+    if (error) console.warn('[Bot] Submission DB save skipped/failed:', error.message);
+  } catch (err) {
+    console.warn('[Bot] Submission table unavailable:', err.message);
+  }
+
+  const summary = `🧩 Нова заявка: ${config.label.toUpperCase()}\n\n` +
+    `👤 Автор: ${getFullName(ctx.from)} (@${ctx.from.username || 'n/a'}, ID: ${ctx.from.id})\n` +
+    `🏷️ Назва: ${payload.title}\n\n` +
+    `📝 Опис:\n${payload.description}\n\n` +
+    `📌 Деталі / час / ціна / лінки:\n${payload.details}\n\n` +
+    `🔗 Чат: tg://user?id=${ctx.from.id}`;
+
+  try {
+    await bot.telegram.sendMessage(adminId, summary);
+    await ctx.reply(`Дякуємо! Заявка на ${config.label} надіслана адміну. Після перевірки її можна буде оформити на сайті/календарі.`);
+  } catch (err) {
+    console.error('[Bot] Content submission admin notification error:', err);
+    await ctx.reply('Заявку отримано, але зараз не вдалося відправити повідомлення адміну. Спробуйте ще раз або напишіть адміну напряму.');
+  }
+
+  ctx.session = null;
+  await ctx.reply('Повернутися в головне меню:', mainMenu);
 }
 
 bot.launch().then(() => console.log('[Bot] Launch successful'));

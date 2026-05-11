@@ -194,8 +194,7 @@ window.onTelegramAuth = function(user) {
 
   async function fetchEventsForMonth() {
     if (!sb) {
-      // Fallback: use demo data if Supabase is not connected
-      eventsCache = getDemoEvents();
+      eventsCache = [];
     } else {
 
     const startOfMonth = new Date(currentYear, currentMonth, 1).toISOString();
@@ -214,18 +213,14 @@ window.onTelegramAuth = function(user) {
       const { data, error } = await query;
 
       if (error) {
-        console.warn('Supabase fetch error, using demo data:', error.message);
-        eventsCache = getDemoEvents();
+        console.warn('Supabase fetch error, showing empty calendar:', error.message);
+        eventsCache = [];
       } else {
         eventsCache = data || [];
-        // If no events from DB, show demo events for MVP demo
-        if (eventsCache.length === 0) {
-          eventsCache = getDemoEvents();
-        }
       }
     } catch (err) {
-      console.warn('Network error, using demo data:', err);
-      eventsCache = getDemoEvents();
+      console.warn('Network error, showing empty calendar:', err);
+      eventsCache = [];
     }
     } // end of else (sb exists)
 
@@ -598,72 +593,6 @@ window.onTelegramAuth = function(user) {
       setTimeout(() => btn.textContent = originalText, 2000);
     }
   };
-
-  // ═══════════════════════════════════════════════════════════
-  //  DEMO EVENTS (shown when DB is empty or offline)
-  // ═══════════════════════════════════════════════════════════
-
-  function getDemoEvents() {
-    const y = currentYear;
-    const m = currentMonth;
-
-    return [
-      {
-        id: 'demo-1', title: 'Morning Yoga', description: 'Open session for everyone. Bring your own mat.',
-        start_time: new Date(y, m, 5, 9, 0).toISOString(),
-        end_time: new Date(y, m, 5, 10, 30).toISOString(),
-        type: 'public', location_type: 'offline_studio', status: 'confirmed',
-      },
-      {
-        id: 'demo-2', title: 'Community Networking', description: 'Monthly meetup for conscious entrepreneurs and creators.',
-        start_time: new Date(y, m, 10, 18, 0).toISOString(),
-        end_time: new Date(y, m, 10, 20, 0).toISOString(),
-        type: 'public', location_type: 'offline_studio', status: 'confirmed',
-      },
-      {
-        id: 'demo-3', title: 'Breathwork & Cold Exposure', description: 'Deep breathing session followed by ice bath experience. Led by instructor Alex.',
-        start_time: new Date(y, m, 12, 7, 0).toISOString(),
-        end_time: new Date(y, m, 12, 8, 30).toISOString(),
-        type: 'club', location_type: 'offline_studio', status: 'confirmed',
-      },
-      {
-        id: 'demo-4', title: 'Startup Pitch Night', description: 'Present your project to the community and get feedback.',
-        start_time: new Date(y, m, 15, 19, 0).toISOString(),
-        end_time: new Date(y, m, 15, 21, 0).toISOString(),
-        type: 'public', location_type: 'offline_external', status: 'confirmed',
-      },
-      {
-        id: 'demo-5', title: 'Private Meditation Circle', description: 'Guided meditation with sound healing. Residents only.',
-        start_time: new Date(y, m, 15, 8, 0).toISOString(),
-        end_time: new Date(y, m, 15, 9, 0).toISOString(),
-        type: 'club', location_type: 'offline_studio', status: 'confirmed',
-      },
-      {
-        id: 'demo-6', title: 'Open Mic & Jam Session', description: 'Bring your instrument or voice. All genres welcome!',
-        start_time: new Date(y, m, 20, 20, 0).toISOString(),
-        end_time: new Date(y, m, 20, 22, 30).toISOString(),
-        type: 'public', location_type: 'offline_studio', status: 'confirmed',
-      },
-      {
-        id: 'demo-7', title: 'Inner Circle Strategy Meeting', description: 'Monthly planning session for club leaders and coordinators.',
-        start_time: new Date(y, m, 22, 16, 0).toISOString(),
-        end_time: new Date(y, m, 22, 17, 30).toISOString(),
-        type: 'club', location_type: 'online', status: 'confirmed',
-      },
-      {
-        id: 'demo-8', title: 'Partner Yoga Workshop', description: 'Fun and connecting partner yoga for beginners.',
-        start_time: new Date(y, m, 25, 10, 0).toISOString(),
-        end_time: new Date(y, m, 25, 12, 0).toISOString(),
-        type: 'public', location_type: 'offline_studio', status: 'confirmed',
-      },
-      {
-        id: 'demo-9', title: 'Eco Lecture: Sustainable Living in Prague', description: 'Guest speaker on practical sustainability.',
-        start_time: new Date(y, m, 28, 18, 30).toISOString(),
-        end_time: new Date(y, m, 28, 20, 0).toISOString(),
-        type: 'public', location_type: 'online', status: 'confirmed',
-      },
-    ];
-  }
 
   // Listen for global auth changes
   document.addEventListener('ma3-auth-changed', (e) => {

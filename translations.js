@@ -10,6 +10,7 @@ window.translations = {
     "nav.partners": "Партнёры",
     "nav.openmic": "Open Mic",
     "nav.shop": "Магазин",
+    "nav.calendar": "Календарь",
     "footer.text": "© 2026 Сантьяго – Цифровой Дзен. Все права защищены.",
     "btn.details": "Подробнее",
     
@@ -307,6 +308,8 @@ window.translations = {
     "cabinet.services.desc": "Управление вашими офферами, ценами и описанием практик.",
     "cabinet.projects.title": "Мои Проекты",
     "cabinet.projects.desc": "Глобальные инициативы, события и долгосрочные коллаборации.",
+    "cabinet.events.title": "Мои События",
+    "cabinet.events.desc": "Заявки на разовые события, программы и бронирование времени в студии.",
     "cabinet.admin.desc": "Управление всеми резидентами, событиями и настройками платформы.",
     
     // Community.html
@@ -386,6 +389,7 @@ window.translations = {
     "nav.partners": "Partners",
     "nav.openmic": "Open Mic",
     "nav.shop": "Shop",
+    "nav.calendar": "Calendar",
     "footer.text": "© 2026 Santiago – Digital Zen. All rights reserved.",
     "btn.details": "Learn More",
     
@@ -664,6 +668,8 @@ window.translations = {
     "cabinet.services.desc": "Manage your offers, prices, and practice descriptions.",
     "cabinet.projects.title": "My Projects",
     "cabinet.projects.desc": "Global initiatives, events, and long-term collaborations.",
+    "cabinet.events.title": "My Events",
+    "cabinet.events.desc": "Requests for one-off events, programs, and studio time reservations.",
     "cabinet.admin.desc": "Manage all residents, events, and platform settings.",
 
     // Community.html
@@ -743,6 +749,7 @@ window.translations = {
     "nav.partners": "Partneři",
     "nav.openmic": "Open Mic",
     "nav.shop": "Obchod",
+    "nav.calendar": "Kalendář",
     "footer.text": "© 2026 Santiago – Digitální Zen. Všechna práva vyhrazena.",
     "btn.details": "Více informací",
     
@@ -1018,6 +1025,8 @@ window.translations = {
     "cabinet.services.desc": "Správa vašich nabídek, cen a popisu praxí.",
     "cabinet.projects.title": "Moje Projekty",
     "cabinet.projects.desc": "Globální iniciativy, události a dlouhodobé spolupráce.",
+    "cabinet.events.title": "Moje události",
+    "cabinet.events.desc": "Žádosti o jednorázové akce, programy a rezervace času ve studiu.",
     "cabinet.admin.desc": "Správa všech rezidentů, událostí a nastavení platformy.",
     "event.viewService": "Zobrazit detaily služby →",
 
@@ -1098,6 +1107,7 @@ window.translations = {
     "nav.partners": "Партнери",
     "nav.openmic": "Open Mic",
     "nav.shop": "Магазин",
+    "nav.calendar": "Календар",
     "footer.text": "© 2026 Сантьяго – Цифровий Дзен. Всі права захищені.",
     "btn.details": "Детальніше",
     

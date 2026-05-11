@@ -68,7 +68,24 @@ CREATE TABLE IF NOT EXISTS public.bookings (
 
 ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
 
--- 5. RLS POLICIES
+-- 5. SUBMISSIONS TABLE
+CREATE TABLE IF NOT EXISTS public.submissions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    kind TEXT NOT NULL CHECK (kind IN ('profile', 'service', 'project', 'event')),
+    title TEXT NOT NULL,
+    description TEXT,
+    details TEXT,
+    submitted_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    telegram_id BIGINT,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected', 'archived')),
+    payload JSONB DEFAULT '{}'::jsonb,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.submissions ENABLE ROW LEVEL SECURITY;
+
+-- 6. RLS POLICIES
 
 -- Profiles: Users can read their own profile, admins can read all
 CREATE POLICY "Users can read own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
@@ -112,6 +129,18 @@ CREATE POLICY "Anyone can see published services" ON public.services FOR SELECT 
 -- 2. Staff can manage services
 CREATE POLICY "Staff can manage services" ON public.services FOR ALL USING (
     EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('instructor', 'admin'))
+);
+
+-- Submissions:
+-- Mentors/admins can create draft requests; admins/instructors can review them.
+CREATE POLICY "Staff can create submissions" ON public.submissions FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('instructor', 'admin'))
+);
+CREATE POLICY "Staff can read submissions" ON public.submissions FOR SELECT USING (
+    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('instructor', 'admin'))
+);
+CREATE POLICY "Admins can manage submissions" ON public.submissions FOR ALL USING (
+    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
 );
 
 -- Public login bridge:
@@ -183,9 +212,11 @@ $$;
 
 GRANT EXECUTE ON FUNCTION public.request_event_booking(UUID, UUID) TO anon, authenticated;
 
--- 6. INDEXES
+-- 7. INDEXES
 CREATE INDEX IF NOT EXISTS idx_profiles_telegram_id ON public.profiles(telegram_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_event_user ON public.bookings(event_id, user_id);
+CREATE INDEX IF NOT EXISTS idx_submissions_kind_status ON public.submissions(kind, status);
+CREATE INDEX IF NOT EXISTS idx_submissions_submitted_by ON public.submissions(submitted_by);
 CREATE INDEX IF NOT EXISTS idx_events_service_id ON public.events(service_id);
 CREATE INDEX IF NOT EXISTS idx_events_location_type ON public.events(location_type);
 CREATE INDEX IF NOT EXISTS idx_events_recurrence ON public.events(recurrence_rule) WHERE recurrence_rule IS NOT NULL;

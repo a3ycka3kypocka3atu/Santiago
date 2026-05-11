@@ -8,6 +8,7 @@
   let GRID, EMPTY_STATE, RESET_BTN;
   const state = { category: 'all', format: 'all', instructor: 'all' };
   let allCards = [];
+  let currentUser = window.MA3Auth ? window.MA3Auth.user : { role: 'guest', isLoggedIn: false };
 
   const STORAGE_KEY = 'language';
   const DEFAULT_LANG = 'ru';
@@ -46,6 +47,29 @@
     return labels[key][currentLang] || labels[key]['en'] || key;
   }
 
+  function getRoleDiscount() {
+    return currentUser && ['resident', 'instructor'].includes(currentUser.role) ? 0.1 : 0;
+  }
+
+  function getDisplayPrice(service) {
+    const raw = t(service.price) || '';
+    const match = raw.match(/(\d+(?:[.,]\d+)?)/);
+    const discount = getRoleDiscount();
+    if (!match || !discount) return raw;
+
+    const normalPrice = Number(match[1].replace(',', '.'));
+    if (!Number.isFinite(normalPrice)) return raw;
+
+    const discounted = Math.round(normalPrice * (1 - discount));
+    const note = {
+      ru: 'цена резидента/ментора',
+      en: 'resident/mentor price',
+      cz: 'cena rezidenta/mentora',
+      ua: 'ціна резидента/ментора'
+    };
+    return raw.replace(match[1], String(discounted)) + ` · ${note[currentLang] || note.en}`;
+  }
+
   function createCard(service) {
     const CATEGORY_ICONS = { body: '💆', mind: '🧘', incubator: '🚀', space: '🏛️' };
     const icon = service.icon_emoji || CATEGORY_ICONS[service.category] || '✨';
@@ -68,7 +92,7 @@
           <span class="preview-format">${formatLabel}</span>
         </div>
         <h3 class="preview-card__title">${t(service.title) || ''}</h3>
-        <span class="preview-price">${t(service.price) || ''}</span>
+        <span class="preview-price">${getDisplayPrice(service)}</span>
         <p class="preview-desc">${t(service.description) || ''}</p>
         <div class="preview-card__footer">
           <span class="preview-master">${t(service.instructor_name) || ''}</span>
@@ -143,7 +167,7 @@
       const formatEl = card.querySelector('.preview-format');
 
       if (titleEl) titleEl.textContent = t(service.title);
-      if (priceEl) priceEl.textContent = t(service.price);
+      if (priceEl) priceEl.textContent = getDisplayPrice(service);
       if (descEl) descEl.textContent = t(service.description);
       if (masterEl) masterEl.textContent = t(service.instructor_name);
       if (ctaEl) ctaEl.textContent = t('btn.details');
@@ -235,6 +259,11 @@
 
   document.addEventListener('ma3-lang-change', (e) => {
     currentLang = e.detail?.lang || DEFAULT_LANG;
+    refreshCardText();
+  });
+
+  document.addEventListener('ma3-auth-changed', (e) => {
+    currentUser = e.detail || currentUser;
     refreshCardText();
   });
 

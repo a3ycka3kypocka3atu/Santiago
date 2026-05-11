@@ -3,12 +3,64 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Мастера и инструкторы Студии Сантьяго — массаж, йога, тренировки, медитации." />
-  <title>Мастера | Сантьяго</title>
+  <meta name="description" content="События Santiago: программы, встречи, практики и календарь студии." />
+  <title>События | Сантьяго</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .events-page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 120px 20px 70px;
+      min-height: 100vh;
+    }
+    .events-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin: 28px 0 40px;
+    }
+    .events-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      color: var(--fg);
+      background: rgba(255, 255, 255, 0.08);
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .events-action:hover {
+      transform: translateY(-2px);
+      border-color: var(--glow-yellow);
+      background: rgba(255, 204, 0, 0.12);
+    }
+    .events-empty-panel {
+      display: grid;
+      gap: 18px;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 34px;
+      text-align: center;
+    }
+    .events-empty-panel h2 {
+      color: var(--glow-yellow);
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      margin: 0;
+    }
+    .events-empty-panel p {
+      color: var(--fg-muted);
+      line-height: 1.7;
+      margin: 0;
+    }
+  </style>
 </head>
 <body>
   <div class="bg-clouds">
@@ -23,8 +75,7 @@
         <circle cx="100" cy="90" r="50"/><line x1="100" y1="15" x2="100" y2="30"/><line x1="135" y1="25" x2="125" y2="40"/><line x1="165" y1="50" x2="150" y2="60"/><line x1="180" y1="90" x2="165" y2="90"/><line x1="65" y1="25" x2="75" y2="40"/><line x1="35" y1="50" x2="50" y2="60"/><line x1="20" y1="90" x2="35" y2="90"/>
         <circle cx="100" cy="80" r="14"/><path d="M100 70 Q105 76 100 87 Q94 80 100 70" fill="currentColor" stroke="none"/>
         <line x1="100" y1="65" x2="100" y2="40"/><line x1="115" y1="80" x2="140" y2="80"/><line x1="85" y1="80" x2="60" y2="80"/>
-        <line x1="52" y1="105" x2="148" y2="105"/>
-        <path d="M98 105 Q115 115 90 125 T95 140 L105 140 Q85 125 110 115 T103 105 Z" fill="currentColor" stroke="none"/>
+        <line x1="52" y1="105" x2="148" y2="105"/><path d="M98 105 Q115 115 90 125 T95 140 L105 140 Q85 125 110 115 T103 105 Z" fill="currentColor" stroke="none"/>
       </g>
       <text x="100" y="180" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="28" fill="currentColor" letter-spacing="2">SANTIAGO</text>
       <text x="100" y="205" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="14" fill="currentColor" letter-spacing="6">WAY</text>
@@ -37,72 +88,41 @@
     </svg>
   </a>
 
-    <div class="desktop-controls">
+  <div class="desktop-controls">
     <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" title="Login via Telegram">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
       <span class="tg-text">Login via Telegram</span>
     </a>
-
     <div class="lang-switcher">
       <button class="lang-btn" data-lang="en">EN</button>
       <button class="lang-btn" data-lang="cz">CZ</button>
       <button class="lang-btn" data-lang="ru">RU</button>
       <button class="lang-btn" data-lang="ua">UA</button>
     </div>
-
     <button class="theme-toggle theme-toggle-btn" title="Toggle theme">
       <span class="icon-sun">☀️</span>
       <span class="icon-moon">🌙</span>
       <span class="toggle-thumb"></span>
     </button>
-    
     <button class="menu-trigger" aria-label="Open menu">☰</button>
   </div>
-  </div>
 
-  <!-- ═══ PAGE CONTENT ═══ -->
-  <div class="page-wrapper">
-
+  <main class="events-page">
     <div class="gallery-header">
-      <h1 data-i18n="masters.page.title">Наши мастера</h1>
-      <p data-i18n="masters.page.desc">Профессионалы, которые помогают вам восстанавливаться, развиваться и чувствовать себя лучше.</p>
+      <h1>События Santiago</h1>
+      <p>Здесь будут жить реальные программы, разовые события, студийные встречи и открытые форматы от менторов.</p>
     </div>
 
-    <div class="gallery-grid">
-
-      <!-- Master Card: Ivan -->
-      <a href="profile.html" class="preview-card" id="card-ivan">
-        <div class="preview-card__icon">👨‍⚕️</div>
-        <div class="preview-card__body">
-          <h3 data-i18n="masters.ivan.name">Иван Протиняк</h3>
-          <span class="preview-role" data-i18n="masters.ivan.role">Врач-реабилитолог · Массажист</span>
-          <p data-i18n="masters.ivan.short">Глубокий восстановительный массаж, реабилитация после травм, банная терапия и чайная церемония. 5 лет опыта.</p>
-          <span class="preview-card__cta">
-            <span data-i18n="btn.details">Подробнее</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-          </span>
-        </div>
-      </a>
-
-      <!-- Master Card: Kateryna -->
-      <a href="profile-katerina.html" class="preview-card" id="card-kateryna">
-        <div class="preview-card__icon">🌿</div>
-        <div class="preview-card__body">
-          <h3 data-i18n="masters.kat.name">Катерина</h3>
-          <span class="preview-role" data-i18n="masters.kat.role">Телесные практики · Ароматерапия · Визуальный продакшен</span>
-          <p data-i18n="masters.kat.short">Пилатес, йога, стретчинг, тверк, ароматерапия, SPA-ретриты. Аэросъёмка и Home Staging. 4 года опыта в Чехии.</p>
-          <span class="preview-card__cta">
-            <span data-i18n="btn.details">Подробнее</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-          </span>
-        </div>
-      </a>
-
-      <!-- Placeholder for future masters -->
-
+    <div class="events-actions">
+      <a class="events-action" href="calendar.html">Открыть календарь</a>
+      <a class="events-action" href="https://t.me/santioago_bot?start=create_event" target="_blank" rel="noopener">Предложить событие</a>
     </div>
 
-  </div>
+    <section class="glass-card events-empty-panel">
+      <h2>Календарь готов к реальной программе</h2>
+      <p>Демо-события убраны. Когда вы дадите настоящую программу, ментора, описание и время, мы создадим карточку события, привяжем ее к календарю и включим запись участников.</p>
+    </section>
+  </main>
 
   <nav class="quick-menu" aria-label="Navigation">
     <ul>
@@ -114,20 +134,17 @@
       <li><a href="openmic.html" data-i18n="nav.openmic">Open Mic</a></li>
       <li><a href="shop.html" data-i18n="nav.shop">Shop</a></li>
     </ul>
-
     <div class="menu-controls">
       <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" style="width: 100%; justify-content: center; margin-bottom: 1rem;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
         <span class="tg-text">Login via Telegram</span>
       </a>
-
       <div class="lang-switcher">
         <button class="lang-btn" data-lang="en">EN</button>
         <button class="lang-btn" data-lang="cz">CZ</button>
         <button class="lang-btn" data-lang="ru">RU</button>
         <button class="lang-btn" data-lang="ua">UA</button>
       </div>
-
       <button class="theme-toggle theme-toggle-btn" title="Toggle theme">
         <span class="icon-sun">☀️</span>
         <span class="icon-moon">🌙</span>
@@ -141,7 +158,6 @@
   </footer>
 
   <script src="translations.js?v=7"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=6"></script>
   <script>
