@@ -8,6 +8,8 @@ window.translations = {
     "nav.incubator": "Инкубатор",
     "nav.offers": "Продукты и услуги",
     "nav.partners": "Партнёры",
+    "nav.openmic": "Open Mic",
+    "nav.shop": "Магазин",
     "footer.text": "© 2026 Сантьяго – Цифровой Дзен. Все права защищены.",
     "btn.details": "Подробнее",
     
@@ -382,6 +384,8 @@ window.translations = {
     "nav.incubator": "Incubator",
     "nav.offers": "Products & Services",
     "nav.partners": "Partners",
+    "nav.openmic": "Open Mic",
+    "nav.shop": "Shop",
     "footer.text": "© 2026 Santiago – Digital Zen. All rights reserved.",
     "btn.details": "Learn More",
     
@@ -737,6 +741,8 @@ window.translations = {
     "nav.incubator": "Inkubátor",
     "nav.offers": "Produkty a služby",
     "nav.partners": "Partneři",
+    "nav.openmic": "Open Mic",
+    "nav.shop": "Obchod",
     "footer.text": "© 2026 Santiago – Digitální Zen. Všechna práva vyhrazena.",
     "btn.details": "Více informací",
     
@@ -1090,6 +1096,8 @@ window.translations = {
     "nav.incubator": "Інкубатор",
     "nav.offers": "Продукти та послуги",
     "nav.partners": "Партнери",
+    "nav.openmic": "Open Mic",
+    "nav.shop": "Магазин",
     "footer.text": "© 2026 Сантьяго – Цифровий Дзен. Всі права захищені.",
     "btn.details": "Детальніше",
     
