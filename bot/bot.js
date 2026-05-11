@@ -2,6 +2,7 @@ require('dotenv').config();
 console.log('[Bot] Script started');
 const { Telegraf, Markup, session } = require('telegraf');
 const { createClient } = require('@supabase/supabase-js');
+const { randomUUID } = require('crypto');
 
 // ── ENV CONFIG ──
 const BOT_TOKEN = process.env.BOT_TOKEN;
@@ -34,6 +35,12 @@ function buildPortalUrl(userId, page = 'index.html') {
   return url.toString();
 }
 
+function portalLoginKeyboard(userId, label = '🔓 Відкрити кабінет') {
+  return Markup.inlineKeyboard([
+    [Markup.button.url(label, buildPortalUrl(userId, 'cabinet.html'))]
+  ]);
+}
+
 function applicationKeyboard() {
   return Markup.inlineKeyboard([
     [Markup.button.callback('🤝 Стати Резидентом Клубу', 'apply_role_resident')],
@@ -43,6 +50,84 @@ function applicationKeyboard() {
 
 async function showApplicationChoices(ctx) {
   await ctx.reply('Чудово! Ким ви хочете стати у нашій спільноті?', applicationKeyboard());
+}
+
+function buildMainMenu(role = 'guest', options = {}) {
+  const includeAdminBack = options.includeAdminBack === true;
+
+  if (role === 'admin') {
+    return Markup.inlineKeyboard([
+      [Markup.button.callback('👋 Стати Відвідувачем', 'apply_visitor')],
+      [Markup.button.callback('🤝 Стати Учасником Клубу', 'apply_role_resident')],
+      [Markup.button.callback('🧘 Стати Ментором', 'apply_role_instructor')],
+      [Markup.button.callback('✨ Створити щось', 'create_something')],
+      [
+        Markup.button.callback('👁 Як відвідувач', 'preview_menu_guest'),
+        Markup.button.callback('👁 Як учасник клубу', 'preview_menu_resident')
+      ]
+    ]);
+  }
+
+  if (role === 'instructor') {
+    const rows = [
+      [Markup.button.callback('✨ Створити щось', 'create_something')]
+    ];
+    if (includeAdminBack) rows.push([Markup.button.callback('↩️ Адмін меню', 'preview_menu_admin')]);
+    return Markup.inlineKeyboard(rows);
+  }
+
+  if (role === 'resident') {
+    const rows = [
+      [Markup.button.callback('🧘 Стати Ментором', 'apply_role_instructor')]
+    ];
+    if (includeAdminBack) rows.push([Markup.button.callback('↩️ Адмін меню', 'preview_menu_admin')]);
+    return Markup.inlineKeyboard(rows);
+  }
+
+  const rows = [
+    [Markup.button.callback('👋 Стати Відвідувачем', 'apply_visitor')],
+    [Markup.button.callback('🤝 Стати Учасником Клубу', 'apply_role_resident')],
+    [Markup.button.callback('🧘 Стати Ментором', 'apply_role_instructor')]
+  ];
+  if (includeAdminBack) rows.push([Markup.button.callback('↩️ Адмін меню', 'preview_menu_admin')]);
+  return Markup.inlineKeyboard(rows);
+}
+
+function createSomethingKeyboard() {
+  return Markup.inlineKeyboard([
+    [Markup.button.callback('👤 Заявка на профіль', 'create_profile')],
+    [Markup.button.callback('🛒 Заявка на послугу', 'create_service')],
+    [Markup.button.callback('🏗️ Заявка на проєкт', 'create_project')],
+    [Markup.button.callback('📅 Заявка на подію', 'create_event')]
+  ]);
+}
+
+function previewMenuLabel(role) {
+  if (role === 'admin') return 'Ваше адмін меню:';
+  if (role === 'resident') return 'Так меню бачить учасник клубу:';
+  return 'Так меню бачить новий користувач:';
+}
+
+function clubApplicationKeyboard() {
+  return Markup.inlineKeyboard([
+    [Markup.button.callback('📝 Залишити заявку', 'submit_resident_application')]
+  ]);
+}
+
+function roleApprovalKeyboard(userId, role) {
+  return Markup.inlineKeyboard([
+    [
+      Markup.button.callback('✅ Схвалити', `approve_role_${userId}_${role}`),
+      Markup.button.callback('❌ Відхилити', `reject_role_${userId}`)
+    ]
+  ]);
+}
+
+function getRoleLabel(role) {
+  if (role === 'instructor') return 'Ментор';
+  if (role === 'resident') return 'Учасник клубу';
+  if (role === 'admin') return 'Адмін';
+  return 'Відвідувач';
 }
 
 const SUBMISSION_TYPES = {
@@ -110,6 +195,7 @@ bot.use(async (ctx, next) => {
         const { data: created, error: insertError } = await supabase
           .from('profiles')
           .insert({
+            id: randomUUID(),
             telegram_id: ctx.from.id,
             username: username || null,
             full_name: fullName,
@@ -152,14 +238,6 @@ bot.use(async (ctx, next) => {
 });
 
 // ── START COMMAND & MAIN MENU ──
-const mainMenu = Markup.inlineKeyboard([
-  [Markup.button.callback('ℹ️ Про проєкт (FAQ)', 'faq_about')],
-  [Markup.button.callback('🧘 Напрямки', 'faq_directions')],
-  [Markup.button.callback('🔑 Як працює клуб', 'faq_club')],
-  [Markup.button.callback('🚀 Вступити до клубу / Стати Майстром', 'apply_club')],
-  [Markup.button.callback('⚙️ Панель Інструктора/Адміна', 'instructor_menu')]
-]);
-
 bot.start(async (ctx) => {
   const startPayload = ctx.startPayload;
 
@@ -190,25 +268,9 @@ bot.start(async (ctx) => {
   }
 
   ctx.reply(
-    `Вітаємо у боті студії Santiago! 👋\n\nТут ви можете дізнатися більше про нас, подати заявку до клубу або Майстерні, або керувати розкладом (для інструкторів).`,
-    mainMenu
+    `Вітаємо у боті студії Santiago! 👋\n\nОберіть, що хочете зробити:`,
+    buildMainMenu(ctx.userRole)
   );
-});
-
-// ── FAQ BRANCH ──
-bot.action('faq_about', (ctx) => {
-  ctx.reply('Santiago — це простір для тілесних і духовних практик, нетворкінгу та розвитку.\n\nМи об\'єднуємо майстрів та тих, хто шукає свій шлях.');
-  ctx.answerCbQuery();
-});
-
-bot.action('faq_directions', (ctx) => {
-  ctx.reply('Наші основні напрямки:\n- Йога та медитація\n- Тілесна терапія та масаж\n- Цвяхостояння\n- Бізнес-нетворкінг (для резидентів клубу)');
-  ctx.answerCbQuery();
-});
-
-bot.action('faq_club', (ctx) => {
-  ctx.reply('Клуб Santiago — це закрита спільнота для постійних резидентів. Резиденти отримують доступ до ексклюзивних подій, знижки на оренду та можливість брати участь у внутрішніх зустрічах.');
-  ctx.answerCbQuery();
 });
 
 // ── CLUB & INSTRUCTOR APPLICATION BRANCH ──
@@ -217,30 +279,55 @@ bot.action('apply_club', async (ctx) => {
   await ctx.answerCbQuery();
 });
 
-bot.action(/apply_role_(resident|instructor)/, (ctx) => {
+bot.action('apply_visitor', async (ctx) => {
+  await ctx.reply(
+    'Ваш профіль відвідувача готовий. Відкрийте кабінет, щоб увійти на платформу.',
+    portalLoginKeyboard(ctx.from.id)
+  );
+  await ctx.answerCbQuery();
+});
+
+bot.action('apply_role_resident', async (ctx) => {
+  await ctx.reply(
+    'Участь у клубі Santiago дає доступ до закритих подій, спільноти, спеціальних форматів і можливості бути ближче до внутрішнього життя простору.\n\nЯкщо хочете приєднатися, залиште заявку, і адмін її розгляне.',
+    clubApplicationKeyboard()
+  );
+  await ctx.answerCbQuery();
+});
+
+bot.action('submit_resident_application', async (ctx) => {
+  await finishResidentApplication(ctx);
+  await ctx.answerCbQuery();
+});
+
+bot.action(/preview_menu_(guest|resident|admin)/, async (ctx) => {
+  if (ctx.userRole !== 'admin') {
+    return ctx.answerCbQuery('Тільки для адміна.', { show_alert: true });
+  }
+
   const role = ctx.match[1];
+  await ctx.reply(previewMenuLabel(role), buildMainMenu(role, { includeAdminBack: role !== 'admin' }));
+  await ctx.answerCbQuery();
+});
+
+bot.action('apply_role_instructor', (ctx) => {
   ctx.session = { 
-    state: 'applying_name',
-    applyingRole: role 
+    state: 'mentor_application_materials',
+    applyingRole: 'instructor'
   };
-  ctx.reply('Давайте розпочнемо. Як до вас звертатися (Ім\'я та Прізвище)?');
+  ctx.reply('Напишіть одним повідомленням про себе як ментора: досвід, напрямки, що хочете проводити, посилання, портфоліо або біографію. Можна також надіслати файл/фото з описом у підписі.');
   ctx.answerCbQuery();
 });
 
 // ── INSTRUCTOR WIZARD BRANCH ──
-bot.action('instructor_menu', async (ctx) => {
+bot.action('create_something', async (ctx) => {
   if (ctx.userRole !== 'instructor' && ctx.userRole !== 'admin') {
     return ctx.answerCbQuery('У вас немає доступу до цього меню.', { show_alert: true });
   }
 
   ctx.reply(
-    'Панель Інструктора',
-    Markup.inlineKeyboard([
-      [Markup.button.callback('👤 Заявка на профіль', 'create_profile')],
-      [Markup.button.callback('🛒 Заявка на послугу', 'create_service')],
-      [Markup.button.callback('🏗️ Заявка на проєкт', 'create_project')],
-      [Markup.button.callback('📅 Заявка на подію', 'create_event')]
-    ])
+    'Що хочете створити?',
+    createSomethingKeyboard()
   );
   ctx.answerCbQuery();
 });
@@ -273,7 +360,11 @@ bot.action(/approve_role_(\d+)_(.+)/, async (ctx) => {
   await ctx.editMessageText(ctx.callbackQuery.message.text + `\n\n✅ **СХВАЛЕНО: ${role.toUpperCase()}**`);
   
   try {
-    await bot.telegram.sendMessage(userId, `✨ Вітаємо! Вашу заявку схвалено. Тепер ви — ${role === 'instructor' ? 'Інструктор' : 'Резидент Клубу'}. Ласкаво просимо!`);
+    await bot.telegram.sendMessage(
+      userId,
+      `✨ Вітаємо! Вашу заявку схвалено. Тепер ви — ${getRoleLabel(role)}. Відкрийте кабінет, щоб платформа оновила ваш доступ.`,
+      portalLoginKeyboard(userId)
+    );
   } catch (err) {
     console.log('[Bot] Could not notify user of approval');
   }
@@ -298,6 +389,7 @@ bot.action(/event_type_(public|club|internal)/, async (ctx) => {
   const { data: profile } = await supabase.from('profiles').select('id').eq('telegram_id', ctx.from.id).single();
 
   const { error } = await supabase.from('events').insert({
+    id: randomUUID(),
     title: ctx.session.eventTitle,
     description: ctx.session.eventDesc,
     start_time: ctx.session.eventStart,
@@ -316,37 +408,19 @@ bot.action(/event_type_(public|club|internal)/, async (ctx) => {
   ctx.answerCbQuery();
 });
 
+// Mentor application can be text, a file, a photo, or any Telegram message with a caption.
+bot.on('message', async (ctx, next) => {
+  if (!ctx.session || ctx.session.state !== 'mentor_application_materials') return next();
+
+  await finishMentorApplication(ctx);
+});
+
 // ── TEXT HANDLER (STATE MACHINE) ──
 bot.on('text', async (ctx, next) => {
   if (!ctx.session || !ctx.session.state) return next();
 
   const state = ctx.session.state;
   const text = ctx.message.text;
-
-  // Club Application States
-  if (state === 'applying_name') {
-    ctx.session.appName = text;
-    ctx.session.state = 'applying_occ';
-    ctx.reply('Чим ви займаєтесь (ваша професія чи проєкт)?');
-    return;
-  }
-
-  if (state === 'applying_occ') {
-    ctx.session.appOcc = text;
-    if (ctx.session.applyingRole === 'instructor') {
-      ctx.session.state = 'applying_bio';
-      ctx.reply('Ви обрали роль Інструктора. 🧘\n\nБудь ласка, розкажіть детальніше про вашу практику: якими методами ви володієте, який у вас досвід та що б ви хотіли проводити у Santiago?');
-    } else {
-      await finishApplication(ctx);
-    }
-    return;
-  }
-
-  if (state === 'applying_bio') {
-    ctx.session.appBio = text;
-    await finishApplication(ctx);
-    return;
-  }
 
   if (state === 'openmic_name') {
     ctx.session.openmicName = text;
@@ -431,47 +505,63 @@ bot.on('text', async (ctx, next) => {
   return next();
 });
 
-async function finishApplication(ctx) {
-  const role = ctx.session.applyingRole || 'resident';
+async function finishResidentApplication(ctx) {
   const adminId = ADMIN_CHAT_ID;
-
-  const { error: profileUpdateError } = await supabase
-    .from('profiles')
-    .update({
-      full_name: ctx.session.appName,
-      occupation: ctx.session.appOcc,
-      bio: ctx.session.appBio || null
-    })
-    .eq('telegram_id', ctx.from.id);
-
-  if (profileUpdateError) {
-    console.error('[Bot] Could not update application profile:', profileUpdateError);
-  }
-
-  const summary = `🚀 **Нова заявка на роль: ${role.toUpperCase()}**\n\n` +
-    `👤 **Ім'я:** ${ctx.session.appName}\n` +
-    `🆔 **User:** @${ctx.from.username || 'n/a'} (ID: ${ctx.from.id})\n` +
-    `💼 **Діяльність:** ${ctx.session.appOcc}\n` +
-    (ctx.session.appBio ? `📝 **Біо/Досвід:** ${ctx.session.appBio}\n` : '') +
-    `\n🔗 [Відкрити чат](tg://user?id=${ctx.from.id})`;
-
-  const adminMarkup = Markup.inlineKeyboard([
-    [
-      Markup.button.callback('✅ Схвалити', `approve_role_${ctx.from.id}_${role}`),
-      Markup.button.callback('❌ Відхилити', `reject_role_${ctx.from.id}`)
-    ]
-  ]);
+  const summary = `🤝 Нова заявка в клуб Santiago\n\n` +
+    `👤 Ім'я: ${getFullName(ctx.from)}\n` +
+    `🆔 User: @${ctx.from.username || 'n/a'} (ID: ${ctx.from.id})\n` +
+    `🔗 Чат: tg://user?id=${ctx.from.id}`;
 
   try {
-    await bot.telegram.sendMessage(adminId, summary, { parse_mode: 'Markdown', ...adminMarkup });
-    ctx.reply('Дякуємо! Ваша заявка надіслана адміністраторам. Ми зв\'яжемося з вами найближчим часом. ✨');
+    await bot.telegram.sendMessage(adminId, summary, roleApprovalKeyboard(ctx.from.id, 'resident'));
+    await ctx.reply('Дякуємо! Заявка в клуб надіслана адміну. Коли її схвалять, ви отримаєте кнопку входу в кабінет.');
   } catch (err) {
-    console.error('[Bot] Admin notification error:', err);
-    ctx.reply('Дякуємо! Ваша заявка збережена.');
+    console.error('[Bot] Resident application admin notification error:', err);
+    await ctx.reply('Заявку отримано, але зараз не вдалося відправити повідомлення адміну. Спробуйте ще раз або напишіть адміну напряму.');
   }
-  
-  ctx.session.state = null;
-  ctx.reply('Повернутися в головне меню:', mainMenu);
+
+  ctx.session = null;
+  await ctx.reply('Повернутися в головне меню:', buildMainMenu(ctx.userRole));
+}
+
+async function finishMentorApplication(ctx) {
+  const adminId = ADMIN_CHAT_ID;
+  const message = ctx.message || {};
+  const materialsText = message.text || message.caption || '';
+
+  if (materialsText) {
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        full_name: getFullName(ctx.from),
+        bio: materialsText
+      })
+      .eq('telegram_id', ctx.from.id);
+
+    if (error) {
+      console.error('[Bot] Could not update mentor application profile:', error);
+    }
+  }
+
+  const summary = `🧘 Нова заявка ментора\n\n` +
+    `👤 Ім'я: ${getFullName(ctx.from)}\n` +
+    `🆔 User: @${ctx.from.username || 'n/a'} (ID: ${ctx.from.id})\n` +
+    (materialsText ? `\n📝 Матеріали:\n${materialsText}\n` : '\n📝 Матеріали: файл/медіа переслано нижче.\n') +
+    `\n🔗 Чат: tg://user?id=${ctx.from.id}`;
+
+  try {
+    await bot.telegram.sendMessage(adminId, summary, roleApprovalKeyboard(ctx.from.id, 'instructor'));
+    if (!message.text) {
+      await ctx.forwardMessage(adminId);
+    }
+    await ctx.reply('Дякуємо! Заявка ментора надіслана адміну. Після схвалення ви отримаєте доступ до відповідного кабінету.');
+  } catch (err) {
+    console.error('[Bot] Mentor application admin notification error:', err);
+    await ctx.reply('Заявку отримано, але зараз не вдалося відправити повідомлення адміну. Спробуйте ще раз або напишіть адміну напряму.');
+  }
+
+  ctx.session = null;
+  await ctx.reply('Повернутися в головне меню:', buildMainMenu(ctx.userRole));
 }
 
 async function finishOpenMicApplication(ctx) {
@@ -492,7 +582,7 @@ async function finishOpenMicApplication(ctx) {
   }
 
   ctx.session = null;
-  ctx.reply('Повернутися в головне меню:', mainMenu);
+  ctx.reply('Повернутися в головне меню:', buildMainMenu(ctx.userRole));
 }
 
 async function finishContentSubmission(ctx) {
@@ -514,6 +604,7 @@ async function finishContentSubmission(ctx) {
 
   try {
     const { error } = await supabase.from('submissions').insert({
+      id: randomUUID(),
       kind,
       title: payload.title,
       description: payload.description,
@@ -544,7 +635,7 @@ async function finishContentSubmission(ctx) {
   }
 
   ctx.session = null;
-  await ctx.reply('Повернутися в головне меню:', mainMenu);
+  await ctx.reply('Повернутися в головне меню:', buildMainMenu(ctx.userRole));
 }
 
 bot.launch().then(() => console.log('[Bot] Launch successful'));

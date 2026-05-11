@@ -616,6 +616,15 @@ section {
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
 }
 
+.home-event-card {
+  color: inherit;
+  text-decoration: none;
+}
+
+.home-events-status {
+  opacity: 0.86;
+}
+
 .event-card:hover {
   transform: translateY(-6px) scale(1.02);
 }
@@ -2259,6 +2268,7 @@ body.grayscale-mode .preview-card {
   display: flex;
   align-items: center;
   gap: 6px;
+  margin-left: 68px;
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 0.72rem;
@@ -4156,5 +4166,716 @@ body.grayscale-mode .cal-theme-btn .toggle-thumb {
 
   .om-media__grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Visual polish pass: clearer day/night themes, lighter glass, smoother calendar */
+:root {
+  --surface-glass-day: rgba(255, 255, 255, 0.68);
+  --surface-glass-night: rgba(13, 18, 34, 0.72);
+  --surface-line-day: rgba(38, 54, 92, 0.16);
+  --surface-line-night: rgba(164, 220, 255, 0.18);
+  --text-day: #142033;
+  --text-day-muted: #5d6b86;
+  --text-night: #f4f7ff;
+  --text-night-muted: #b8c2d8;
+  --neon-cyan: #5fffe0;
+  --neon-blue: #72a7ff;
+  --neon-violet: #c59bff;
+  --neon-gold: #ffd166;
+}
+
+body {
+  animation: pageFadeIn 0.38s ease-out forwards;
+}
+
+@keyframes pageFadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+body:not(.calendar-page):not(.grayscale-mode) {
+  color: var(--text-day);
+  background:
+    radial-gradient(circle at 16% 12%, rgba(114, 167, 255, 0.22), transparent 34vw),
+    radial-gradient(circle at 88% 22%, rgba(197, 155, 255, 0.18), transparent 30vw),
+    linear-gradient(135deg, #f7fbff 0%, #e8f1ff 42%, #fbf4ff 72%, #fff7ed 100%);
+  background-attachment: fixed;
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .bg-clouds {
+  opacity: 0.45;
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .glass-card,
+body:not(.calendar-page):not(.grayscale-mode) .profile-detail-text,
+body:not(.calendar-page):not(.grayscale-mode) .spec-card,
+body:not(.calendar-page):not(.grayscale-mode) .offer-card,
+body:not(.calendar-page):not(.grayscale-mode) .video-card,
+body:not(.calendar-page):not(.grayscale-mode) .modal-container,
+body:not(.calendar-page):not(.grayscale-mode) .preview-card,
+body:not(.calendar-page):not(.grayscale-mode) .services-filters,
+body:not(.calendar-page):not(.grayscale-mode) .om-format-card,
+body:not(.calendar-page):not(.grayscale-mode) .om-media-card,
+body:not(.calendar-page):not(.grayscale-mode) .om-cta-card {
+  color: var(--text-day);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.48));
+  border-color: var(--surface-line-day);
+  box-shadow:
+    0 18px 48px rgba(39, 58, 105, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.74);
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .hero-content {
+  color: #f8fbff;
+  background: rgba(18, 22, 42, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .gallery-header h1,
+body:not(.calendar-page):not(.grayscale-mode) .profile-hero .profile-name,
+body:not(.calendar-page):not(.grayscale-mode) .offer-hero h1,
+body:not(.calendar-page):not(.grayscale-mode) section:not(.hero) h2,
+body:not(.calendar-page):not(.grayscale-mode) .om-hero__title,
+body:not(.calendar-page):not(.grayscale-mode) .om-section__title,
+body:not(.calendar-page):not(.grayscale-mode) .preview-card__title,
+body:not(.calendar-page):not(.grayscale-mode) .spec-card h3,
+body:not(.calendar-page):not(.grayscale-mode) .offer-card h3,
+body:not(.calendar-page):not(.grayscale-mode) .video-card-body h3,
+body:not(.calendar-page):not(.grayscale-mode) .om-format-card__body h3,
+body:not(.calendar-page):not(.grayscale-mode) .om-media-card h3 {
+  color: var(--text-day);
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  text-shadow: none;
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .gallery-header p,
+body:not(.calendar-page):not(.grayscale-mode) .preview-desc,
+body:not(.calendar-page):not(.grayscale-mode) .preview-price,
+body:not(.calendar-page):not(.grayscale-mode) .profile-title,
+body:not(.calendar-page):not(.grayscale-mode) .profile-bio,
+body:not(.calendar-page):not(.grayscale-mode) .profile-detail-text,
+body:not(.calendar-page):not(.grayscale-mode) .offer-tagline,
+body:not(.calendar-page):not(.grayscale-mode) .offer-card p,
+body:not(.calendar-page):not(.grayscale-mode) .offer-card li,
+body:not(.calendar-page):not(.grayscale-mode) .om-hero__subtitle,
+body:not(.calendar-page):not(.grayscale-mode) .om-hero__desc,
+body:not(.calendar-page):not(.grayscale-mode) .om-section__desc,
+body:not(.calendar-page):not(.grayscale-mode) .om-format-card__body p,
+body:not(.calendar-page):not(.grayscale-mode) .om-media-card p,
+body:not(.calendar-page):not(.grayscale-mode) .om-cta-card__content p {
+  color: var(--text-day-muted);
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .preview-card__cta,
+body:not(.calendar-page):not(.grayscale-mode) .preview-card:hover .preview-card__cta,
+body:not(.calendar-page):not(.grayscale-mode) .profile-actions .cta-card--primary,
+body:not(.calendar-page):not(.grayscale-mode) .profile-languages,
+body:not(.calendar-page):not(.grayscale-mode) .om-format-card__duration {
+  color: #057c69;
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .preview-badge {
+  color: #057c69;
+  background: rgba(95, 255, 224, 0.18);
+  border-color: rgba(5, 124, 105, 0.18);
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .preview-format,
+body:not(.calendar-page):not(.grayscale-mode) .om-tag {
+  color: #6d55b8;
+  background: rgba(197, 155, 255, 0.2);
+  border-color: rgba(109, 85, 184, 0.18);
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .om-hero__title {
+  color: #142033 !important;
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .om-hero__subtitle {
+  color: #384761 !important;
+  font-weight: 700;
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .om-hero__desc,
+body:not(.calendar-page):not(.grayscale-mode) .om-section__label {
+  color: #5d6b86 !important;
+}
+
+body.grayscale-mode {
+  color: var(--text-night);
+  background:
+    radial-gradient(circle at 18% 10%, rgba(95, 255, 224, 0.08), transparent 30vw),
+    radial-gradient(circle at 86% 18%, rgba(197, 155, 255, 0.08), transparent 28vw),
+    linear-gradient(135deg, #050812 0%, #081426 45%, #0d0a1a 100%);
+}
+
+body.grayscale-mode .glass-card,
+body.grayscale-mode .preview-card,
+body.grayscale-mode .spec-card,
+body.grayscale-mode .offer-card,
+body.grayscale-mode .video-card,
+body.grayscale-mode .modal-container,
+body.grayscale-mode .services-filters,
+body.grayscale-mode .om-format-card,
+body.grayscale-mode .om-media-card,
+body.grayscale-mode .om-cta-card {
+  color: var(--text-night);
+  background: linear-gradient(160deg, rgba(17, 24, 45, 0.78), rgba(9, 13, 28, 0.58)) !important;
+  border-color: var(--surface-line-night) !important;
+  box-shadow:
+    0 20px 52px rgba(0, 0, 0, 0.42),
+    0 0 28px rgba(95, 255, 224, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09) !important;
+}
+
+.btn-primary,
+.btn-primary-yellow,
+.events-action,
+.guest-cta__btn,
+.club-gate-btn,
+.event-detail__book-btn,
+.om-btn--primary,
+.profile-actions .cta-card,
+.btn-modal-trigger,
+.services-empty__reset {
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(95, 255, 224, 0.18), rgba(114, 167, 255, 0.14));
+  border: 1px solid rgba(95, 255, 224, 0.36);
+  color: var(--text-night);
+  box-shadow:
+    0 10px 26px rgba(20, 30, 60, 0.18),
+    0 0 18px rgba(95, 255, 224, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(14px) saturate(1.25);
+  -webkit-backdrop-filter: blur(14px) saturate(1.25);
+}
+
+.btn-primary:hover,
+.btn-primary-yellow:hover,
+.events-action:hover,
+.guest-cta__btn:hover,
+.club-gate-btn:hover,
+.event-detail__book-btn:hover,
+.om-btn--primary:hover,
+.profile-actions .cta-card:hover,
+.btn-modal-trigger:hover,
+.services-empty__reset:hover {
+  background: linear-gradient(145deg, rgba(95, 255, 224, 0.28), rgba(197, 155, 255, 0.22));
+  border-color: rgba(95, 255, 224, 0.62);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow:
+    0 14px 34px rgba(20, 30, 60, 0.24),
+    0 0 26px rgba(95, 255, 224, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.26);
+}
+
+body:not(.grayscale-mode) .btn-primary,
+body:not(.grayscale-mode) .btn-primary-yellow,
+body:not(.grayscale-mode) .events-action,
+body:not(.grayscale-mode) .guest-cta__btn,
+body:not(.grayscale-mode) .club-gate-btn,
+body:not(.grayscale-mode) .event-detail__book-btn,
+body:not(.grayscale-mode) .om-btn--primary,
+body:not(.grayscale-mode) .profile-actions .cta-card,
+body:not(.grayscale-mode) .btn-modal-trigger,
+body:not(.grayscale-mode) .services-empty__reset {
+  color: #0e2236;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(95, 255, 224, 0.22));
+  border-color: rgba(42, 122, 170, 0.32);
+  font-weight: 700;
+}
+
+.theme-toggle,
+.home-icon,
+.menu-trigger,
+.tg-login-btn,
+.lang-switcher,
+.cabinet-btn,
+.quick-menu a {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.055));
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+body:not(.grayscale-mode) .theme-toggle,
+body:not(.grayscale-mode) .home-icon,
+body:not(.grayscale-mode) .menu-trigger,
+body:not(.grayscale-mode) .tg-login-btn,
+body:not(.grayscale-mode) .lang-switcher,
+body:not(.grayscale-mode) .cabinet-btn,
+body:not(.grayscale-mode) .quick-menu a {
+  color: #13233a;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.38));
+  border-color: rgba(30, 50, 88, 0.16);
+}
+
+body:not(.grayscale-mode) .lang-btn {
+  color: #4f5e76;
+}
+
+body:not(.grayscale-mode) .lang-btn:hover,
+body:not(.grayscale-mode) .lang-btn.active {
+  color: #142033;
+  background: rgba(255, 209, 102, 0.46);
+}
+
+body:not(.grayscale-mode) .quick-menu.open {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+body.grayscale-mode .quick-menu.open {
+  background: linear-gradient(180deg, rgba(8, 12, 24, 0.34), rgba(8, 12, 24, 0.04));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.theme-toggle:focus-visible,
+.home-icon:focus-visible,
+.menu-trigger:focus-visible,
+.tg-login-btn:focus-visible,
+.lang-btn:focus-visible,
+.quick-menu a:focus-visible,
+.btn-primary:focus-visible,
+.filter-tab:focus-visible,
+.cal-ctrl-btn:focus-visible,
+.cal-day:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 3px;
+}
+
+.hero {
+  background:
+    radial-gradient(circle at 50% 90%, rgba(255, 210, 90, 0.86), transparent 24%),
+    linear-gradient(180deg, #080b20 0%, #1d1550 25%, #76306b 48%, #e17642 70%, #fff1a6 100%);
+}
+
+.hero .stars {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 1.2px, transparent 1.8px),
+    radial-gradient(circle, rgba(255, 231, 143, 0.85) 0 1.4px, transparent 2.1px),
+    radial-gradient(circle, rgba(153, 212, 255, 0.8) 0 1px, transparent 1.7px);
+  background-size: 180px 180px, 260px 260px, 340px 340px;
+  background-position: 24px 18px, 90px 70px, 140px 40px;
+}
+
+body.grayscale-mode .hero .stars {
+  opacity: 0.68;
+  animation: starTwinkle 4.8s ease-in-out infinite alternate;
+}
+
+body.grayscale-mode .hero-content {
+  background: rgba(10, 13, 25, 0.72) !important;
+  border-color: rgba(95, 255, 224, 0.2) !important;
+}
+
+body.grayscale-mode .manifest {
+  color: var(--text-night-muted);
+  opacity: 1;
+}
+
+section {
+  animation-duration: 0.52s;
+}
+
+/* Calendar readability and smoother layout */
+body.calendar-page {
+  --bg-void: #070b16;
+  --fg: var(--text-night);
+  --fg-muted: var(--text-night-muted);
+  color: var(--fg);
+}
+
+body.calendar-page:not(.grayscale-mode) {
+  --bg-void: #f4f8ff;
+  --fg: var(--text-day);
+  --fg-muted: var(--text-day-muted);
+  color: var(--fg);
+}
+
+body.calendar-page:not(.grayscale-mode) .cal-bg {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(114, 167, 255, 0.24), transparent 34vw),
+    radial-gradient(circle at 86% 18%, rgba(95, 255, 224, 0.16), transparent 28vw),
+    linear-gradient(135deg, #f8fbff 0%, #eef6ff 50%, #f9f3ff 100%) !important;
+}
+
+body.calendar-page.grayscale-mode .cal-bg {
+  background:
+    radial-gradient(circle at 18% 16%, rgba(114, 167, 255, 0.14), transparent 34vw),
+    radial-gradient(circle at 86% 20%, rgba(95, 255, 224, 0.11), transparent 30vw),
+    linear-gradient(135deg, #050812 0%, #071327 52%, #0d0a1a 100%) !important;
+}
+
+body.calendar-page:not(.grayscale-mode) .cal-bg__noise {
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(244, 248, 255, 0.84) 78%);
+}
+
+body.calendar-page #cal-main {
+  padding-top: 82px;
+  padding-bottom: 52px;
+}
+
+body.calendar-page .cal-header {
+  margin-bottom: 18px;
+}
+
+body.calendar-page .cal-header h1 {
+  color: var(--fg);
+  text-shadow: none;
+}
+
+body.calendar-page .cal-subtitle,
+body.calendar-page .upcoming-empty p,
+body.calendar-page .events-empty p,
+body.calendar-page .event-card__time,
+body.calendar-page .event-card__desc,
+body.calendar-page .upcoming-card__date,
+body.calendar-page .upcoming-card__time,
+body.calendar-page .guest-cta__content p {
+  color: var(--fg-muted) !important;
+  opacity: 1;
+}
+
+body.calendar-page .upcoming-strip {
+  margin-bottom: 18px;
+  padding: 0;
+}
+
+body.calendar-page .upcoming-strip__title,
+body.calendar-page .always-available__title {
+  margin: 0;
+  color: var(--fg);
+  background: none;
+  -webkit-text-fill-color: currentColor;
+}
+
+body.calendar-page .upcoming-empty {
+  min-height: 30px;
+  padding: 4px 16px 6px;
+}
+
+body.calendar-page .upcoming-strip__track {
+  padding: 2px 4px 8px;
+}
+
+body.calendar-page .cal-layout {
+  gap: 22px;
+}
+
+body.calendar-page .cal-card.glass-card,
+body.calendar-page .cal-events-panel.glass-card,
+body.calendar-page .guest-cta.glass-card,
+body.calendar-page .upcoming-card,
+body.calendar-page .popup-container {
+  transform: none;
+  background: linear-gradient(160deg, rgba(15, 20, 36, 0.78), rgba(9, 13, 28, 0.62)) !important;
+  border-color: rgba(164, 220, 255, 0.18) !important;
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.34),
+    0 0 26px rgba(95, 255, 224, 0.055),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+body.calendar-page:not(.grayscale-mode) .cal-card.glass-card,
+body.calendar-page:not(.grayscale-mode) .cal-events-panel.glass-card,
+body.calendar-page:not(.grayscale-mode) .guest-cta.glass-card,
+body.calendar-page:not(.grayscale-mode) .upcoming-card,
+body.calendar-page:not(.grayscale-mode) .popup-container {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.52)) !important;
+  border-color: rgba(39, 58, 105, 0.16) !important;
+  box-shadow:
+    0 18px 48px rgba(39, 58, 105, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+body.calendar-page .cal-month-label,
+body.calendar-page .events-panel-title,
+body.calendar-page .event-card__title,
+body.calendar-page .upcoming-card__title,
+body.calendar-page .guest-cta__content h3 {
+  color: var(--fg) !important;
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  text-shadow: none;
+}
+
+body.calendar-page .cal-weekdays span {
+  color: var(--fg-muted) !important;
+}
+
+body.calendar-page .cal-day {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+body.calendar-page:not(.grayscale-mode) .cal-day {
+  background: rgba(255, 255, 255, 0.58);
+  border-color: rgba(39, 58, 105, 0.08);
+}
+
+body.calendar-page .cal-day__num {
+  color: var(--fg) !important;
+  text-shadow: none;
+}
+
+body.calendar-page .cal-day:not(.cal-day--empty):hover {
+  transform: translateY(-2px);
+  background: rgba(95, 255, 224, 0.11) !important;
+  border-color: rgba(95, 255, 224, 0.34) !important;
+}
+
+body.calendar-page .cal-day--selected {
+  transform: none;
+  background: linear-gradient(145deg, rgba(95, 255, 224, 0.22), rgba(114, 167, 255, 0.14)) !important;
+  border-color: rgba(95, 255, 224, 0.46) !important;
+}
+
+body.calendar-page:not(.grayscale-mode) .cal-day--selected {
+  background: linear-gradient(145deg, rgba(95, 255, 224, 0.3), rgba(114, 167, 255, 0.2)) !important;
+}
+
+body.calendar-page .cal-day--today {
+  animation: none;
+}
+
+body.calendar-page:not(.grayscale-mode) #cal-nav {
+  background: rgba(255, 255, 255, 0.64) !important;
+  border-bottom-color: rgba(39, 58, 105, 0.12) !important;
+  box-shadow: 0 8px 28px rgba(39, 58, 105, 0.08);
+}
+
+body.calendar-page.grayscale-mode #cal-nav {
+  background: rgba(7, 10, 20, 0.7) !important;
+}
+
+body.calendar-page #cal-nav .user-badge {
+  margin-left: 68px;
+}
+
+/* Homepage content cards: larger, clearer blocks */
+body.home-page section:not(.hero) {
+  padding-top: 28px;
+  padding-bottom: 36px;
+}
+
+body.home-page section:not(.hero) h2 {
+  font-size: clamp(2rem, 4.8vw, 2.8rem);
+  margin: 3rem 0 1.7rem;
+  line-height: 1.05;
+}
+
+body.home-page .grid {
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 1.35rem;
+  max-width: 1280px;
+}
+
+body.home-page .grid .glass-card,
+body.home-page .carousel .event-card {
+  min-height: 178px;
+  padding: clamp(26px, 3vw, 36px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+body.home-page .grid .glass-card h3,
+body.home-page .carousel .event-card h3 {
+  font-size: clamp(1.45rem, 2.4vw, 1.95rem);
+  line-height: 1.12;
+  margin: 0 0 0.72rem;
+}
+
+body.home-page .grid .glass-card p,
+body.home-page .carousel .event-card p {
+  font-size: clamp(1.02rem, 1.45vw, 1.18rem);
+  line-height: 1.65;
+  margin: 0;
+}
+
+body.home-page .carousel {
+  gap: 1.45rem;
+  padding-left: max(1.25rem, calc((100vw - 1280px) / 2 + 1.25rem));
+}
+
+body.home-page .carousel .event-card {
+  min-width: min(360px, calc(100vw - 48px));
+}
+
+@media (max-width: 600px) {
+  body.home-page section:not(.hero) {
+    padding-top: 18px;
+    padding-bottom: 24px;
+  }
+
+  body.home-page section:not(.hero) h2 {
+    font-size: 1.72rem;
+    margin: 2rem 0 1.15rem;
+  }
+
+  body.home-page .grid {
+    grid-template-columns: 1fr;
+    gap: 0.95rem;
+    padding: 0 0.9rem;
+  }
+
+  body.home-page .grid .glass-card,
+  body.home-page .carousel .event-card {
+    min-height: 150px;
+    padding: 24px;
+  }
+
+  body.home-page .grid .glass-card h3,
+  body.home-page .carousel .event-card h3 {
+    font-size: 1.42rem;
+  }
+
+  body.home-page .grid .glass-card p,
+  body.home-page .carousel .event-card p {
+    font-size: 1rem;
+  }
+}
+
+body.calendar-page .filter-tab,
+body.calendar-page .cal-ctrl-btn {
+  color: var(--fg-muted);
+}
+
+body.calendar-page .filter-tab.active {
+  color: var(--neon-cyan);
+  background: rgba(95, 255, 224, 0.14);
+  border-color: rgba(95, 255, 224, 0.42);
+}
+
+body.calendar-page:not(.grayscale-mode) .filter-tab.active {
+  color: #057c69;
+}
+
+body.calendar-page:not(.grayscale-mode) .comm-hero h1,
+body.calendar-page:not(.grayscale-mode) .comm-section .gallery-header h2,
+body.calendar-page:not(.grayscale-mode) .audience-card h2 {
+  color: var(--text-day) !important;
+  text-shadow: none !important;
+}
+
+body.calendar-page:not(.grayscale-mode) .comm-hero p,
+body.calendar-page:not(.grayscale-mode) .comm-section .gallery-header p,
+body.calendar-page:not(.grayscale-mode) .comm-card p,
+body.calendar-page:not(.grayscale-mode) .audience-card p,
+body.calendar-page:not(.grayscale-mode) .ecosystem-box p {
+  color: var(--text-day-muted) !important;
+}
+
+body.calendar-page:not(.grayscale-mode) .value-tag,
+body.calendar-page:not(.grayscale-mode) .comm-card,
+body.calendar-page:not(.grayscale-mode) .audience-card,
+body.calendar-page:not(.grayscale-mode) .ecosystem-box {
+  color: var(--text-day);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.48)) !important;
+  border-color: rgba(39, 58, 105, 0.14) !important;
+  box-shadow: 0 18px 48px rgba(39, 58, 105, 0.11);
+}
+
+body.calendar-page:not(.grayscale-mode) .comm-card h3 {
+  color: #9a6a00 !important;
+}
+
+body:not(.grayscale-mode) .product-card {
+  color: var(--text-day);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.72), rgba(235, 247, 255, 0.56)) !important;
+  border-color: rgba(5, 124, 105, 0.16) !important;
+  box-shadow: 0 16px 40px rgba(39, 58, 105, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+}
+
+body:not(.grayscale-mode) .product-card h3 {
+  color: var(--text-day) !important;
+}
+
+body:not(.grayscale-mode) .product-card p {
+  color: var(--text-day-muted) !important;
+}
+
+body:not(.grayscale-mode) .product-price {
+  color: #b77900 !important;
+}
+
+body.calendar-page:not(.grayscale-mode) .cabinet-card h3 {
+  color: #9a6a00 !important;
+}
+
+body.calendar-page .cal-events-panel .event-card {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.calendar-page:not(.grayscale-mode) .cal-events-panel .event-card {
+  background: rgba(255, 255, 255, 0.56);
+  border-color: rgba(39, 58, 105, 0.1);
+}
+
+@media (max-width: 900px) {
+  body.calendar-page #cal-main {
+    padding-top: 78px;
+  }
+
+  body.calendar-page .cal-layout {
+    gap: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  body.calendar-page #cal-main {
+    padding: 70px 16px 40px;
+  }
+
+  body.calendar-page .cal-header {
+    margin-bottom: 16px;
+  }
+
+  body.calendar-page .cal-header h1 {
+    font-size: 1.72rem;
+  }
+
+  body.calendar-page .cal-card {
+    padding: 16px 14px;
+  }
+
+  body.calendar-page .cal-controls {
+    margin-bottom: 16px;
+  }
+
+  body.calendar-page .cal-month-label {
+    font-size: 1.2rem;
+  }
+
+  body.calendar-page .location-filter {
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  body.calendar-page .filter-tab {
+    padding: 7px 13px;
+  }
+
+  body.calendar-page .cal-day {
+    border-radius: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
   }
 }

@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="home-page">
   <!-- Global Background Clouds for all sections -->
   <div class="bg-clouds">
     <div class="cloud-global c1"></div>
@@ -118,26 +118,10 @@
   <!-- Upcoming Events Carousel -->
   <section class="events" id="events">
     <h2 data-i18n="events.title">Ближайшие события</h2>
-    <div class="carousel">
-      <div class="event-card glass-card">
-        <h3 data-i18n="events.1.title">Социальная игра "Эхо"</h3>
-        <p data-i18n="events.1.date">12 мая 2026</p>
-      </div>
-      <div class="event-card glass-card">
-        <h3 data-i18n="events.2.title">Лекция "Инновации в медитации"</h3>
-        <p data-i18n="events.2.date">20 мая 2026</p>
-      </div>
-      <div class="event-card glass-card">
-        <h3 data-i18n="events.3.title">Нетворкинг вечер</h3>
-        <p data-i18n="events.3.date">28 мая 2026</p>
-      </div>
-      <div class="event-card glass-card">
-        <h3>Мастер-класс по йоге</h3>
-        <p>5 июня 2026</p>
-      </div>
-      <div class="event-card glass-card">
-        <h3>Открытый микрофон</h3>
-        <p>10 июня 2026</p>
+    <div class="carousel" id="home-events-track" aria-live="polite">
+      <div class="event-card glass-card home-events-status">
+        <h3 data-i18n="calNoUpcoming">No upcoming events this month</h3>
+        <p>...</p>
       </div>
     </div>
   </section>
@@ -233,9 +217,14 @@
     </div>
   </nav>
 
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- rrule library for recurrence expansion -->
+  <script src="https://cdn.jsdelivr.net/npm/rrule@2.7.2/dist/es5/rrule.min.js"></script>
   <script src="translations.js?v=7"></script>
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=6"></script>
+  <script src="home-events.js?v=1"></script>
   <script>
     const themeToggles = document.querySelectorAll('.theme-toggle-btn');
     const body = document.body;
@@ -260,7 +249,5 @@
   <footer class="footer">
     <p data-i18n="footer.text">© 2026 Сантьяго – Цифровой Дзен. Все права защищены.</p>
   </footer>
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body>
 </html>
