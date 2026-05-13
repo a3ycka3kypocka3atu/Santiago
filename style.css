@@ -170,7 +170,7 @@ body.grayscale-mode .hero::after {
   transition: bottom 2.5s ease-in-out, opacity 2s ease-in-out;
 }
 
-/* Stars overlay – hidden by default, shown in dark mode */
+/* Stars overlay - faint at the top in day mode, stronger in night mode */
 .hero .stars {
   position: absolute;
   top: 0;
@@ -4517,11 +4517,20 @@ body.grayscale-mode .quick-menu.open {
   background-position: 22px 18px, 86px 58px, 150px 34px, 48px 120px;
   filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.34));
   z-index: 2;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.5) 28%, transparent 58%);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.5) 28%, transparent 58%);
+}
+
+body:not(.grayscale-mode) .hero .stars {
+  opacity: 0.16;
+  animation: none;
 }
 
 body.grayscale-mode .hero .stars {
   opacity: 0.86;
   animation: starFlash 1.8s ease-out forwards, starTwinkle 4.8s 1.8s ease-in-out infinite alternate;
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 .hero .moon {
