@@ -4515,14 +4515,14 @@ body.grayscale-mode .quick-menu.open {
     radial-gradient(circle, rgba(255, 255, 255, 0.76) 0 0.9px, transparent 1.8px);
   background-size: 130px 130px, 190px 190px, 270px 270px, 360px 360px;
   background-position: 22px 18px, 86px 58px, 150px 34px, 48px 120px;
-  filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.34));
+  filter: drop-shadow(0 0 9px rgba(255, 255, 255, 0.46));
   z-index: 2;
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.5) 28%, transparent 58%);
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.5) 28%, transparent 58%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.82) 34%, rgba(0, 0, 0, 0.22) 62%, transparent 76%);
+  mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.82) 34%, rgba(0, 0, 0, 0.22) 62%, transparent 76%);
 }
 
 body:not(.grayscale-mode) .hero .stars {
-  opacity: 0.16;
+  opacity: 0.34;
   animation: none;
 }
 
