@@ -12,6 +12,7 @@
 }
 
 .favorite-toggle,
+.reminder-toggle,
 .favorite-item__open,
 .favorite-item__remove,
 .favorite-login-link {
@@ -34,6 +35,7 @@
 }
 
 .favorite-toggle:hover,
+.reminder-toggle:hover,
 .favorite-item__open:hover,
 .favorite-item__remove:hover,
 .favorite-login-link:hover {
@@ -43,6 +45,7 @@
 }
 
 .favorite-toggle__icon,
+.reminder-toggle__icon,
 .favorite-item__remove svg {
   width: 15px;
   height: 15px;
@@ -59,7 +62,18 @@
   fill: currentColor;
 }
 
+.reminder-toggle.is-active {
+  border-color: rgba(95, 255, 224, 0.62);
+  background: rgba(95, 255, 224, 0.16);
+  color: #6ee7d8;
+}
+
+.reminder-toggle.is-active .reminder-toggle__icon {
+  fill: currentColor;
+}
+
 .favorite-toggle.is-busy,
+.reminder-toggle.is-busy,
 .favorite-item__remove:disabled {
   opacity: 0.65;
   cursor: wait;
@@ -81,7 +95,8 @@
 }
 
 .event-detail__actions .event-detail__book-btn,
-.event-detail__actions .event-detail__favorite-btn {
+.event-detail__actions .event-detail__favorite-btn,
+.event-detail__actions .event-detail__reminder-btn {
   margin-top: 0;
 }
 
@@ -90,6 +105,12 @@
 }
 
 .event-detail__favorite-btn {
+  flex: 0 0 auto;
+  min-height: 48px;
+  padding: 0 16px;
+}
+
+.event-detail__reminder-btn {
   flex: 0 0 auto;
   min-height: 48px;
   padding: 0 16px;
@@ -122,6 +143,47 @@
 .cabinet-favorites__list {
   display: grid;
   gap: 22px;
+}
+
+.favorites-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.favorites-toolbar__filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.favorites-toolbar__filter,
+.favorites-toolbar__sort {
+  min-height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--fg);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.favorites-toolbar__filter {
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+.favorites-toolbar__filter.is-active {
+  border-color: rgba(255, 204, 0, 0.5);
+  background: rgba(255, 204, 0, 0.15);
+  color: var(--glow-yellow);
+}
+
+.favorites-toolbar__sort {
+  padding: 0 34px 0 12px;
 }
 
 .favorites-group {
@@ -205,6 +267,11 @@
   border-color: rgba(255, 120, 120, 0.28);
 }
 
+.favorite-item__reminder {
+  color: #c8fff7;
+  border-color: rgba(95, 255, 224, 0.3);
+}
+
 .favorites-empty {
   display: grid;
   justify-items: center;
@@ -217,15 +284,30 @@
 }
 
 body:not(.grayscale-mode) .favorite-toggle,
+body:not(.grayscale-mode) .reminder-toggle,
 body:not(.grayscale-mode) .favorite-item__open,
 body:not(.grayscale-mode) .favorite-item__remove,
-body:not(.grayscale-mode) .favorite-login-link {
+body:not(.grayscale-mode) .favorite-login-link,
+body:not(.grayscale-mode) .favorites-toolbar__filter,
+body:not(.grayscale-mode) .favorites-toolbar__sort {
   color: #142033;
   background: rgba(255, 255, 255, 0.66);
   border-color: rgba(30, 50, 88, 0.18);
 }
 
 body:not(.grayscale-mode) .favorite-toggle.is-active {
+  color: #8a5f00;
+  background: rgba(255, 209, 102, 0.42);
+  border-color: rgba(138, 95, 0, 0.22);
+}
+
+body:not(.grayscale-mode) .reminder-toggle.is-active {
+  color: #12655c;
+  background: rgba(95, 255, 224, 0.28);
+  border-color: rgba(18, 101, 92, 0.18);
+}
+
+body:not(.grayscale-mode) .favorites-toolbar__filter.is-active {
   color: #8a5f00;
   background: rgba(255, 209, 102, 0.42);
   border-color: rgba(138, 95, 0, 0.22);
@@ -258,18 +340,23 @@ body:not(.grayscale-mode) .favorite-item--event .favorite-item__badge {
   }
 
   .favorite-toggle,
+  .reminder-toggle,
   .favorite-item__open,
-  .favorite-item__remove {
+  .favorite-item__remove,
+  .favorites-toolbar__sort {
     width: 100%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .favorite-toggle,
+  .reminder-toggle,
   .favorite-item,
   .favorite-item__open,
   .favorite-item__remove,
-  .favorite-login-link {
+  .favorite-login-link,
+  .favorites-toolbar__filter,
+  .favorites-toolbar__sort {
     transition-duration: 0.001ms !important;
   }
 }

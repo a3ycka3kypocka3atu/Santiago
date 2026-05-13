@@ -10,6 +10,8 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID || '5756186570';
 const PUBLIC_SITE_URL = process.env.PUBLIC_SITE_URL || 'https://brown-delta-28.vercel.app';
+const NOTIFICATION_POLL_MS = Number(process.env.NOTIFICATION_POLL_MS || 60000);
+const NOTIFICATION_TIME_ZONE = process.env.NOTIFICATION_TIME_ZONE || 'Europe/Prague';
 
 const ADMINS = ['andrisav', 'waysantiago24'];
 const INSTRUCTORS = ['kateryna_mihailovna'];
@@ -33,6 +35,48 @@ function buildPortalUrl(userId, page = 'index.html') {
   const url = new URL(page, base);
   url.searchParams.set('userId', userId);
   return url.toString();
+}
+
+function buildPublicUrl(page = 'calendar.html') {
+  const base = PUBLIC_SITE_URL.endsWith('/') ? PUBLIC_SITE_URL : `${PUBLIC_SITE_URL}/`;
+  return new URL(page || 'calendar.html', base).toString();
+}
+
+function formatEventDateTime(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'час уточнюється';
+
+  return new Intl.DateTimeFormat('uk-UA', {
+    timeZone: NOTIFICATION_TIME_ZONE,
+    day: '2-digit',
+    month: 'long',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date);
+}
+
+function buildReminderText(notification) {
+  const payload = notification.payload || {};
+  const title = payload.title || 'подія Santiago';
+  const when = formatEventDateTime(payload.start_time);
+
+  if (notification.kind === 'event_reminder_24h') {
+    return `Нагадування Santiago\n\nЗавтра подія: ${title}\nПочаток: ${when}`;
+  }
+
+  if (notification.kind === 'event_reminder_3h') {
+    return `Нагадування Santiago\n\nСьогодні подія: ${title}\nПочаток: ${when}`;
+  }
+
+  return `Оновлення Santiago\n\n${title}\nПочаток: ${when}`;
+}
+
+function reminderKeyboard(notification) {
+  const payload = notification.payload || {};
+  const page = payload.url || 'calendar.html';
+  return Markup.inlineKeyboard([
+    [Markup.button.url('Відкрити календар', buildPublicUrl(page))]
+  ]);
 }
 
 function portalLoginKeyboard(userId, label = '🔓 Відкрити кабінет') {
@@ -638,7 +682,119 @@ async function finishContentSubmission(ctx) {
   await ctx.reply('Повернутися в головне меню:', buildMainMenu(ctx.userRole));
 }
 
-bot.launch().then(() => console.log('[Bot] Launch successful'));
+let notificationWorkerBusy = false;
+
+async function markNotification(id, patch) {
+  const { error } = await supabase
+    .from('subscription_notifications')
+    .update({
+      ...patch,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', id);
+
+  if (error) console.error('[Bot] Notification status update error:', error);
+}
+
+async function processDueNotification(notification) {
+  const { data: subscription, error: subscriptionError } = await supabase
+    .from('subscriptions')
+    .select('status, preferences')
+    .eq('id', notification.subscription_id)
+    .single();
+
+  if (subscriptionError || !subscription || subscription.status !== 'active') {
+    await markNotification(notification.id, { status: 'cancelled' });
+    return;
+  }
+
+  if (notification.kind.startsWith('event_reminder') &&
+      subscription.preferences &&
+      subscription.preferences.event_reminders === false) {
+    await markNotification(notification.id, { status: 'cancelled' });
+    return;
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('telegram_id, full_name')
+    .eq('id', notification.user_id)
+    .single();
+
+  if (profileError || !profile || !profile.telegram_id) {
+    await markNotification(notification.id, {
+      status: 'failed',
+      failed_at: new Date().toISOString(),
+      error: profileError ? profileError.message : 'profile_telegram_id_missing'
+    });
+    return;
+  }
+
+  try {
+    await bot.telegram.sendMessage(
+      profile.telegram_id,
+      buildReminderText(notification),
+      reminderKeyboard(notification)
+    );
+
+    await markNotification(notification.id, {
+      status: 'sent',
+      sent_at: new Date().toISOString(),
+      error: null
+    });
+  } catch (err) {
+    console.error('[Bot] Reminder send error:', err);
+    await markNotification(notification.id, {
+      status: 'failed',
+      failed_at: new Date().toISOString(),
+      error: err.message || 'telegram_send_failed'
+    });
+  }
+}
+
+async function processDueNotifications() {
+  if (notificationWorkerBusy) return;
+  notificationWorkerBusy = true;
+
+  try {
+    const { data: notifications, error } = await supabase
+      .from('subscription_notifications')
+      .select('id, subscription_id, user_id, target_type, target_key, kind, send_at, payload')
+      .eq('status', 'pending')
+      .lte('send_at', new Date().toISOString())
+      .order('send_at', { ascending: true })
+      .limit(25);
+
+    if (error) {
+      console.error('[Bot] Notification fetch error:', error);
+      return;
+    }
+
+    for (const notification of notifications || []) {
+      await processDueNotification(notification);
+    }
+  } catch (err) {
+    console.error('[Bot] Notification worker error:', err);
+  } finally {
+    notificationWorkerBusy = false;
+  }
+}
+
+function startNotificationWorker() {
+  if (!Number.isFinite(NOTIFICATION_POLL_MS) || NOTIFICATION_POLL_MS <= 0) {
+    console.log('[Bot] Notification worker disabled');
+    return;
+  }
+
+  console.log(`[Bot] Notification worker polling every ${NOTIFICATION_POLL_MS}ms`);
+  setTimeout(processDueNotifications, 5000);
+  setInterval(processDueNotifications, NOTIFICATION_POLL_MS);
+}
+
+bot.launch().then(() => {
+  console.log('[Bot] Launch successful');
+  startNotificationWorker();
+});
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));

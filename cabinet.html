@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="favorites.css?v=1" />
+  <link rel="stylesheet" href="favorites.css?v=2" />
   <style>
     .cabinet-page {
       padding: 100px 20px 60px;
@@ -95,6 +95,116 @@
       background: var(--glow-yellow);
       color: #000;
       box-shadow: 0 0 20px var(--glow-yellow);
+    }
+    .cabinet-guide {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin: 30px auto 0;
+      padding: 18px 20px;
+      max-width: 920px;
+      border: 1px solid rgba(95, 255, 224, 0.22);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(16px);
+      text-align: left;
+    }
+    .cabinet-guide__text {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+    }
+    .cabinet-guide__text strong {
+      color: var(--fg);
+      font-size: 1rem;
+    }
+    .cabinet-guide__text span {
+      color: var(--fg-muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .cabinet-guide__button {
+      flex: 0 0 auto;
+      min-height: 40px;
+      padding: 0 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 204, 0, 0.42);
+      background: rgba(255, 204, 0, 0.13);
+      color: var(--glow-yellow);
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .cabinet-info-popup {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: none;
+      place-items: center;
+      padding: 22px;
+      background: rgba(4, 8, 18, 0.72);
+      backdrop-filter: blur(14px);
+    }
+    .cabinet-info-popup.open {
+      display: grid;
+    }
+    .cabinet-info-popup__panel {
+      width: min(680px, 100%);
+      max-height: min(760px, 88vh);
+      overflow: auto;
+      padding: 26px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(13, 20, 36, 0.96);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+    }
+    .cabinet-info-popup__top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    .cabinet-info-popup__top h2 {
+      margin: 0;
+      color: var(--glow-yellow);
+      font-size: 1.35rem;
+    }
+    .cabinet-info-popup__close {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--fg);
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .cabinet-info-popup__list {
+      display: grid;
+      gap: 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .cabinet-info-popup__list li {
+      padding: 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--fg-muted);
+      line-height: 1.55;
+    }
+    .cabinet-info-popup__list strong {
+      color: var(--fg);
+    }
+    @media (max-width: 680px) {
+      .cabinet-guide {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .cabinet-guide__button {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -188,6 +298,14 @@
       <p data-i18n="cabinet.subtitle">Пространство для управления вашими проектами и услугами в Santiago Studio.</p>
     </div>
 
+    <section class="cabinet-guide" aria-label="Cabinet guide">
+      <div class="cabinet-guide__text">
+        <strong>Особистий простір Santiago</strong>
+        <span>Тут зібрані збережені події, майстри, послуги та майбутні підписки.</span>
+      </div>
+      <button class="cabinet-guide__button" id="cabinet-guide-open" type="button">Як це працює?</button>
+    </section>
+
     <div class="cabinet-grid">
       <!-- Profile Card -->
       <div class="glass-card cabinet-card">
@@ -248,6 +366,22 @@
     </section>
   </main>
 
+  <div class="cabinet-info-popup" id="cabinet-info-popup" aria-hidden="true" role="dialog" aria-labelledby="cabinet-info-title">
+    <div class="cabinet-info-popup__panel">
+      <div class="cabinet-info-popup__top">
+        <h2 id="cabinet-info-title">Як працює кабінет</h2>
+        <button class="cabinet-info-popup__close" id="cabinet-guide-close" type="button" aria-label="Close">×</button>
+      </div>
+      <ul class="cabinet-info-popup__list">
+        <li><strong>Збережене</strong> — ваша особиста бібліотека подій, майстрів, послуг, проєктів і контенту.</li>
+        <li><strong>Нагадування</strong> — для збережених подій бот автоматично готує повідомлення за 24 години і за 3 години до старту.</li>
+        <li><strong>Підписка на майстра</strong> — окремий дозвіл на ширші повідомлення від майстра через бот.</li>
+        <li><strong>Visitor</strong> може зберігати, отримувати нагадування і керувати сповіщеннями. <strong>Club member</strong> відкриває клубні події, спеціальні пропозиції і знижки.</li>
+        <li><strong>Mentor</strong> зможе працювати зі своєю аудиторією, заявками, подіями і послугами. <strong>Admin</strong> керує ролями, заявками і контентом.</li>
+      </ul>
+    </div>
+  </div>
+
   <!-- Quick-menu panel -->
 
   <nav class="quick-menu" aria-label="Navigation">
@@ -286,7 +420,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=6"></script>
-  <script src="favorites.js?v=1"></script>
+  <script src="favorites.js?v=2"></script>
   <script>
     function renderCabinetFavorites() {
       if (window.MA3Favorites) {
@@ -324,6 +458,40 @@
         updateCabinetRoleUI(window.MA3Auth ? window.MA3Auth.user : null);
         renderCabinetFavorites();
       }, 120);
+
+      const guideOpen = document.getElementById('cabinet-guide-open');
+      const guideClose = document.getElementById('cabinet-guide-close');
+      const guidePopup = document.getElementById('cabinet-info-popup');
+
+      function closeGuide() {
+        if (!guidePopup) return;
+        guidePopup.classList.remove('open');
+        guidePopup.setAttribute('aria-hidden', 'true');
+      }
+
+      if (guideOpen && guidePopup) {
+        guideOpen.addEventListener('click', () => {
+          guidePopup.classList.add('open');
+          guidePopup.setAttribute('aria-hidden', 'false');
+        });
+      }
+
+      if (guideClose) guideClose.addEventListener('click', closeGuide);
+      if (guidePopup) {
+        guidePopup.addEventListener('click', (event) => {
+          if (event.target === guidePopup) closeGuide();
+        });
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        const guidePopup = document.getElementById('cabinet-info-popup');
+        if (guidePopup) {
+          guidePopup.classList.remove('open');
+          guidePopup.setAttribute('aria-hidden', 'true');
+        }
+      }
     });
   </script>
 </body>

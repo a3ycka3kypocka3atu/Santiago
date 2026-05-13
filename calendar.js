@@ -514,6 +514,21 @@ window.onTelegramAuth = function(user) {
     };
 
     const typeBadge = typeLabels[event.type] ? (typeLabels[event.type][currentLang] || typeLabels[event.type].en) : event.type;
+    const eventFavoriteItem = () => ({
+      type: 'event',
+      key: event.id || `${event.title}-${event.start_time}`,
+      title: event.title,
+      subtitle: `${dateStr} · ${timeStr}`,
+      url: 'calendar.html',
+      metadata: {
+        event_id: event.id,
+        start_time: event.start_time,
+        end_time: event.end_time,
+        type: event.type,
+        service_id: event.service_id || null,
+        location_type: event.location_type || null
+      }
+    });
 
     eventPopupContent.innerHTML = `
       <div class="event-detail">
@@ -533,6 +548,7 @@ window.onTelegramAuth = function(user) {
         ${event.service_id ? `<a href="${event.detail_page || 'services.html'}" class="event-detail__service-link" target="_blank" data-i18n="event.viewService">View Service Details →</a>` : ''}
         <div class="event-detail__actions">
           <button class="event-detail__favorite-btn" type="button" data-event-favorite aria-label="Save event"></button>
+          <button class="event-detail__reminder-btn" type="button" data-event-reminder aria-label="Remind me"></button>
           ${currentUser.isLoggedIn
             ? `<button class="event-detail__book-btn" onclick="submitBooking('${event.id}')">${bookBtnLabel[currentLang] || bookBtnLabel.en}</button>`
             : `<button class="event-detail__book-btn" onclick="alert('Please log in via Telegram first.')">Log in to book</button>`
@@ -543,21 +559,12 @@ window.onTelegramAuth = function(user) {
 
     const favoriteButton = eventPopupContent.querySelector('[data-event-favorite]');
     if (favoriteButton && window.MA3Favorites) {
-      window.MA3Favorites.registerButton(favoriteButton, () => ({
-        type: 'event',
-        key: event.id || `${event.title}-${event.start_time}`,
-        title: event.title,
-        subtitle: `${dateStr} · ${timeStr}`,
-        url: 'calendar.html',
-        metadata: {
-          event_id: event.id,
-          start_time: event.start_time,
-          end_time: event.end_time,
-          type: event.type,
-          service_id: event.service_id || null,
-          location_type: event.location_type || null
-        }
-      }));
+      window.MA3Favorites.registerButton(favoriteButton, eventFavoriteItem);
+    }
+
+    const reminderButton = eventPopupContent.querySelector('[data-event-reminder]');
+    if (reminderButton && window.MA3Subscriptions) {
+      window.MA3Subscriptions.registerReminderButton(reminderButton, eventFavoriteItem);
     }
 
     eventPopup.classList.add('open');
