@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=4" />
   <link rel="stylesheet" href="favorites.css?v=3" />
   <style>
     .cabinet-page {
@@ -658,7 +658,7 @@
             <button class="cabinet-view-switch__button is-active" type="button" data-cabinet-view="admin">Admin</button>
             <button class="cabinet-view-switch__button" type="button" data-cabinet-view="visitor">Visitor</button>
             <button class="cabinet-view-switch__button" type="button" data-cabinet-view="resident">Resident</button>
-            <button class="cabinet-view-switch__button" type="button" data-cabinet-view="instructor">Mentor</button>
+            <button class="cabinet-view-switch__button" type="button" data-cabinet-view="instructor">Master</button>
           </div>
         </div>
       </section>
@@ -807,12 +807,12 @@
         </div>
       </section>
 
-      <section class="cabinet-section" data-role-section data-roles="instructor" aria-labelledby="cabinet-mentor-title" hidden>
+      <section class="cabinet-section" data-role-section data-roles="instructor" aria-labelledby="cabinet-master-title" hidden>
         <div class="cabinet-section__header">
           <div class="cabinet-section__header-text">
-            <span class="cabinet-section__eyebrow">Mentor</span>
-            <h2 id="cabinet-mentor-title">Кабінет ментора</h2>
-            <p>Робоча зона для профілю, послуг, подій і заявок. Поки це керований каркас, який відкриває заявки через Telegram-бота.</p>
+            <span class="cabinet-section__eyebrow">Master</span>
+            <h2 id="cabinet-master-title">Кабінет майстра</h2>
+            <p>Робоча зона для профілю, послуг, подій, проєктів і заявок. Майстер може почати дію з кабінету або календаря.</p>
           </div>
         </div>
         <div class="cabinet-role-grid">
@@ -846,7 +846,7 @@
               <span class="cabinet-role-card__state cabinet-role-card__state--ready">Бот</span>
             </div>
             <h3>Послуги</h3>
-            <p>Ментор може подати послугу або формат, який адмін перевірить перед публікацією.</p>
+            <p>Майстер може подати послугу або формат, який адмін перевірить перед публікацією.</p>
             <div class="cabinet-role-card__actions">
               <a class="cabinet-action" href="https://t.me/santioago_bot?start=create_service" target="_blank" rel="noopener">Додати послугу</a>
             </div>
@@ -866,9 +866,30 @@
               <span class="cabinet-role-card__state cabinet-role-card__state--ready">Бот</span>
             </div>
             <h3>Події</h3>
-            <p>Заявка на подію, майстер-клас або програму з датами, статусом і майбутніми reminders.</p>
+            <p>Нова подія створюється через заявку, а існуючу можна привʼязати до майстра з календаря.</p>
             <div class="cabinet-role-card__actions">
-              <a class="cabinet-action" href="https://t.me/santioago_bot?start=create_event" target="_blank" rel="noopener">Створити подію</a>
+              <a class="cabinet-action" href="https://t.me/santioago_bot?start=create_event" target="_blank" rel="noopener">Нова подія</a>
+              <a class="cabinet-action" href="calendar.html?masterAction=attach">Привʼязати існуючу</a>
+            </div>
+          </article>
+
+          <article class="cabinet-role-card cabinet-role-card--mentor">
+            <div class="cabinet-role-card__top">
+              <span class="cabinet-role-card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 7h18"></path>
+                  <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <rect x="5" y="7" width="14" height="14" rx="2"></rect>
+                  <path d="M9 13h6"></path>
+                  <path d="M9 17h4"></path>
+                </svg>
+              </span>
+              <span class="cabinet-role-card__state cabinet-role-card__state--ready">Бот</span>
+            </div>
+            <h3>Проєкти</h3>
+            <p>Заявка на новий проєкт, серію, колаборацію або довший формат, який має зʼявитися на платформі.</p>
+            <div class="cabinet-role-card__actions">
+              <a class="cabinet-action" href="https://t.me/santioago_bot?start=create_project" target="_blank" rel="noopener">Створити проєкт</a>
             </div>
           </article>
         </div>
@@ -972,7 +993,7 @@
         <li><strong>Нагадування</strong> — для збережених подій бот автоматично готує повідомлення за 24 години і за 3 години до старту.</li>
         <li><strong>Підписка на майстра</strong> — окремий дозвіл на ширші повідомлення від майстра через бот.</li>
         <li><strong>Visitor</strong> може зберігати, отримувати нагадування і керувати сповіщеннями. <strong>Club member</strong> відкриває клубні події, спеціальні пропозиції і знижки.</li>
-        <li><strong>Mentor</strong> зможе працювати зі своєю аудиторією, заявками, подіями і послугами. <strong>Admin</strong> керує ролями, заявками і контентом.</li>
+        <li><strong>Master</strong> зможе працювати зі своєю аудиторією, заявками, подіями, проєктами і послугами. <strong>Admin</strong> керує ролями, заявками і контентом.</li>
       </ul>
     </div>
   </div>
@@ -985,6 +1006,7 @@
       <li><a href="services.html" data-i18n="nav.offers">Продукты и услуги</a></li>
       <li><a href="events.html" data-i18n="nav.events">События</a></li>
       <li><a href="masters.html" data-i18n="nav.partners">Партнёры</a></li>
+      <li><a href="projects.html" data-i18n="nav.projects">Проекты</a></li>
       <li><a href="community.html" data-i18n="nav.club">Клуб</a></li>
       <li><a href="openmic.html" data-i18n="nav.openmic">Open Mic</a></li>
       <li><a href="shop.html" data-i18n="nav.shop">Shop</a></li>
@@ -1016,9 +1038,32 @@
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=6"></script>
   <script src="favorites.js?v=2"></script>
-  <script src="cabinet.js?v=3"></script>
+  <script src="cabinet.js?v=4"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      const body = document.body;
+      const themeToggles = document.querySelectorAll('.theme-toggle-btn');
+
+      function syncThemeToggles() {
+        const isNight = body.classList.contains('grayscale-mode');
+        themeToggles.forEach((toggle) => {
+          toggle.setAttribute('aria-pressed', String(isNight));
+        });
+      }
+
+      if (localStorage.getItem('grayscale') === 'enabled') {
+        body.classList.add('grayscale-mode');
+      }
+
+      themeToggles.forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+          body.classList.toggle('grayscale-mode');
+          localStorage.setItem('grayscale', body.classList.contains('grayscale-mode') ? 'enabled' : 'disabled');
+          syncThemeToggles();
+        });
+      });
+      syncThemeToggles();
+
       const guideOpen = document.getElementById('cabinet-guide-open');
       const guideClose = document.getElementById('cabinet-guide-close');
       const guidePopup = document.getElementById('cabinet-info-popup');

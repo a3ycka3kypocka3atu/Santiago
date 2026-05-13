@@ -31,6 +31,7 @@ window.onTelegramAuth = function(user) {
   let currentFilter = 'all'; // 'all' | 'online' | 'offline_studio' | 'offline_external'
   let preselectedServiceId = null;  // Pre-filter from URL param ?service=ID
   let preselectedInstructor = null; // Pre-filter from URL param ?instructor=NAME
+  const TELEGRAM_BOT_URL = 'https://t.me/santioago_bot';
 
   // ── Parse URL pre-filter params ──
   (function parseUrlParams() {
@@ -93,6 +94,42 @@ window.onTelegramAuth = function(user) {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
+  }
+
+  function isMasterUser() {
+    return currentUser && currentUser.isLoggedIn && currentUser.role === 'instructor';
+  }
+
+  function buildTelegramStartUrl(payload) {
+    return `${TELEGRAM_BOT_URL}?start=${encodeURIComponent(payload)}`;
+  }
+
+  function formatDatePayload(day) {
+    const month = String(currentMonth + 1).padStart(2, '0');
+    const date = String(day).padStart(2, '0');
+    return `${currentYear}-${month}-${date}`;
+  }
+
+  function renderMasterDayActions(day) {
+    if (!isMasterUser()) return '';
+    const selectedDate = formatDatePayload(day);
+    return `
+      <div class="master-calendar-actions">
+        <a class="master-calendar-actions__button" href="${buildTelegramStartUrl(`create_event_${selectedDate}`)}" target="_blank" rel="noopener">Нова подія на цей день</a>
+        <span>Існуючу подію можна привʼязати з її картки.</span>
+      </div>
+    `;
+  }
+
+  function renderAttachEventAction(event) {
+    if (!isMasterUser()) return '';
+    const eventId = getEventBaseId(event);
+    if (!eventId) return '';
+    return `
+      <div class="event-card__actions">
+        <a class="event-card__master-link" href="${buildTelegramStartUrl(`attach_event_${eventId}`)}" target="_blank" rel="noopener">Привʼязати до себе</a>
+      </div>
+    `;
   }
 
   function getEventBaseId(event) {
@@ -522,11 +559,12 @@ window.onTelegramAuth = function(user) {
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>
           <p>${noEventsText[currentLang] || noEventsText.en}</p>
         </div>
+        ${renderMasterDayActions(day)}
       `;
       return;
     }
 
-    eventsList.innerHTML = '';
+    eventsList.innerHTML = renderMasterDayActions(day);
 
     events.forEach(event => {
       const card = document.createElement('div');
@@ -565,7 +603,12 @@ window.onTelegramAuth = function(user) {
         <h4 class="event-card__title">${title}</h4>
         ${desc ? `<p class="event-card__desc">${desc}</p>` : ''}
         ${capacityText ? `<p class="event-card__desc event-card__desc--stats">${capacityText}</p>` : ''}
+        ${renderAttachEventAction(event)}
       `;
+
+      card.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', (clickEvent) => clickEvent.stopPropagation());
+      });
 
       card.addEventListener('click', () => {
         openEventPopup(event);
@@ -682,6 +725,10 @@ window.onTelegramAuth = function(user) {
           ${currentUser.isLoggedIn
             ? `<button class="event-detail__book-btn" ${bookingStatus === 'pending' || bookingStatus === 'confirmed' ? 'disabled' : ''} onclick="submitBooking('${baseEventId}')">${bookingLabel || (bookBtnLabel[currentLang] || bookBtnLabel.en)}</button>`
             : `<button class="event-detail__book-btn" onclick="alert('Please log in via Telegram first.')">Log in to book</button>`
+          }
+          ${isMasterUser() && baseEventId
+            ? `<a class="event-detail__book-btn event-detail__master-link" href="${buildTelegramStartUrl(`attach_event_${baseEventId}`)}" target="_blank" rel="noopener">Привʼязати до себе</a>`
+            : ''
           }
         </div>
       </div>
@@ -808,7 +855,7 @@ window.onTelegramAuth = function(user) {
     const roleLabels = {
       guest: { en: 'Guest', cz: 'Host', ru: 'Гость', ua: 'Гість' },
       resident: { en: 'Resident', cz: 'Rezident', ru: 'Резидент', ua: 'Резидент' },
-      instructor: { en: 'Instructor', cz: 'Instruktor', ru: 'Инструктор', ua: 'Інструктор' },
+      instructor: { en: 'Master', cz: 'Mistr', ru: 'Мастер', ua: 'Майстер' },
       admin: { en: 'Admin', cz: 'Admin', ru: 'Админ', ua: 'Адмін' },
     };
 

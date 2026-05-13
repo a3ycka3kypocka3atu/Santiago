@@ -23,7 +23,7 @@ if (!BOT_TOKEN || !SUPABASE_URL || !SUPABASE_KEY) {
 
 const bot = new Telegraf(BOT_TOKEN);
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-const SITE_VERSION = 'cabinet-admin-view-v3';
+const SITE_VERSION = 'master-event-actions-v4';
 
 bot.use(session());
 
@@ -90,7 +90,7 @@ function portalLoginKeyboard(userId, label = '🔓 Відкрити кабіне
 function applicationKeyboard() {
   return Markup.inlineKeyboard([
     [Markup.button.callback('🤝 Стати Резидентом Клубу', 'apply_role_resident')],
-    [Markup.button.callback('🧘 Стати Інструктором (Майстром)', 'apply_role_instructor')]
+    [Markup.button.callback('🧘 Стати Майстром', 'apply_role_instructor')]
   ]);
 }
 
@@ -105,7 +105,7 @@ function buildMainMenu(role = 'guest', options = {}) {
     return Markup.inlineKeyboard([
       [Markup.button.callback('👋 Стати Відвідувачем', 'apply_visitor')],
       [Markup.button.callback('🤝 Стати Учасником Клубу', 'apply_role_resident')],
-      [Markup.button.callback('🧘 Стати Ментором', 'apply_role_instructor')],
+      [Markup.button.callback('🧘 Стати Майстром', 'apply_role_instructor')],
       [Markup.button.callback('✨ Створити щось', 'create_something')],
       [Markup.button.callback('📋 Заявки на створення', 'admin_submissions_pending')],
       [
@@ -125,7 +125,7 @@ function buildMainMenu(role = 'guest', options = {}) {
 
   if (role === 'resident') {
     const rows = [
-      [Markup.button.callback('🧘 Стати Ментором', 'apply_role_instructor')]
+      [Markup.button.callback('🧘 Стати Майстром', 'apply_role_instructor')]
     ];
     if (includeAdminBack) rows.push([Markup.button.callback('↩️ Адмін меню', 'preview_menu_admin')]);
     return Markup.inlineKeyboard(rows);
@@ -134,7 +134,7 @@ function buildMainMenu(role = 'guest', options = {}) {
   const rows = [
     [Markup.button.callback('👋 Стати Відвідувачем', 'apply_visitor')],
     [Markup.button.callback('🤝 Стати Учасником Клубу', 'apply_role_resident')],
-    [Markup.button.callback('🧘 Стати Ментором', 'apply_role_instructor')]
+    [Markup.button.callback('🧘 Стати Майстром', 'apply_role_instructor')]
   ];
   if (includeAdminBack) rows.push([Markup.button.callback('↩️ Адмін меню', 'preview_menu_admin')]);
   return Markup.inlineKeyboard(rows);
@@ -171,7 +171,7 @@ function roleApprovalKeyboard(userId, role) {
 }
 
 function getRoleLabel(role) {
-  if (role === 'instructor') return 'Ментор';
+  if (role === 'instructor') return 'Майстер';
   if (role === 'resident') return 'Учасник клубу';
   if (role === 'admin') return 'Адмін';
   return 'Відвідувач';
@@ -179,7 +179,7 @@ function getRoleLabel(role) {
 
 const SUBMISSION_TYPES = {
   profile: {
-    label: 'профіль ментора',
+    label: 'профіль майстра',
     titlePrompt: 'Як має називатися ваш публічний профіль? Напишіть імʼя/назву, як на сайті.',
     descriptionPrompt: 'Опишіть себе: практика, досвід, напрямки, для кого ви працюєте.',
     detailsPrompt: 'Додайте посилання, контакти, Instagram/сайт/портфоліо, фото або що ще потрібно адміну для сторінки.'
@@ -293,11 +293,17 @@ function buildSubmissionAdminText(submission) {
   const attachments = payload.attachments || [];
   const status = getSubmissionDisplayStatus(submission);
   const config = SUBMISSION_TYPES[submission.kind] || SUBMISSION_TYPES.event;
+  const eventLinkLine = payload.attach_event_id
+    ? `Привʼязка події: ${payload.attach_event_title || payload.attach_event_id} (${payload.attach_event_id})\n`
+    : '';
+  const selectedDateLine = payload.selected_date ? `Дата з календаря: ${payload.selected_date}\n` : '';
 
   return `🧩 Заявка: ${config.label.toUpperCase()}\n\n` +
     `Статус: ${submissionStatusLabel(status)}\n` +
     `ID: ${submission.id}\n` +
     `Автор: ${author.name || 'n/a'} (@${author.username || 'n/a'}, TG ${submission.telegram_id || author.id || 'n/a'})\n` +
+    eventLinkLine +
+    selectedDateLine +
     `Назва: ${submission.title}\n\n` +
     `Опис:\n${compactText(submission.description, 1000)}\n\n` +
     `Деталі / час / ціна / лінки:\n${compactText(submission.details, 1000)}\n\n` +
@@ -336,17 +342,58 @@ function extractFirstUrl(text) {
   return match ? match[0] : null;
 }
 
-async function startSubmission(ctx, kind) {
+async function startSubmission(ctx, kind, options = {}) {
   if (!canCreateContent(ctx)) {
-    return ctx.reply('Цей розділ доступний для менторів/інструкторів та адміністраторів. Якщо ви хочете стати ментором, подайте заявку через меню клубу.');
+    return ctx.reply('Цей розділ доступний для майстрів та адміністраторів. Якщо ви хочете стати майстром, подайте заявку через меню клубу.');
   }
 
   const config = SUBMISSION_TYPES[kind] || SUBMISSION_TYPES.event;
   ctx.session = {
     state: 'submission_title',
-    submissionKind: kind
+    submissionKind: kind,
+    submissionMode: options.mode || null,
+    selectedDate: options.selectedDate || null
   };
-  await ctx.reply(`Створюємо заявку на ${config.label}. Адмін перевірить матеріали перед публікацією.\n\n${config.titlePrompt}`);
+  const dateLine = options.selectedDate ? `\n\nДата з календаря: ${options.selectedDate}.` : '';
+  await ctx.reply(`Створюємо заявку на ${config.label}. Адмін перевірить матеріали перед публікацією.${dateLine}\n\n${config.titlePrompt}`);
+}
+
+async function startEventAttachSubmission(ctx, eventId) {
+  if (!canCreateContent(ctx)) {
+    return ctx.reply('Привʼязка події доступна для майстрів та адміністраторів.');
+  }
+
+  const safeEventId = String(eventId || '').trim();
+  if (!safeEventId) {
+    return ctx.reply('Не вдалося визначити подію. Відкрийте календар і спробуйте ще раз.');
+  }
+
+  let event = null;
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .select('id,title,start_time,end_time,type')
+      .eq('id', safeEventId)
+      .single();
+    if (!error && data) event = data;
+  } catch (err) {
+    console.warn('[Bot] Event attach lookup failed:', err.message);
+  }
+
+  const title = event && event.title ? event.title : safeEventId;
+  const when = event && event.start_time ? formatEventDateTime(event.start_time) : 'дата уточнюється';
+  ctx.session = {
+    state: 'submission_description',
+    submissionKind: 'event',
+    submissionMode: 'attach_existing_event',
+    attachEventId: safeEventId,
+    attachEventTitle: title,
+    submissionTitle: `Привʼязати подію: ${title}`
+  };
+
+  await ctx.reply(
+    `Привʼязуємо існуючу подію до вас як майстра.\n\nПодія: ${title}\nЧас: ${when}\n\nНапишіть коротко, як саме ця подія повʼязана з вами: ви ведете її, співведете, даєте формат/послугу або хочете взяти її в роботу.`
+  );
 }
 
 async function fetchSubmission(submissionId) {
@@ -572,6 +619,19 @@ bot.start(async (ctx) => {
     return ctx.reply('Open Mic & Santiago Talks 🎤\n\nЯк до вас звертатися?');
   }
 
+  if (startPayload && startPayload.startsWith('attach_event_')) {
+    const eventId = startPayload.replace('attach_event_', '');
+    return startEventAttachSubmission(ctx, eventId);
+  }
+
+  if (startPayload && startPayload.startsWith('create_event_')) {
+    const selectedDate = startPayload.replace('create_event_', '');
+    return startSubmission(ctx, 'event', {
+      mode: 'create_event_from_calendar',
+      selectedDate
+    });
+  }
+
   if (startPayload && startPayload.startsWith('create_')) {
     const kind = startPayload.replace('create_', '');
     if (SUBMISSION_TYPES[kind]) {
@@ -627,7 +687,7 @@ bot.action('apply_role_instructor', (ctx) => {
     state: 'mentor_application_materials',
     applyingRole: 'instructor'
   };
-  ctx.reply('Напишіть одним повідомленням про себе як ментора: досвід, напрямки, що хочете проводити, посилання, портфоліо або біографію. Можна також надіслати файл/фото з описом у підписі.');
+  ctx.reply('Напишіть одним повідомленням про себе як майстра: досвід, напрямки, що хочете проводити, посилання, портфоліо або біографію. Можна також надіслати файл/фото з описом у підписі.');
   ctx.answerCbQuery();
 });
 
@@ -819,7 +879,11 @@ bot.on('text', async (ctx, next) => {
     const config = SUBMISSION_TYPES[ctx.session.submissionKind] || SUBMISSION_TYPES.event;
     ctx.session.submissionDescription = text;
     ctx.session.state = 'submission_details';
-    ctx.reply(config.detailsPrompt);
+    if (ctx.session.submissionMode === 'attach_existing_event') {
+      ctx.reply('Додайте деталі для адміна: що саме треба привʼязати, яку роль ви маєте в події, чи треба змінити опис/дату/послугу/ціну, і будь-які посилання або матеріали.');
+    } else {
+      ctx.reply(config.detailsPrompt);
+    }
     return;
   }
 
@@ -908,7 +972,7 @@ async function finishMentorApplication(ctx) {
     }
   }
 
-  const summary = `🧘 Нова заявка ментора\n\n` +
+  const summary = `🧘 Нова заявка майстра\n\n` +
     `👤 Ім'я: ${getFullName(ctx.from)}\n` +
     `🆔 User: @${ctx.from.username || 'n/a'} (ID: ${ctx.from.id})\n` +
     (materialsText ? `\n📝 Матеріали:\n${materialsText}\n` : '\n📝 Матеріали: файл/медіа переслано нижче.\n') +
@@ -919,7 +983,7 @@ async function finishMentorApplication(ctx) {
     if (!message.text) {
       await ctx.forwardMessage(adminId);
     }
-    await ctx.reply('Дякуємо! Заявка ментора надіслана адміну. Після схвалення ви отримаєте доступ до відповідного кабінету.');
+    await ctx.reply('Дякуємо! Заявка майстра надіслана адміну. Після схвалення ви отримаєте доступ до відповідного кабінету.');
   } catch (err) {
     console.error('[Bot] Mentor application admin notification error:', err);
     await ctx.reply('Заявку отримано, але зараз не вдалося відправити повідомлення адміну. Спробуйте ще раз або напишіть адміну напряму.');
@@ -964,6 +1028,10 @@ async function finishContentSubmission(ctx) {
     details: ctx.session.submissionDetails,
     workflow_status: 'pending',
     attachments,
+    mode: ctx.session.submissionMode || null,
+    selected_date: ctx.session.selectedDate || null,
+    attach_event_id: ctx.session.attachEventId || null,
+    attach_event_title: ctx.session.attachEventTitle || null,
     telegram: {
       id: ctx.from.id,
       username: ctx.from.username || null,

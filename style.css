@@ -2714,6 +2714,50 @@ body.grayscale-mode .preview-card {
   overflow: hidden;
 }
 
+.event-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.event-card__master-link,
+.master-calendar-actions__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(95, 255, 224, 0.28);
+  background: rgba(95, 255, 224, 0.1);
+  color: #6ee7d8;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.event-card__master-link:hover,
+.master-calendar-actions__button:hover {
+  border-color: rgba(95, 255, 224, 0.58);
+  background: rgba(95, 255, 224, 0.16);
+}
+
+.master-calendar-actions {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(95, 255, 224, 0.18);
+  background: rgba(95, 255, 224, 0.07);
+}
+
+.master-calendar-actions span {
+  color: var(--fg-muted);
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
 .event-card__lock {
   position: absolute;
   top: 14px;
@@ -2794,6 +2838,13 @@ body.grayscale-mode .preview-card {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(16, 185, 129, 0.6) 100%);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);
+}
+
+.event-detail__master-link {
+  text-decoration: none;
+  border-color: rgba(95, 255, 224, 0.32);
+  background: rgba(95, 255, 224, 0.12);
+  color: #6ee7d8;
 }
 
 /* ── Club Gate Popup ── */
@@ -4458,16 +4509,27 @@ body.grayscale-mode .quick-menu.open {
 
 .hero .stars {
   background-image:
-    radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 1.2px, transparent 1.8px),
-    radial-gradient(circle, rgba(255, 231, 143, 0.85) 0 1.4px, transparent 2.1px),
-    radial-gradient(circle, rgba(153, 212, 255, 0.8) 0 1px, transparent 1.7px);
-  background-size: 180px 180px, 260px 260px, 340px 340px;
-  background-position: 24px 18px, 90px 70px, 140px 40px;
+    radial-gradient(circle, rgba(255, 255, 255, 0.98) 0 1.5px, transparent 2.4px),
+    radial-gradient(circle, rgba(255, 232, 166, 0.95) 0 1.8px, transparent 2.8px),
+    radial-gradient(circle, rgba(153, 212, 255, 0.86) 0 1.2px, transparent 2.2px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.76) 0 0.9px, transparent 1.8px);
+  background-size: 130px 130px, 190px 190px, 270px 270px, 360px 360px;
+  background-position: 22px 18px, 86px 58px, 150px 34px, 48px 120px;
+  filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.34));
+  z-index: 2;
 }
 
 body.grayscale-mode .hero .stars {
-  opacity: 0.68;
-  animation: starTwinkle 4.8s ease-in-out infinite alternate;
+  opacity: 0.86;
+  animation: starFlash 1.8s ease-out forwards, starTwinkle 4.8s 1.8s ease-in-out infinite alternate;
+}
+
+.hero .moon {
+  z-index: 3;
+}
+
+.hero-content {
+  z-index: 4;
 }
 
 body.grayscale-mode .hero-content {

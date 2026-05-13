@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Мастера и инструкторы Студии Сантьяго — массаж, йога, тренировки, медитации." />
-  <title>Мастера | Сантьяго</title>
+  <meta name="description" content="Проекты Santiago Way — клуб, инкубатор, пространство, Open Mic, коливинг и digital community." />
+  <title>Проекты | Сантьяго</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
@@ -37,7 +37,7 @@
     </svg>
   </a>
 
-    <div class="desktop-controls">
+  <div class="desktop-controls">
     <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" title="Login via Telegram">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
       <span class="tg-text">Login via Telegram</span>
@@ -55,102 +55,60 @@
       <span class="icon-moon">🌙</span>
       <span class="toggle-thumb"></span>
     </button>
-    
+
     <button class="menu-trigger" aria-label="Open menu">☰</button>
   </div>
-  </div>
 
-  <!-- ═══ PAGE CONTENT ═══ -->
   <div class="page-wrapper">
-
     <div class="gallery-header">
-      <h1 data-i18n="masters.page.title">Наши мастера</h1>
-      <p data-i18n="masters.page.desc">Профессионалы, которые помогают вам восстанавливаться, развиваться и чувствовать себя лучше.</p>
+      <h1 data-i18n="projects.page.title">Проекты Santiago</h1>
+      <p data-i18n="projects.page.desc">Экосистема инициатив: пространство, клуб, инкубатор, сцена для идей и совместная цифровая инфраструктура.</p>
     </div>
 
-    <div class="services-filters" id="masters-filters">
+    <div class="services-filters" id="projects-filters">
       <div class="filter-group">
-        <div class="filter-label" data-i18n="filter.direction">Направление</div>
-        <div class="filter-tabs" role="tablist" aria-label="Master direction">
-          <button class="filter-tab active" data-filter="direction" data-value="all" role="tab" aria-selected="true" data-i18n="filter.all">Все</button>
-          <button class="filter-tab" data-filter="direction" data-value="body" role="tab" aria-selected="false" data-i18n="filter.body">Тело</button>
-          <button class="filter-tab" data-filter="direction" data-value="wellness" role="tab" aria-selected="false" data-i18n="filter.wellness">Wellness</button>
-          <button class="filter-tab" data-filter="direction" data-value="media" role="tab" aria-selected="false" data-i18n="filter.media">Медиа</button>
+        <div class="filter-label" data-i18n="filter.category">Категория</div>
+        <div class="filter-tabs" role="tablist" aria-label="Project category">
+          <button class="filter-tab active" data-filter="category" data-value="all" role="tab" aria-selected="true" data-i18n="filter.all">Все</button>
+          <button class="filter-tab" data-filter="category" data-value="space" role="tab" aria-selected="false" data-i18n="filter.space">Пространство</button>
+          <button class="filter-tab" data-filter="category" data-value="community" role="tab" aria-selected="false" data-i18n="filter.community">Комьюнити</button>
+          <button class="filter-tab" data-filter="category" data-value="incubator" role="tab" aria-selected="false" data-i18n="filter.incubator">Инкубатор</button>
+          <button class="filter-tab" data-filter="category" data-value="media" role="tab" aria-selected="false" data-i18n="filter.media">Медиа</button>
+          <button class="filter-tab" data-filter="category" data-value="living" role="tab" aria-selected="false" data-i18n="filter.living">Коливинг</button>
+          <button class="filter-tab" data-filter="category" data-value="digital" role="tab" aria-selected="false" data-i18n="filter.digital">Digital</button>
         </div>
       </div>
       <div class="filter-group">
-        <div class="filter-label" data-i18n="filter.format">Формат</div>
-        <div class="filter-tabs" role="tablist" aria-label="Master format">
-          <button class="filter-tab active" data-filter="format" data-value="all" role="tab" aria-selected="true" data-i18n="filter.all">Все</button>
-          <button class="filter-tab" data-filter="format" data-value="individual" role="tab" aria-selected="false" data-i18n="filter.individual">Индивидуальные</button>
-          <button class="filter-tab" data-filter="format" data-value="group" role="tab" aria-selected="false" data-i18n="filter.group">Групповые</button>
-          <button class="filter-tab" data-filter="format" data-value="b2b" role="tab" aria-selected="false" data-i18n="filter.b2b">B2B</button>
+        <div class="filter-label" data-i18n="filter.status">Статус</div>
+        <div class="filter-tabs" role="tablist" aria-label="Project status">
+          <button class="filter-tab active" data-filter="status" data-value="all" role="tab" aria-selected="true" data-i18n="filter.all">Все</button>
+          <button class="filter-tab" data-filter="status" data-value="active" role="tab" aria-selected="false" data-i18n="filter.active">Активные</button>
+          <button class="filter-tab" data-filter="status" data-value="building" role="tab" aria-selected="false" data-i18n="filter.building">В сборке</button>
+          <button class="filter-tab" data-filter="status" data-value="concept" role="tab" aria-selected="false" data-i18n="filter.concept">Концепт</button>
         </div>
       </div>
       <div class="filter-group filter-group--instructor">
-        <div class="filter-label" data-i18n="filter.role">Роль</div>
+        <div class="filter-label" data-i18n="filter.sort">Сортировка</div>
         <div class="filter-select-wrap">
-          <select class="filter-select" id="master-role-filter" aria-label="Select master role">
-            <option value="all" data-i18n="filter.allRoles">Все роли</option>
-            <option value="rehab" data-i18n="filter.rehab">Реабилитация</option>
-            <option value="practices" data-i18n="filter.practices">Практики</option>
-            <option value="production" data-i18n="filter.production">Продакшен</option>
+          <select class="filter-select" id="projects-sort" aria-label="Sort projects">
+            <option value="priority" data-i18n="filter.sortPriority">По приоритету</option>
+            <option value="title" data-i18n="filter.sortTitle">По названию</option>
+            <option value="status" data-i18n="filter.sortStatus">По статусу</option>
           </select>
           <svg class="select-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
         </div>
       </div>
     </div>
 
-    <div class="services-empty" id="masters-empty" hidden>
+    <div class="services-empty" id="projects-empty" hidden>
       <div class="services-empty__icon">
         <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6"/></svg>
       </div>
-      <p class="services-empty__text" data-i18n="masters.empty.text">По этим критериям мастеров не найдено</p>
-      <button class="services-empty__reset" id="masters-reset-filters" data-i18n="services.empty.reset">Сбросить фильтры</button>
+      <p class="services-empty__text" data-i18n="projects.empty.text">По этим критериям проектов не найдено</p>
+      <button class="services-empty__reset" id="projects-reset-filters" data-i18n="services.empty.reset">Сбросить фильтры</button>
     </div>
 
-    <div class="gallery-grid" id="masters-grid">
-
-      <!-- Master Card: Ivan -->
-      <a href="profile.html" class="preview-card" id="card-ivan" data-direction="body wellness" data-format="individual" data-role="rehab practices">
-        <div class="preview-card__icon">👨‍⚕️</div>
-        <div class="preview-card__body">
-          <div class="preview-card__meta">
-            <span class="preview-badge" data-i18n="filter.body">Тело</span>
-            <span class="preview-format" data-i18n="filter.individual">Индивидуальные</span>
-          </div>
-          <h3 data-i18n="masters.ivan.name">Иван Протиняк</h3>
-          <span class="preview-role" data-i18n="masters.ivan.role">Врач-реабилитолог · Массажист</span>
-          <p data-i18n="masters.ivan.short">Глубокий восстановительный массаж, реабилитация после травм, банная терапия и чайная церемония. 5 лет опыта.</p>
-          <span class="preview-card__cta">
-            <span data-i18n="btn.details">Подробнее</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-          </span>
-        </div>
-      </a>
-
-      <!-- Master Card: Kateryna -->
-      <a href="profile-katerina.html" class="preview-card" id="card-kateryna" data-direction="body wellness media" data-format="individual group b2b" data-role="practices production">
-        <div class="preview-card__icon">🌿</div>
-        <div class="preview-card__body">
-          <div class="preview-card__meta">
-            <span class="preview-badge" data-i18n="filter.wellness">Wellness</span>
-            <span class="preview-format" data-i18n="filter.group">Групповые</span>
-          </div>
-          <h3 data-i18n="masters.kat.name">Катерина</h3>
-          <span class="preview-role" data-i18n="masters.kat.role">Телесные практики · Ароматерапия · Визуальный продакшен</span>
-          <p data-i18n="masters.kat.short">Пилатес, йога, стретчинг, тверк, ароматерапия, SPA-ретриты. Аэросъёмка и Home Staging. 4 года опыта в Чехии.</p>
-          <span class="preview-card__cta">
-            <span data-i18n="btn.details">Подробнее</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-          </span>
-        </div>
-      </a>
-
-      <!-- Placeholder for future masters -->
-
-    </div>
-
+    <div class="gallery-grid" id="projects-grid"></div>
   </div>
 
   <nav class="quick-menu" aria-label="Navigation">
@@ -190,11 +148,11 @@
     <p data-i18n="footer.text">© 2026 Сантьяго – Цифровой Дзен. Все права защищены.</p>
   </footer>
 
-  <script src="translations.js?v=7"></script>
+  <script src="translations.js?v=8"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=6"></script>
-  <script src="masters.js?v=1"></script>
+  <script src="projects.js?v=1"></script>
   <script>
     const themeToggles = document.querySelectorAll('.theme-toggle-btn');
     if (localStorage.getItem('grayscale') === 'enabled') document.body.classList.add('grayscale-mode');
