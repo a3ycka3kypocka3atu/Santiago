@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="favorites.css?v=2" />
+  <link rel="stylesheet" href="favorites.css?v=3" />
   <style>
     .cabinet-page {
       padding: 100px 20px 60px;
@@ -117,6 +117,32 @@
       justify-content: flex-end;
       gap: 10px;
       flex-wrap: wrap;
+    }
+    .cabinet-view-switch {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .cabinet-view-switch[hidden] {
+      display: none !important;
+    }
+    .cabinet-view-switch__button {
+      min-height: 32px;
+      padding: 0 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--fg-muted);
+      font-size: 0.74rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .cabinet-view-switch__button.is-active {
+      border-color: rgba(255, 204, 0, 0.45);
+      background: rgba(255, 204, 0, 0.13);
+      color: var(--glow-yellow);
     }
     .cabinet-action {
       display: inline-flex;
@@ -292,6 +318,101 @@
       background: rgba(245, 158, 11, 0.13);
       border-color: rgba(245, 158, 11, 0.22);
     }
+    .cabinet-data-panel {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.024));
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+    }
+    .cabinet-data-panel__title {
+      margin: 0;
+      color: var(--fg);
+      font-size: 1rem;
+      font-weight: 800;
+    }
+    .cabinet-data-list {
+      display: grid;
+      gap: 10px;
+    }
+    .cabinet-data-item {
+      display: grid;
+      gap: 7px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.045);
+    }
+    .cabinet-data-item__top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .cabinet-data-item__title {
+      margin: 0;
+      color: var(--fg);
+      font-size: 0.92rem;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+    .cabinet-data-item__meta,
+    .cabinet-data-item__text {
+      margin: 0;
+      color: var(--fg-muted);
+      font-size: 0.8rem;
+      line-height: 1.48;
+    }
+    .cabinet-status-pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 26px;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: rgba(95, 255, 224, 0.11);
+      color: #6ee7d8;
+      font-size: 0.68rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .cabinet-status-pill--pending,
+    .cabinet-status-pill--needs_info {
+      background: rgba(255, 204, 0, 0.13);
+      color: var(--glow-yellow);
+    }
+    .cabinet-status-pill--rejected,
+    .cabinet-status-pill--cancelled {
+      background: rgba(248, 113, 113, 0.13);
+      color: #fca5a5;
+    }
+    .cabinet-data-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .cabinet-data-stat {
+      display: grid;
+      gap: 4px;
+      min-height: 76px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.045);
+    }
+    .cabinet-data-stat strong {
+      color: var(--fg);
+      font-size: 1.25rem;
+    }
+    .cabinet-data-stat span {
+      color: var(--fg-muted);
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
     .cabinet-guide {
       display: flex;
       align-items: center;
@@ -429,6 +550,9 @@
       .cabinet-guide__button {
         width: 100%;
       }
+      .cabinet-data-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
     @media (max-width: 980px) {
       .cabinet-role-grid {
@@ -547,6 +671,12 @@
             <p id="cabinet-role-title" class="cabinet-status__title">Особистий простір</p>
           </div>
           <p id="cabinet-role-text" class="cabinet-status__text">Увійдіть через Telegram, щоб кабінет підтягнув вашу роль і персональні розділи.</p>
+          <div id="cabinet-view-switch" class="cabinet-view-switch" hidden aria-label="Admin view switch">
+            <button class="cabinet-view-switch__button is-active" type="button" data-cabinet-view="admin">Admin</button>
+            <button class="cabinet-view-switch__button" type="button" data-cabinet-view="visitor">Visitor</button>
+            <button class="cabinet-view-switch__button" type="button" data-cabinet-view="resident">Resident</button>
+            <button class="cabinet-view-switch__button" type="button" data-cabinet-view="instructor">Mentor</button>
+          </div>
         </div>
         <div class="cabinet-status__actions">
           <a class="cabinet-action cabinet-action--primary" href="https://t.me/santioago_bot?start=login" target="_blank" rel="noopener">
@@ -696,6 +826,22 @@
         </div>
       </section>
 
+      <section class="cabinet-section" data-role-section data-roles="visitor resident instructor admin" aria-labelledby="cabinet-bookings-title" hidden>
+        <div class="cabinet-section__header">
+          <div class="cabinet-section__header-text">
+            <span class="cabinet-section__eyebrow">Bookings</span>
+            <h2 id="cabinet-bookings-title">Мої записи</h2>
+            <p>Тут видно тільки ваші власні заявки на події. Публічний статус “я прийду” живе на сторінці події.</p>
+          </div>
+        </div>
+        <div class="cabinet-data-panel">
+          <h3 class="cabinet-data-panel__title">Статуси записів</h3>
+          <div id="cabinet-bookings-list" class="cabinet-data-list">
+            <div class="favorites-empty">Завантажуємо записи...</div>
+          </div>
+        </div>
+      </section>
+
       <section class="cabinet-section" data-role-section data-roles="instructor admin" aria-labelledby="cabinet-mentor-title" hidden>
         <div class="cabinet-section__header">
           <div class="cabinet-section__header-text">
@@ -761,6 +907,18 @@
             </div>
           </article>
         </div>
+        <div class="cabinet-data-panel">
+          <h3 class="cabinet-data-panel__title">Мої заявки</h3>
+          <div id="cabinet-submissions-list" class="cabinet-data-list">
+            <div class="favorites-empty">Завантажуємо заявки...</div>
+          </div>
+        </div>
+        <div class="cabinet-data-panel">
+          <h3 class="cabinet-data-panel__title">Опубліковані / привʼязані активності</h3>
+          <div id="cabinet-mentor-activity-list" class="cabinet-data-list">
+            <div class="favorites-empty">Завантажуємо активності...</div>
+          </div>
+        </div>
       </section>
 
       <section class="cabinet-section" data-role-section data-roles="admin" aria-labelledby="cabinet-admin-title" hidden>
@@ -817,6 +975,12 @@
             <h3>Контент</h3>
             <p>Події, послуги, майстри, проєкти і статуси `pending / approved / rejected / published`.</p>
           </article>
+        </div>
+        <div class="cabinet-data-panel">
+          <h3 class="cabinet-data-panel__title">Огляд платформи</h3>
+          <div id="cabinet-admin-overview" class="cabinet-data-stats">
+            <div class="favorites-empty">Завантажуємо огляд...</div>
+          </div>
         </div>
       </section>
     </div>
@@ -887,7 +1051,7 @@
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=6"></script>
   <script src="favorites.js?v=2"></script>
-  <script src="cabinet.js?v=1"></script>
+  <script src="cabinet.js?v=2"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const guideOpen = document.getElementById('cabinet-guide-open');

@@ -51,14 +51,14 @@ Missing:
 
 The website can request a booking through the database function, but the complete user journey is not finished.
 
-Missing:
+Clarified scope:
 
-- admin receives Telegram notification when a booking is requested;
-- admin can approve/reject booking from Telegram;
-- booking status changes in Supabase;
-- user receives Telegram confirmation/rejection;
-- cabinet shows booking status for the event;
-- event card can show whether user is saved, booked, pending, confirmed, or rejected.
+- private bookings are not a global website list;
+- users see only their own booking status;
+- mentors/organizers see counts and private booking state only for their own events/services;
+- admin/master sees platform counts and operational health, not casual access to all booking rows;
+- public “I will come” participation is separate from private booking and can be shown on event pages;
+- if event capacity is limited, the public page can show taken/left places.
 
 ### Notification Plan Beyond Reminders
 
@@ -118,13 +118,14 @@ Needed:
 
 Build the next step as one combined Telegram-first operations plan:
 
-1. Booking requests through website create a Supabase booking and notify admin in Telegram.
-2. Admin approves/rejects booking in Telegram.
-3. User gets Telegram result.
-4. Cabinet shows booking state next to saved event/reminder state.
-5. Submission requests from mentors are stored in Supabase and visible to admin in Telegram.
-6. Admin approves/rejects submissions in Telegram.
-7. Mentor sees submission state in the website cabinet.
+1. Website booking requests create private Supabase bookings and show only the user's own status.
+2. Public “I will come” participation is visible on the event page/calendar, including capacity counts when relevant.
+3. Submission requests from mentors are stored in Supabase and visible to admin/master in Telegram.
+4. Files stay in Telegram; the website cabinet shows only text/status/admin message/final link.
+5. Admin/master answers each submission in Telegram: accept, reject, ask for info, or send final published link.
+6. Mentor sees submitted/in-work/published/rejected request states in the website cabinet.
+7. Mentor sees stats for their own linked events/services: saved count, public attendee count, booking count.
+8. Admin/master can switch website cabinet view between admin, visitor, resident, and mentor to test the platform.
 
 This keeps admin work inside the bot, while the website becomes the user-facing status and discovery layer.
 

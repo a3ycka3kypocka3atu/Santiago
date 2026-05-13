@@ -26,6 +26,8 @@ window.onTelegramAuth = function(user) {
   let selectedDay = null;
   let eventsCache = []; // All events for the current month
   let servicesCache = []; // Evergreen services for Always Available section
+  let eventStatsCache = new Map(); // Public participation counts/names by event id
+  let bookingStatusCache = new Map(); // Logged-in user's private booking state by event id
   let currentFilter = 'all'; // 'all' | 'online' | 'offline_studio' | 'offline_external'
   let preselectedServiceId = null;  // Pre-filter from URL param ?service=ID
   let preselectedInstructor = null; // Pre-filter from URL param ?instructor=NAME
@@ -81,6 +83,85 @@ window.onTelegramAuth = function(user) {
     // Re-render events if a day is selected
     if (selectedDay !== null) {
       renderEventsForDay(selectedDay);
+    }
+  }
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function getEventBaseId(event) {
+    return event && event.original_id ? event.original_id : String(event && event.id ? event.id : '').split('_')[0];
+  }
+
+  function getEventStats(event) {
+    const eventId = getEventBaseId(event);
+    return eventStatsCache.get(eventId) || {
+      event_id: eventId,
+      capacity: event && event.capacity ? event.capacity : null,
+      participant_count: 0,
+      participants: []
+    };
+  }
+
+  function getBookingStatus(event) {
+    return bookingStatusCache.get(getEventBaseId(event)) || null;
+  }
+
+  function isCurrentUserAttending(event) {
+    if (!currentUser || !currentUser.id) return false;
+    const stats = getEventStats(event);
+    return (stats.participants || []).some(participant => participant.profile_id === currentUser.id);
+  }
+
+  async function refreshEventState() {
+    if (!sb || !eventsCache.length) {
+      eventStatsCache = new Map();
+      bookingStatusCache = new Map();
+      return;
+    }
+
+    const eventIds = [...new Set(eventsCache.map(event => getEventBaseId(event)).filter(Boolean))];
+    if (!eventIds.length) return;
+
+    try {
+      const { data, error } = await sb.rpc('get_event_public_stats', { p_event_ids: eventIds });
+      if (error) throw error;
+
+      eventStatsCache = new Map((data || []).map(row => [
+        row.event_id,
+        {
+          ...row,
+          participant_count: Number(row.participant_count || 0),
+          participants: Array.isArray(row.participants) ? row.participants : []
+        }
+      ]));
+    } catch (err) {
+      console.warn('[Calendar] Public event stats unavailable:', err.message || err);
+      eventStatsCache = new Map();
+    }
+
+    if (!currentUser.isLoggedIn || !currentUser.id) {
+      bookingStatusCache = new Map();
+      return;
+    }
+
+    try {
+      const { data, error } = await sb.rpc('get_profile_booking_status', {
+        p_user_id: currentUser.id,
+        p_event_ids: eventIds
+      });
+      if (error) throw error;
+
+      bookingStatusCache = new Map((data || []).map(row => [row.event_id, row.status]));
+    } catch (err) {
+      console.warn('[Calendar] Booking status unavailable:', err.message || err);
+      bookingStatusCache = new Map();
     }
   }
 
@@ -231,6 +312,7 @@ window.onTelegramAuth = function(user) {
       return e.type === 'public'; // Guest/Visitor — shows public, hides club/internal
     });
 
+    await refreshEventState();
     renderCalendar();
     renderUpcomingStrip();
   }
@@ -264,6 +346,7 @@ window.onTelegramAuth = function(user) {
         const duration = event.duration_minutes || 60;
         return {
           ...event,
+          original_id: event.original_id || event.id,
           id: `${event.id}_${date.getTime()}`,
           start_time: date.toISOString(),
           end_time: new Date(date.getTime() + duration * 60000).toISOString()
@@ -464,6 +547,12 @@ window.onTelegramAuth = function(user) {
 
       const title = event.title;
       const desc = event.description || '';
+      const stats = getEventStats(event);
+      const participantCount = Number(stats.participant_count || 0);
+      const capacity = stats.capacity || event.capacity || null;
+      const capacityText = capacity
+        ? `${participantCount} / ${capacity}`
+        : (participantCount ? `${participantCount} coming` : '');
       
       let typeBadge = typeLabels[event.type] ? (typeLabels[event.type][currentLang] || typeLabels[event.type].en) : event.type;
       if (isClub) typeBadge = '🔒 ' + typeBadge;
@@ -475,6 +564,7 @@ window.onTelegramAuth = function(user) {
         </div>
         <h4 class="event-card__title">${title}</h4>
         ${desc ? `<p class="event-card__desc">${desc}</p>` : ''}
+        ${capacityText ? `<p class="event-card__desc event-card__desc--stats">${capacityText}</p>` : ''}
       `;
 
       card.addEventListener('click', () => {
@@ -513,15 +603,46 @@ window.onTelegramAuth = function(user) {
       ua: 'Записатися',
     };
 
+    const participationLabels = {
+      join: { en: 'I will come', cz: 'Přijdu', ru: 'Я приду', ua: 'Я прийду' },
+      leave: { en: 'I cannot come', cz: 'Nepřijdu', ru: 'Не приду', ua: 'Не прийду' },
+      login: { en: 'Log in to join', cz: 'Přihlaste se', ru: 'Войти, чтобы отметиться', ua: 'Увійти, щоб відмітитись' }
+    };
+
+    const bookingLabels = {
+      pending: { en: 'Booking pending', cz: 'Rezervace čeká', ru: 'Заявка ожидает', ua: 'Заявка очікує' },
+      confirmed: { en: 'Booking confirmed', cz: 'Rezervace potvrzena', ru: 'Запись подтверждена', ua: 'Запис підтверджено' },
+      rejected: { en: 'Booking rejected', cz: 'Rezervace odmítnuta', ru: 'Заявка отклонена', ua: 'Заявку відхилено' },
+      cancelled: { en: 'Booking cancelled', cz: 'Rezervace zrušena', ru: 'Запись отменена', ua: 'Запис скасовано' }
+    };
+
     const typeBadge = typeLabels[event.type] ? (typeLabels[event.type][currentLang] || typeLabels[event.type].en) : event.type;
+    const baseEventId = getEventBaseId(event);
+    const stats = getEventStats(event);
+    const participantCount = Number(stats.participant_count || 0);
+    const capacity = stats.capacity || event.capacity || null;
+    const participants = stats.participants || [];
+    const userAttending = isCurrentUserAttending(event);
+    const bookingStatus = getBookingStatus(event);
+    const bookingLabel = bookingStatus && bookingLabels[bookingStatus]
+      ? (bookingLabels[bookingStatus][currentLang] || bookingLabels[bookingStatus].en)
+      : null;
+    const participantNames = participants
+      .slice(0, 8)
+      .map(participant => `<span>${escapeHtml(participant.name || 'Santiago user')}</span>`)
+      .join('');
+    const participantMore = participants.length > 8 ? `<span>+${participants.length - 8}</span>` : '';
+    const statsText = capacity
+      ? `${participantCount} / ${capacity} places`
+      : `${participantCount} coming`;
     const eventFavoriteItem = () => ({
       type: 'event',
-      key: event.id || `${event.title}-${event.start_time}`,
+      key: baseEventId || `${event.title}-${event.start_time}`,
       title: event.title,
       subtitle: `${dateStr} · ${timeStr}`,
       url: 'calendar.html',
       metadata: {
-        event_id: event.id,
+        event_id: baseEventId,
         start_time: event.start_time,
         end_time: event.end_time,
         type: event.type,
@@ -545,12 +666,21 @@ window.onTelegramAuth = function(user) {
           </div>
         </div>
         ${event.description ? `<p class="event-detail__desc">${event.description}</p>` : ''}
+        <div class="event-detail__stats">
+          <strong>${statsText}</strong>
+          ${capacity ? `<span>${Math.max(capacity - participantCount, 0)} places left</span>` : ''}
+        </div>
+        ${participants.length ? `<div class="event-detail__participants">${participantNames}${participantMore}</div>` : ''}
         ${event.service_id ? `<a href="${event.detail_page || 'services.html'}" class="event-detail__service-link" target="_blank" data-i18n="event.viewService">View Service Details →</a>` : ''}
         <div class="event-detail__actions">
           <button class="event-detail__favorite-btn" type="button" data-event-favorite aria-label="Save event"></button>
           <button class="event-detail__reminder-btn" type="button" data-event-reminder aria-label="Remind me"></button>
           ${currentUser.isLoggedIn
-            ? `<button class="event-detail__book-btn" onclick="submitBooking('${event.id}')">${bookBtnLabel[currentLang] || bookBtnLabel.en}</button>`
+            ? `<button class="event-detail__participation-btn ${userAttending ? 'is-active' : ''}" type="button" onclick="toggleEventParticipation('${baseEventId}', ${!userAttending})">${userAttending ? (participationLabels.leave[currentLang] || participationLabels.leave.en) : (participationLabels.join[currentLang] || participationLabels.join.en)}</button>`
+            : `<button class="event-detail__participation-btn" type="button" onclick="alert('Please log in via Telegram first.')">${participationLabels.login[currentLang] || participationLabels.login.en}</button>`
+          }
+          ${currentUser.isLoggedIn
+            ? `<button class="event-detail__book-btn" ${bookingStatus === 'pending' || bookingStatus === 'confirmed' ? 'disabled' : ''} onclick="submitBooking('${baseEventId}')">${bookingLabel || (bookBtnLabel[currentLang] || bookBtnLabel.en)}</button>`
             : `<button class="event-detail__book-btn" onclick="alert('Please log in via Telegram first.')">Log in to book</button>`
           }
         </div>
@@ -582,6 +712,43 @@ window.onTelegramAuth = function(user) {
   }
 
   // ── BOOKING LOGIC ──
+  window.toggleEventParticipation = async function(eventId, shouldAttend) {
+    if (!currentUser.isLoggedIn || !currentUser.id) {
+      alert('Please log in first.');
+      return;
+    }
+
+    const btn = document.querySelector('.event-detail__participation-btn');
+    const originalText = btn ? btn.textContent : '';
+    if (btn) {
+      btn.textContent = '...';
+      btn.disabled = true;
+    }
+
+    try {
+      const { error } = await sb.rpc('upsert_event_participation', {
+        p_event_id: eventId,
+        p_user_id: currentUser.id,
+        p_attending: shouldAttend
+      });
+
+      if (error) throw error;
+
+      await refreshEventState();
+      const event = eventsCache.find(item => getEventBaseId(item) === eventId);
+      if (event) openEventPopup(event);
+    } catch (err) {
+      console.error('Participation error:', err);
+      if (btn) {
+        btn.textContent = 'Error';
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }, 1800);
+      }
+    }
+  };
+
   window.submitBooking = async function(eventId) {
     if (!currentUser.isLoggedIn || !currentUser.id) {
       alert('Please log in first.');
@@ -602,17 +769,19 @@ window.onTelegramAuth = function(user) {
       if (error) throw error;
       
       const successMsg = {
-        en: 'Booking requested! Waiting for admin approval.',
-        cz: 'Rezervace požadována! Čeká se na schválení.',
-        ru: 'Заявка отправлена! Ожидает подтверждения.',
-        ua: 'Заявка відправлена! Очікує підтвердження.'
+        en: 'Booking requested. Status is now in your cabinet.',
+        cz: 'Rezervace odeslána. Stav je ve vašem kabinetu.',
+        ru: 'Заявка отправлена. Статус теперь в кабинете.',
+        ua: 'Заявка відправлена. Статус тепер у кабінеті.'
       };
       
       btn.textContent = successMsg[currentLang] || successMsg.en;
       btn.classList.add('success');
+      await refreshEventState();
       
       setTimeout(() => {
-        closePopup(eventPopup);
+        const event = eventsCache.find(item => getEventBaseId(item) === eventId);
+        if (event) openEventPopup(event);
       }, 2000);
 
     } catch (err) {
