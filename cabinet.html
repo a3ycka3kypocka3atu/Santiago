@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Кабинет Резидента | Сантьяго</title>
+  <title>Кабінет Santiago</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
@@ -16,85 +16,281 @@
       margin: 0 auto;
       min-height: 100vh;
     }
-    .cabinet-grid {
+    .cabinet-shell {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
-      margin-top: 40px;
+      gap: 26px;
+      margin-top: 36px;
     }
-    .cabinet-card {
-      padding: 30px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
+    .cabinet-page h1,
+    .cabinet-page h2,
+    .cabinet-page h3 {
+      background: none !important;
+      -webkit-text-fill-color: currentColor !important;
+      -webkit-background-clip: border-box !important;
+      background-clip: border-box;
+    }
+    body.calendar-page:not(.grayscale-mode) .cabinet-page .cabinet-section__header h2 {
+      color: var(--text-day) !important;
+      -webkit-text-fill-color: var(--text-day) !important;
+    }
+    body.calendar-page:not(.grayscale-mode) .cabinet-page .cabinet-section__header p {
+      color: var(--text-day-muted) !important;
+    }
+    .cabinet-status {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
-      gap: 15px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      gap: 18px;
+      padding: 18px 20px;
+      border-radius: 16px;
+      border: 1px solid rgba(95, 255, 224, 0.18);
+      background: rgba(255, 255, 255, 0.055);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.18);
     }
-    .cabinet-card:hover {
-      transform: translateY(-5px);
-      border-color: var(--glow-yellow);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 20px rgba(255,204,0,0.1);
+    .cabinet-status__content {
+      display: grid;
+      gap: 8px;
+      min-width: 0;
     }
-    .cabinet-card .icon {
-      font-size: 3rem;
-      margin-bottom: 10px;
-    }
-    .cabinet-card h3 {
-      font-size: 1.4rem;
-      color: var(--glow-yellow);
-    }
-    .cabinet-card p {
-      color: var(--fg-muted);
-      font-size: 0.95rem;
-    }
-    .admin-badge {
-      display: inline-block;
-      padding: 4px 12px;
-      background: rgba(255, 204, 0, 0.2);
-      border: 1px solid var(--glow-yellow);
-      color: var(--glow-yellow);
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-    /* Add Button Styling */
-    .add-btn-wrapper {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      opacity: 0.6;
-      transition: all 0.3s ease;
-    }
-    .cabinet-card:hover .add-btn-wrapper {
-      opacity: 1;
-      transform: scale(1.1);
-    }
-    .add-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+    .cabinet-status__line {
       display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .cabinet-status__title {
+      margin: 0;
+      color: var(--fg);
+      font-size: 1.02rem;
+      font-weight: 800;
+    }
+    .cabinet-status__text {
+      margin: 0;
+      color: var(--fg-muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+    .cabinet-role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      width: fit-content;
+      min-height: 30px;
+      padding: 0 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--fg-muted);
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .cabinet-role-badge::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: currentColor;
+      box-shadow: 0 0 10px currentColor;
+    }
+    .cabinet-role-badge--visitor {
+      color: #6ee7d8;
+      border-color: rgba(95, 255, 224, 0.28);
+    }
+    .cabinet-role-badge--resident {
+      color: var(--glow-green);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+    .cabinet-role-badge--instructor {
+      color: var(--glow-blue);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+    .cabinet-role-badge--admin {
+      color: var(--glow-yellow);
+      border-color: rgba(245, 158, 11, 0.34);
+    }
+    .cabinet-status__actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .cabinet-action {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
-      color: var(--glow-yellow);
-      backdrop-filter: blur(10px);
+      gap: 8px;
+      min-height: 40px;
+      padding: 0 13px;
+      border-radius: 10px;
+      border: 1px solid rgba(95, 255, 224, 0.26);
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--fg);
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-decoration: none;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
     }
-    .add-btn:hover {
-      background: var(--glow-yellow);
-      color: #000;
-      box-shadow: 0 0 20px var(--glow-yellow);
+    .cabinet-action:hover {
+      transform: translateY(-1px);
+      border-color: rgba(95, 255, 224, 0.58);
+      background: rgba(95, 255, 224, 0.13);
+    }
+    .cabinet-action:disabled {
+      opacity: 0.62;
+      cursor: wait;
+      transform: none;
+    }
+    .cabinet-action--primary {
+      border-color: rgba(255, 204, 0, 0.42);
+      background: rgba(255, 204, 0, 0.13);
+      color: var(--glow-yellow);
+    }
+    .cabinet-action--muted {
+      color: var(--fg-muted);
+      border-color: rgba(255, 255, 255, 0.13);
+    }
+    .cabinet-action svg {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
+    }
+    .cabinet-section {
+      display: grid;
+      gap: 16px;
+    }
+    .cabinet-section[hidden] {
+      display: none !important;
+    }
+    .cabinet-section__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 18px;
+      padding-bottom: 4px;
+    }
+    .cabinet-section__header-text {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+    }
+    .cabinet-section__eyebrow {
+      color: #6ee7d8;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .cabinet-section__header h2 {
+      margin: 0;
+      color: var(--fg);
+      font-size: clamp(1.28rem, 2.3vw, 1.75rem);
+      letter-spacing: 0;
+    }
+    .cabinet-section__header p {
+      margin: 0;
+      max-width: 720px;
+      color: var(--fg-muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+    .cabinet-role-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .cabinet-role-card {
+      display: grid;
+      align-content: start;
+      gap: 14px;
+      min-height: 188px;
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.072), rgba(255, 255, 255, 0.026));
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
+    }
+    .cabinet-role-card__top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .cabinet-role-card__icon {
+      display: inline-grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      color: #6ee7d8;
+      background: rgba(95, 255, 224, 0.11);
+      border: 1px solid rgba(95, 255, 224, 0.18);
+    }
+    .cabinet-role-card__icon svg {
+      width: 20px;
+      height: 20px;
+    }
+    .cabinet-role-card__state {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--fg-muted);
+      font-size: 0.68rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+    .cabinet-role-card__state--ready {
+      color: #6ee7d8;
+      background: rgba(95, 255, 224, 0.12);
+    }
+    .cabinet-role-card__state--next {
+      color: var(--glow-yellow);
+      background: rgba(245, 158, 11, 0.14);
+    }
+    .cabinet-role-card h3 {
+      margin: 0;
+      color: var(--fg);
+      font-size: 1.05rem;
+      line-height: 1.28;
+      background: none;
+      -webkit-text-fill-color: currentColor;
+    }
+    .cabinet-role-card p {
+      margin: 0;
+      color: var(--fg-muted);
+      font-size: 0.88rem;
+      line-height: 1.52;
+    }
+    .cabinet-role-card__actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: auto;
+    }
+    .cabinet-role-card--club .cabinet-role-card__icon {
+      color: var(--glow-green);
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.2);
+    }
+    .cabinet-role-card--mentor .cabinet-role-card__icon {
+      color: var(--glow-blue);
+      background: rgba(59, 130, 246, 0.12);
+      border-color: rgba(59, 130, 246, 0.2);
+    }
+    .cabinet-role-card--admin .cabinet-role-card__icon {
+      color: var(--glow-yellow);
+      background: rgba(245, 158, 11, 0.13);
+      border-color: rgba(245, 158, 11, 0.22);
     }
     .cabinet-guide {
       display: flex;
@@ -118,6 +314,18 @@
     .cabinet-guide__text strong {
       color: var(--fg);
       font-size: 1rem;
+    }
+    .cabinet-guide__title {
+      margin: 0;
+      color: var(--fg) !important;
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.35;
+      text-shadow: none;
+    }
+    body.calendar-page:not(.grayscale-mode) .cabinet-guide__title {
+      color: var(--text-day) !important;
+      -webkit-text-fill-color: var(--text-day) !important;
     }
     .cabinet-guide__text span {
       color: var(--fg-muted);
@@ -198,12 +406,43 @@
       color: var(--fg);
     }
     @media (max-width: 680px) {
+      .cabinet-page {
+        padding-inline: 16px;
+      }
+      .cabinet-status,
+      .cabinet-section__header {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .cabinet-status__actions,
+      .cabinet-role-card__actions {
+        justify-content: stretch;
+      }
+      .cabinet-action {
+        width: 100%;
+      }
       .cabinet-guide {
         flex-direction: column;
         align-items: stretch;
       }
       .cabinet-guide__button {
         width: 100%;
+      }
+    }
+    @media (max-width: 980px) {
+      .cabinet-role-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 640px) {
+      .cabinet-role-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cabinet-action {
+        transition-duration: 0.001ms !important;
       }
     }
   </style>
@@ -292,67 +531,294 @@
   </div>
 
   <main class="cabinet-page">
-    <div class="gallery-header">
-      <div id="role-badge-container"></div>
-      <h1 data-i18n="cabinet.title">Личный кабинет</h1>
-      <p data-i18n="cabinet.subtitle">Пространство для управления вашими проектами и услугами в Santiago Studio.</p>
-    </div>
-
     <section class="cabinet-guide" aria-label="Cabinet guide">
       <div class="cabinet-guide__text">
-        <strong>Особистий простір Santiago</strong>
+        <h1 class="cabinet-guide__title">Особистий простір Santiago</h1>
         <span>Тут зібрані збережені події, майстри, послуги та майбутні підписки.</span>
       </div>
       <button class="cabinet-guide__button" id="cabinet-guide-open" type="button">Як це працює?</button>
     </section>
 
-    <div class="cabinet-grid">
-      <!-- Profile Card -->
-      <div class="glass-card cabinet-card">
-        <div class="icon">👤</div>
-        <h3 data-i18n="cabinet.profile.title">Мой Профиль</h3>
-        <p data-i18n="cabinet.profile.desc">Настройка публичной страницы, контактов и биографии.</p>
-        <a class="add-btn-wrapper" href="https://t.me/santioago_bot?start=create_profile" target="_blank" rel="noopener" aria-label="Create profile request">
-          <span class="add-btn" title="Create Profile Request">+</span>
-        </a>
-      </div>
+    <div class="cabinet-shell">
+      <section class="cabinet-status" aria-label="Поточний доступ">
+        <div class="cabinet-status__content">
+          <div class="cabinet-status__line">
+            <span id="cabinet-role-badge" class="cabinet-role-badge cabinet-role-badge--visitor">Visitor</span>
+            <p id="cabinet-role-title" class="cabinet-status__title">Особистий простір</p>
+          </div>
+          <p id="cabinet-role-text" class="cabinet-status__text">Увійдіть через Telegram, щоб кабінет підтягнув вашу роль і персональні розділи.</p>
+        </div>
+        <div class="cabinet-status__actions">
+          <a class="cabinet-action cabinet-action--primary" href="https://t.me/santioago_bot?start=login" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 2 2 11l8 3 3 8 8-20Z"></path>
+              <path d="m10 14 11-12"></path>
+            </svg>
+            <span>Telegram вхід</span>
+          </a>
+          <button class="cabinet-action cabinet-action--muted" type="button" id="cabinet-refresh-role">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12a9 9 0 0 1-15.5 6.2"></path>
+              <path d="M3 12A9 9 0 0 1 18.5 5.8"></path>
+              <path d="M18 2v4h4"></path>
+              <path d="M6 22v-4H2"></path>
+            </svg>
+            <span>Оновити роль</span>
+          </button>
+        </div>
+      </section>
 
-      <!-- Services Card -->
-      <div class="glass-card cabinet-card">
-        <div class="icon">✨</div>
-        <h3 data-i18n="cabinet.services.title">Мои Услуги</h3>
-        <p data-i18n="cabinet.services.desc">Управление вашими офферами, ценами и описанием практик.</p>
-        <a class="add-btn-wrapper" href="https://t.me/santioago_bot?start=create_service" target="_blank" rel="noopener" aria-label="Create service request">
-          <span class="add-btn" title="Create New Service">+</span>
-        </a>
-      </div>
+      <section class="cabinet-section" data-role-section data-roles="guest" aria-labelledby="cabinet-login-title">
+        <div class="cabinet-section__header">
+          <div class="cabinet-section__header-text">
+            <span class="cabinet-section__eyebrow">Login</span>
+            <h2 id="cabinet-login-title">Почніть з Telegram-входу</h2>
+            <p>Кабінет відкриває персональні блоки тільки після того, як бот передасть сайту ваш профіль Santiago.</p>
+          </div>
+        </div>
+      </section>
 
-      <!-- Projects Card -->
-      <div class="glass-card cabinet-card">
-        <div class="icon">🏗️</div>
-        <h3 data-i18n="cabinet.projects.title">Мои Проекты</h3>
-        <p data-i18n="cabinet.projects.desc">Глобальные инициативы, события и долгосрочные коллаборации.</p>
-        <a class="add-btn-wrapper" href="https://t.me/santioago_bot?start=create_project" target="_blank" rel="noopener" aria-label="Create project request">
-          <span class="add-btn" title="Create New Project">+</span>
-        </a>
-      </div>
+      <section class="cabinet-section" data-role-section data-roles="visitor resident instructor admin" aria-labelledby="cabinet-personal-title" hidden>
+        <div class="cabinet-section__header">
+          <div class="cabinet-section__header-text">
+            <span class="cabinet-section__eyebrow">Personal</span>
+            <h2 id="cabinet-personal-title">Мій простір</h2>
+            <p>Базові речі для всіх користувачів: профіль, збережене, нагадування і швидкий перехід до подій та послуг.</p>
+          </div>
+        </div>
+        <div class="cabinet-role-grid">
+          <article class="cabinet-role-card">
+            <div class="cabinet-role-card__top">
+              <span class="cabinet-role-card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21a8 8 0 0 0-16 0"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </span>
+              <span class="cabinet-role-card__state cabinet-role-card__state--ready">Готово</span>
+            </div>
+            <h3>Профіль</h3>
+            <p>Імʼя, роль і Telegram-звʼязка. Пізніше тут буде чисте редагування профілю без переходу в бот.</p>
+            <div class="cabinet-role-card__actions">
+              <a class="cabinet-action" href="profile.html">Відкрити профіль</a>
+            </div>
+          </article>
 
-      <!-- Events Card -->
-      <div class="glass-card cabinet-card">
-        <div class="icon">📅</div>
-        <h3 data-i18n="cabinet.events.title">Мои События</h3>
-        <p data-i18n="cabinet.events.desc">Заявки на разовые события, программы и бронирование времени в студии.</p>
-        <a class="add-btn-wrapper" href="https://t.me/santioago_bot?start=create_event" target="_blank" rel="noopener" aria-label="Create event request">
-          <span class="add-btn" title="Create New Event">+</span>
-        </a>
-      </div>
+          <article class="cabinet-role-card">
+            <div class="cabinet-role-card__top">
+              <span class="cabinet-role-card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21 12 17 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"></path>
+                </svg>
+              </span>
+              <span class="cabinet-role-card__state cabinet-role-card__state--ready">Готово</span>
+            </div>
+            <h3>Обране</h3>
+            <p>Збережені події, послуги, майстри та майбутні типи контенту з платформи.</p>
+            <div class="cabinet-role-card__actions">
+              <a class="cabinet-action" href="#cabinet-favorites-title">До обраного</a>
+            </div>
+          </article>
 
-      <!-- Admin Tools (Hidden if not admin) -->
-      <div class="glass-card cabinet-card" id="admin-tools" style="display: none;">
-        <div class="icon">⚙️</div>
-        <h3 data-i18n="cabinet.admin.title">Администрирование</h3>
-        <p data-i18n="cabinet.admin.desc">Управление всеми резидентами, событиями и настройками платформы.</p>
-      </div>
+          <article class="cabinet-role-card">
+            <div class="cabinet-role-card__top">
+              <span class="cabinet-role-card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+              </span>
+              <span class="cabinet-role-card__state cabinet-role-card__state--ready">MVP</span>
+            </div>
+            <h3>Нагадування</h3>
+            <p>Події з обраного вже готують Telegram-нагадування за 24 години і за 3 години до старту.</p>
+            <div class="cabinet-role-card__actions">
+              <a class="cabinet-action" href="calendar.html">Календар</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="cabinet-section" data-role-section data-roles="resident instructor admin" aria-labelledby="cabinet-club-title" hidden>
+        <div class="cabinet-section__header">
+          <div class="cabinet-section__header-text">
+            <span class="cabinet-section__eyebrow">Club</span>
+            <h2 id="cabinet-club-title">Клуб Santiago</h2>
+            <p>Розділ для учасників клубу: клубний статус, закриті події і майбутні спеціальні пропозиції.</p>
+          </div>
+        </div>
+        <div class="cabinet-role-grid">
+          <article class="cabinet-role-card cabinet-role-card--club">
+            <div class="cabinet-role-card__top">
+              <span class="cabinet-role-card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2 15 8l6 .9-4.5 4.3 1.1 6.1L12 16.4 6.4 19.3l1.1-6.1L3 8.9 9 8Z"></path>
+                </svg>
+              </span>
+              <span class="cabinet-role-card__state cabinet-role-card__state--ready">Роль</span>
+            </div>
+            <h3>Клубний статус</h3>
+            <p>Показує, що користувач має доступ до клубних форматів і внутрішніх подій.</p>
+          </article>
+
+          <article class="cabinet-role-card cabinet-role-card--club">
+            <div class="cabinet-role-card__top">
+              <span class="cabinet-role-card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                  <path d="M16 2v4"></path>
+                  <path d="M8 2v4"></path>
+                  <path d="M3 10h18"></path>
+                </svg>
+              </span>
+              <span class="cabinet-role-card__state cabinet-role-card__state--next">Далі</span>
+            </div>
+            <h3>Клубні події</h3>
+            <p>Наступним кроком підключимо вибірку club events і компактний список доступних подій.</p>
+            <div class="cabinet-role-card__actions">
+              <a class="cabinet-action" href="calendar.html">Дивитись календар</a>
+            </div>
+          </article>
+
+          <article class="cabinet-role-card cabinet-role-card--club">
+            <div class="cabinet-role-card__top">
+              <span class="cabinet-role-card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"></path>
+                </svg>
+              </span>
+              <span class="cabinet-role-card__state cabinet-role-card__state--next">Пізніше</span>
+            </div>
+            <h3>Клубні матеріали</h3>
+            <p>Зарезервований блок для контенту, записів, знижок і закритих матеріалів клубу.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="cabinet-section" data-role-section data-roles="instructor admin" aria-labelledby="cabinet-mentor-title" hidden>
+        <div class="cabinet-section__header">
+          <div class="cabinet-section__header-text">
+            <span class="cabinet-section__eyebrow">Mentor</span>
+            <h2 id="cabinet-mentor-title">Кабінет ментора</h2>
+            <p>Робоча зона для профілю, послуг, подій і заявок. Поки це керований каркас, який відкриває заявки через Telegram-бота.</p>
+          </div>
+        </div>
+        <div class="cabinet-role-grid">
+          <article class="cabinet-role-card cabinet-role-card--mentor">
+            <div class="cabinet-role-card__top">
+              <span class="cabinet-role-card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                </svg>
+              </span>
+              <span class="cabinet-role-card__state cabinet-role-card__state--ready">Бот</span>
+            </div>
+            <h3>Профіль майстра</h3>
+            <p>Заявка на публічний профіль, біографію, практики, посилання і матеріали.</p>
+            <div class="cabinet-role-card__actions">
+              <a class="cabinet-action" href="https://t.me/santioago_bot?start=create_profile" target="_blank" rel="noopener">Подати профіль</a>
+            </div>
+          </article>
+
+          <article class="cabinet-role-card cabinet-role-card--mentor">
+            <div class="cabinet-role-card__top">
+              <span class="cabinet-role-card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 7h-9"></path>
+                  <path d="M14 17H5"></path>
+                  <circle cx="17" cy="17" r="3"></circle>
+                  <circle cx="7" cy="7" r="3"></circle>
+                </svg>
+              </span>
+              <span class="cabinet-role-card__state cabinet-role-card__state--ready">Бот</span>
+            </div>
+            <h3>Послуги</h3>
+            <p>Ментор може подати послугу або формат, який адмін перевірить перед публікацією.</p>
+            <div class="cabinet-role-card__actions">
+              <a class="cabinet-action" href="https://t.me/santioago_bot?start=create_service" target="_blank" rel="noopener">Додати послугу</a>
+            </div>
+          </article>
+
+          <article class="cabinet-role-card cabinet-role-card--mentor">
+            <div class="cabinet-role-card__top">
+              <span class="cabinet-role-card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M8 2v4"></path>
+                  <path d="M16 2v4"></path>
+                  <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                  <path d="M3 10h18"></path>
+                  <path d="m9 16 2 2 4-4"></path>
+                </svg>
+              </span>
+              <span class="cabinet-role-card__state cabinet-role-card__state--ready">Бот</span>
+            </div>
+            <h3>Події</h3>
+            <p>Заявка на подію, майстер-клас або програму з датами, статусом і майбутніми reminders.</p>
+            <div class="cabinet-role-card__actions">
+              <a class="cabinet-action" href="https://t.me/santioago_bot?start=create_event" target="_blank" rel="noopener">Створити подію</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="cabinet-section" data-role-section data-roles="admin" aria-labelledby="cabinet-admin-title" hidden>
+        <div class="cabinet-section__header">
+          <div class="cabinet-section__header-text">
+            <span class="cabinet-section__eyebrow">Admin</span>
+            <h2 id="cabinet-admin-title">Адмін-центр</h2>
+            <p>Підготовлений простір для заявок, користувачів, подій, контенту і approve/reject. Повну логіку підключаємо наступним етапом.</p>
+          </div>
+        </div>
+        <div class="cabinet-role-grid">
+          <article class="cabinet-role-card cabinet-role-card--admin">
+            <div class="cabinet-role-card__top">
+              <span class="cabinet-role-card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 11 12 14 22 4"></path>
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+              </span>
+              <span class="cabinet-role-card__state cabinet-role-card__state--next">Далі</span>
+            </div>
+            <h3>Заявки</h3>
+            <p>Список заявок з `submissions`, перегляд деталей, approve/reject і повідомлення в Telegram.</p>
+          </article>
+
+          <article class="cabinet-role-card cabinet-role-card--admin">
+            <div class="cabinet-role-card__top">
+              <span class="cabinet-role-card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </span>
+              <span class="cabinet-role-card__state cabinet-role-card__state--next">Далі</span>
+            </div>
+            <h3>Користувачі</h3>
+            <p>Пошук профілів, перегляд ролей і ручна зміна статусів після погодження.</p>
+          </article>
+
+          <article class="cabinet-role-card cabinet-role-card--admin">
+            <div class="cabinet-role-card__top">
+              <span class="cabinet-role-card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+              </span>
+              <span class="cabinet-role-card__state cabinet-role-card__state--next">Далі</span>
+            </div>
+            <h3>Контент</h3>
+            <p>Події, послуги, майстри, проєкти і статуси `pending / approved / rejected / published`.</p>
+          </article>
+        </div>
+      </section>
     </div>
 
     <section class="cabinet-favorites" aria-labelledby="cabinet-favorites-title">
@@ -421,44 +887,9 @@
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=6"></script>
   <script src="favorites.js?v=2"></script>
+  <script src="cabinet.js?v=1"></script>
   <script>
-    function renderCabinetFavorites() {
-      if (window.MA3Favorites) {
-        window.MA3Favorites.renderCabinet('#cabinet-favorites-list');
-      }
-    }
-
-    function updateCabinetRoleUI(user) {
-      const adminTools = document.getElementById('admin-tools');
-      const badgeContainer = document.getElementById('role-badge-container');
-      
-      if (user && (user.role === 'admin' || user.role === 'instructor')) {
-        if (user.role === 'admin') {
-          adminTools.style.display = 'flex';
-          badgeContainer.innerHTML = '<span class="admin-badge">Administrator</span>';
-        } else {
-          badgeContainer.innerHTML = '<span class="admin-badge" style="border-color: #00ffcc; color: #00ffcc; background: rgba(0, 255, 204, 0.1);">Instructor</span>';
-        }
-      } else {
-        if (adminTools) adminTools.style.display = 'none';
-        if (badgeContainer) badgeContainer.innerHTML = '';
-        // Redirect if not authorized
-        // window.location.href = 'index.html';
-      }
-    }
-
-    // Role handling for Cabinet
-    document.addEventListener('ma3-auth-changed', (e) => {
-      updateCabinetRoleUI(e.detail);
-      renderCabinetFavorites();
-    });
-
     document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        updateCabinetRoleUI(window.MA3Auth ? window.MA3Auth.user : null);
-        renderCabinetFavorites();
-      }, 120);
-
       const guideOpen = document.getElementById('cabinet-guide-open');
       const guideClose = document.getElementById('cabinet-guide-close');
       const guidePopup = document.getElementById('cabinet-info-popup');
