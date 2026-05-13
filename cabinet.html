@@ -38,7 +38,7 @@
     }
     .cabinet-status {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-columns: minmax(0, 1fr);
       align-items: center;
       gap: 18px;
       padding: 18px 20px;
@@ -111,13 +111,6 @@
       color: var(--glow-yellow);
       border-color: rgba(245, 158, 11, 0.34);
     }
-    .cabinet-status__actions {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
     .cabinet-view-switch {
       display: flex;
       align-items: center;
@@ -170,15 +163,6 @@
       opacity: 0.62;
       cursor: wait;
       transform: none;
-    }
-    .cabinet-action--primary {
-      border-color: rgba(255, 204, 0, 0.42);
-      background: rgba(255, 204, 0, 0.13);
-      color: var(--glow-yellow);
-    }
-    .cabinet-action--muted {
-      color: var(--fg-muted);
-      border-color: rgba(255, 255, 255, 0.13);
     }
     .cabinet-action svg {
       width: 16px;
@@ -536,7 +520,6 @@
         flex-direction: column;
         align-items: stretch;
       }
-      .cabinet-status__actions,
       .cabinet-role-card__actions {
         justify-content: stretch;
       }
@@ -677,24 +660,6 @@
             <button class="cabinet-view-switch__button" type="button" data-cabinet-view="resident">Resident</button>
             <button class="cabinet-view-switch__button" type="button" data-cabinet-view="instructor">Mentor</button>
           </div>
-        </div>
-        <div class="cabinet-status__actions">
-          <a class="cabinet-action cabinet-action--primary" href="https://t.me/santioago_bot?start=login" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 2 2 11l8 3 3 8 8-20Z"></path>
-              <path d="m10 14 11-12"></path>
-            </svg>
-            <span>Telegram вхід</span>
-          </a>
-          <button class="cabinet-action cabinet-action--muted" type="button" id="cabinet-refresh-role">
-            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 12a9 9 0 0 1-15.5 6.2"></path>
-              <path d="M3 12A9 9 0 0 1 18.5 5.8"></path>
-              <path d="M18 2v4h4"></path>
-              <path d="M6 22v-4H2"></path>
-            </svg>
-            <span>Оновити роль</span>
-          </button>
         </div>
       </section>
 
@@ -842,7 +807,7 @@
         </div>
       </section>
 
-      <section class="cabinet-section" data-role-section data-roles="instructor admin" aria-labelledby="cabinet-mentor-title" hidden>
+      <section class="cabinet-section" data-role-section data-roles="instructor" aria-labelledby="cabinet-mentor-title" hidden>
         <div class="cabinet-section__header">
           <div class="cabinet-section__header-text">
             <span class="cabinet-section__eyebrow">Mentor</span>

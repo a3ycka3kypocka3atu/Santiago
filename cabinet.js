@@ -9,32 +9,27 @@
     guest: {
       label: 'Login',
       title: 'Потрібен Telegram-вхід',
-      text: 'Увійдіть через Telegram, щоб кабінет підтягнув вашу роль і персональні розділи.',
-      primary: 'Telegram вхід'
+      text: 'Увійдіть через Telegram, щоб кабінет підтягнув вашу роль і персональні розділи.'
     },
     visitor: {
       label: 'Visitor',
       title: 'Базовий кабінет відвідувача',
-      text: 'Доступні профіль, обране і нагадування для збережених подій.',
-      primary: 'Відкрити бот'
+      text: 'Доступні профіль, обране і нагадування для збережених подій.'
     },
     resident: {
       label: 'Club member',
       title: 'Кабінет учасника клубу',
-      text: 'До базового простору додано клубний статус і підготовлений розділ клубних подій.',
-      primary: 'Відкрити бот'
+      text: 'До базового простору додано клубний статус і підготовлений розділ клубних подій.'
     },
     instructor: {
       label: 'Mentor',
       title: 'Кабінет ментора',
-      text: 'Доступні менторські заявки на профіль, послуги, події та майбутній робочий простір.',
-      primary: 'Відкрити бот'
+      text: 'Доступні менторські заявки на профіль, послуги, події та майбутній робочий простір.'
     },
     admin: {
       label: 'Admin',
       title: 'Адмін-центр Santiago',
-      text: 'Доступні всі рольові блоки та підготовлений простір для заявок, користувачів і контенту.',
-      primary: 'Відкрити бот'
+      text: 'Доступні всі рольові блоки та підготовлений простір для заявок, користувачів і контенту.'
     }
   };
 
@@ -102,20 +97,6 @@
     return `<div class="favorites-empty">${escapeHtml(text)}</div>`;
   }
 
-  function getStoredTelegramId() {
-    try {
-      const stored = JSON.parse(localStorage.getItem('ma3_user') || '{}');
-      return stored.telegram_id || null;
-    } catch (err) {
-      return null;
-    }
-  }
-
-  function setStatusText(text) {
-    const statusText = document.getElementById('cabinet-role-text');
-    if (statusText) statusText.textContent = text;
-  }
-
   function renderCabinetFavorites() {
     if (window.MA3Favorites) {
       window.MA3Favorites.renderCabinet('#cabinet-favorites-list');
@@ -140,7 +121,6 @@
     const badge = document.getElementById('cabinet-role-badge');
     const title = document.getElementById('cabinet-role-title');
     const text = document.getElementById('cabinet-role-text');
-    const primaryAction = document.querySelector('.cabinet-status__actions .cabinet-action--primary span');
 
     if (badge) {
       badge.className = `cabinet-role-badge cabinet-role-badge--${role}`;
@@ -149,7 +129,6 @@
 
     if (title) title.textContent = copy.title;
     if (text) text.textContent = copy.text;
-    if (primaryAction) primaryAction.textContent = copy.primary;
     updateViewSwitch(user, role);
 
     document.querySelectorAll('[data-role-section]').forEach((section) => {
@@ -325,7 +304,7 @@
     const role = getEffectiveRole(user);
     renderBookings(user);
 
-    if (role === 'instructor' || role === 'admin') {
+    if (role === 'instructor') {
       renderSubmissions(user);
       renderMentorActivity(user);
     }
@@ -335,43 +314,11 @@
     }
   }
 
-  async function refreshRole() {
-    const button = document.getElementById('cabinet-refresh-role');
-    const telegramId = getStoredTelegramId();
-
-    if (!window.MA3Auth || !telegramId) {
-      setStatusText('Щоб оновити роль, зайдіть через Telegram-кнопку з бота. Після approve бот дасть посилання з вашим Telegram ID.');
-      return;
-    }
-
-    if (button) button.disabled = true;
-    setStatusText('Оновлюємо роль із Supabase...');
-
-    try {
-      const profile = await window.MA3Auth.syncProfile(telegramId);
-      const user = profile ? window.MA3Auth.user : getAuthUser();
-      updateRoleSections(user);
-      renderOperationalData(user);
-      setStatusText(profile ? (ROLE_COPY[normalizeRole(user)] || ROLE_COPY.visitor).text : 'Профіль не знайдено. Відкрийте Telegram-бот і зайдіть у кабінет з його кнопки.');
-    } catch (err) {
-      console.warn('[Cabinet] Role refresh failed:', err);
-      setStatusText('Не вдалося оновити роль. Спробуйте відкрити кабінет через Telegram-бот ще раз.');
-    } finally {
-      if (button) button.disabled = false;
-    }
-  }
-
   function initCabinet() {
     const user = getAuthUser();
     updateRoleSections(user);
     renderCabinetFavorites();
     renderOperationalData(user);
-
-    const refreshButton = document.getElementById('cabinet-refresh-role');
-    if (refreshButton && !refreshButton.__ma3CabinetBound) {
-      refreshButton.__ma3CabinetBound = true;
-      refreshButton.addEventListener('click', refreshRole);
-    }
 
     document.querySelectorAll('[data-cabinet-view]').forEach((button) => {
       if (button.__ma3CabinetViewBound) return;
@@ -396,7 +343,6 @@
   });
 
   window.MA3Cabinet = {
-    refreshRole,
     renderCabinetFavorites,
     updateRoleSections
   };
