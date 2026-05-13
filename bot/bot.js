@@ -23,6 +23,7 @@ if (!BOT_TOKEN || !SUPABASE_URL || !SUPABASE_KEY) {
 
 const bot = new Telegraf(BOT_TOKEN);
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const SITE_VERSION = 'cabinet-admin-view-v3';
 
 bot.use(session());
 
@@ -34,6 +35,7 @@ function buildPortalUrl(userId, page = 'index.html') {
   const base = PUBLIC_SITE_URL.endsWith('/') ? PUBLIC_SITE_URL : `${PUBLIC_SITE_URL}/`;
   const url = new URL(page, base);
   url.searchParams.set('userId', userId);
+  url.searchParams.set('v', SITE_VERSION);
   return url.toString();
 }
 
