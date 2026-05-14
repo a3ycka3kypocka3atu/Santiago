@@ -98,8 +98,9 @@
   }
 
   function renderCabinetFavorites() {
-    if (window.MA3Favorites) {
-      window.MA3Favorites.renderCabinet('#cabinet-favorites-list');
+    const container = document.getElementById('cabinet-favorites-list');
+    if (window.MA3Favorites && container && !container.closest('[hidden]')) {
+      window.MA3Favorites.renderCabinet(container);
     }
   }
 
@@ -254,52 +255,6 @@
     }
   }
 
-  function countValues(object) {
-    return Object.values(object || {}).reduce((sum, value) => sum + Number(value || 0), 0);
-  }
-
-  async function renderAdminOverview(user) {
-    const container = document.getElementById('cabinet-admin-overview');
-    if (!container) return;
-    if (!user || user.role !== 'admin' || !window.supabaseClient) {
-      container.innerHTML = emptyState('Огляд доступний тільки admin/master.');
-      return;
-    }
-
-    try {
-      const { data, error } = await window.supabaseClient.rpc('get_admin_platform_overview', {
-        p_user_id: user.id
-      });
-      if (error) throw error;
-
-      const overview = data || {};
-      const profiles = overview.profiles_by_role || {};
-      const submissions = overview.submissions_by_status || {};
-      const events = overview.events || {};
-      const services = overview.services || {};
-      const bookings = overview.bookings_by_status || {};
-
-      container.innerHTML = [
-        ['Profiles', countValues(profiles)],
-        ['Submissions pending', Number(submissions.pending || 0) + Number(submissions.needs_info || 0)],
-        ['Events confirmed', Number(events.confirmed || 0)],
-        ['Services published', Number(services.published || 0)],
-        ['Bookings pending', Number(bookings.pending || 0)],
-        ['Bookings confirmed', Number(bookings.confirmed || 0)],
-        ['Public coming', Number(overview.public_participations || 0)],
-        ['Published requests', Number(submissions.published || 0)]
-      ].map(([label, value]) => `
-        <div class="cabinet-data-stat">
-          <strong>${escapeHtml(value)}</strong>
-          <span>${escapeHtml(label)}</span>
-        </div>
-      `).join('');
-    } catch (err) {
-      console.warn('[Cabinet] Admin overview unavailable:', err);
-      container.innerHTML = emptyState('Огляд зʼявиться після оновлення бази.');
-    }
-  }
-
   function renderOperationalData(user) {
     const role = getEffectiveRole(user);
     renderBookings(user);
@@ -309,9 +264,6 @@
       renderMentorActivity(user);
     }
 
-    if (role === 'admin') {
-      renderAdminOverview(user);
-    }
   }
 
   function initCabinet() {
@@ -327,6 +279,7 @@
         adminViewRole = button.dataset.cabinetView || 'admin';
         const current = getAuthUser();
         updateRoleSections(current);
+        renderCabinetFavorites();
         renderOperationalData(current);
       });
     });

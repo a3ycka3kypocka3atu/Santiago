@@ -37,6 +37,7 @@
       color: var(--text-day-muted) !important;
     }
     .cabinet-status {
+      order: 0;
       display: grid;
       grid-template-columns: minmax(0, 1fr);
       align-items: center;
@@ -170,8 +171,12 @@
       flex: 0 0 auto;
     }
     .cabinet-section {
+      order: 2;
       display: grid;
       gap: 16px;
+    }
+    .cabinet-section--master {
+      order: 1;
     }
     .cabinet-section[hidden] {
       display: none !important;
@@ -807,7 +812,7 @@
         </div>
       </section>
 
-      <section class="cabinet-section" data-role-section data-roles="instructor" aria-labelledby="cabinet-master-title" hidden>
+      <section class="cabinet-section cabinet-section--master" data-role-section data-roles="instructor" aria-labelledby="cabinet-master-title" hidden>
         <div class="cabinet-section__header">
           <div class="cabinet-section__header-text">
             <span class="cabinet-section__eyebrow">Master</span>
@@ -962,16 +967,10 @@
             <p>Події, послуги, майстри, проєкти і статуси `pending / approved / rejected / published`.</p>
           </article>
         </div>
-        <div class="cabinet-data-panel">
-          <h3 class="cabinet-data-panel__title">Огляд платформи</h3>
-          <div id="cabinet-admin-overview" class="cabinet-data-stats">
-            <div class="favorites-empty">Завантажуємо огляд...</div>
-          </div>
-        </div>
       </section>
     </div>
 
-    <section class="cabinet-favorites" aria-labelledby="cabinet-favorites-title">
+    <section class="cabinet-favorites" data-role-section data-roles="visitor resident instructor" aria-labelledby="cabinet-favorites-title" hidden>
       <div class="cabinet-favorites__header">
         <h2 id="cabinet-favorites-title">Обране</h2>
         <p>Збережені події та послуги з платформи Santiago.</p>
