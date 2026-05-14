@@ -97,7 +97,7 @@ window.onTelegramAuth = function(user) {
   }
 
   function isMasterUser() {
-    return currentUser && currentUser.isLoggedIn && currentUser.role === 'instructor';
+    return currentUser && currentUser.isLoggedIn && ['instructor', 'admin'].includes(currentUser.role);
   }
 
   function buildTelegramStartUrl(payload) {
@@ -108,6 +108,44 @@ window.onTelegramAuth = function(user) {
     const month = String(currentMonth + 1).padStart(2, '0');
     const date = String(day).padStart(2, '0');
     return `${currentYear}-${month}-${date}`;
+  }
+
+  const MASTER_CTA_LABELS = {
+    action: {
+      en: 'Add event',
+      cz: 'Přidat událost',
+      ru: 'Добавить событие',
+      ua: 'Додати подію'
+    },
+    selected: {
+      en: 'The selected date will be passed into the event request.',
+      cz: 'Vybrané datum se předá do žádosti o událost.',
+      ru: 'Выбранная дата будет передана в заявку на событие.',
+      ua: 'Обрана дата передасться в заявку на подію.'
+    },
+    empty: {
+      en: 'Select a day in the calendar to pass the date into the request.',
+      cz: 'Vyberte den v kalendáři, aby se datum předalo do žádosti.',
+      ru: 'Выберите день в календаре, чтобы передать дату в заявку.',
+      ua: 'Оберіть день у календарі, щоб передати дату в заявку.'
+    }
+  };
+
+  function updateMasterCalendarCta() {
+    if (!masterCalendarCta || !masterCreateEventLink || !masterCreateEventLabel || !masterCreateEventHint) return;
+
+    if (!isMasterUser()) {
+      masterCalendarCta.hidden = true;
+      return;
+    }
+
+    const datePayload = selectedDay ? formatDatePayload(selectedDay) : null;
+    masterCalendarCta.hidden = false;
+    masterCreateEventLink.href = buildTelegramStartUrl(datePayload ? `create_event_${datePayload}` : 'create_event');
+    masterCreateEventLabel.textContent = MASTER_CTA_LABELS.action[currentLang] || MASTER_CTA_LABELS.action.en;
+    masterCreateEventHint.textContent = datePayload
+      ? `${MASTER_CTA_LABELS.selected[currentLang] || MASTER_CTA_LABELS.selected.en} ${datePayload}`
+      : (MASTER_CTA_LABELS.empty[currentLang] || MASTER_CTA_LABELS.empty.en);
   }
 
   function renderMasterDayActions(day) {
@@ -227,6 +265,10 @@ window.onTelegramAuth = function(user) {
   const logoutBtn = document.getElementById('logout-btn');
   const upcomingTrack = document.getElementById('upcoming-track');
   const tgLoginContainer = document.getElementById('telegram-login-container');
+  const masterCalendarCta = document.getElementById('master-calendar-cta');
+  const masterCreateEventLink = document.getElementById('master-create-event-link');
+  const masterCreateEventLabel = document.getElementById('master-create-event-label');
+  const masterCreateEventHint = document.getElementById('master-create-event-hint');
 
   // ═══════════════════════════════════════════════════════════
   //  CALENDAR RENDERING
@@ -240,6 +282,7 @@ window.onTelegramAuth = function(user) {
   function renderCalendar() {
     calGrid.innerHTML = '';
     updateMonthLabel();
+    updateMasterCalendarCta();
 
     const firstDay = new Date(currentYear, currentMonth, 1);
     // Monday = 0, Sunday = 6 (ISO week)
@@ -304,6 +347,7 @@ window.onTelegramAuth = function(user) {
     selectedDay = day;
     renderCalendar();
     renderEventsForDay(day);
+    updateMasterCalendarCta();
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -843,6 +887,7 @@ window.onTelegramAuth = function(user) {
   document.addEventListener('ma3-auth-changed', (e) => {
     currentUser = e.detail;
     updateUserBadge();
+    updateMasterCalendarCta();
     fetchEventsForMonth();
     fetchEvergreenServices();
   });
@@ -995,6 +1040,7 @@ window.onTelegramAuth = function(user) {
       applyTranslations(btn.dataset.lang);
       updateMonthLabel();
       updateUserBadge();
+      updateMasterCalendarCta();
       renderAlwaysAvailable();
     });
   });

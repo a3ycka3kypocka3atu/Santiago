@@ -204,6 +204,11 @@ const SUBMISSION_TYPES = {
   }
 };
 
+const SERVICE_BOOKING_TITLES = {
+  'deep-massage': 'Глибокий відновлювальний масаж і чайна церемонія',
+  'wellness-katerina': 'Wellness і трансформація стану'
+};
+
 function canCreateContent(ctx) {
   return ctx.userRole === 'instructor' || ctx.userRole === 'admin';
 }
@@ -393,6 +398,125 @@ async function startEventAttachSubmission(ctx, eventId) {
 
   await ctx.reply(
     `Привʼязуємо існуючу подію до вас як майстра.\n\nПодія: ${title}\nЧас: ${when}\n\nНапишіть коротко, як саме ця подія повʼязана з вами: ви ведете її, співведете, даєте формат/послугу або хочете взяти її в роботу.`
+  );
+}
+
+function parseServiceBookingPayload(payload) {
+  const match = String(payload || '').match(/^book_(.+)_(\d{8})_(\d{4})$/);
+  if (!match) return null;
+
+  const [, slug, dateCode, timeCode] = match;
+  const year = dateCode.slice(0, 4);
+  const month = dateCode.slice(4, 6);
+  const day = dateCode.slice(6, 8);
+  const hour = timeCode.slice(0, 2);
+  const minute = timeCode.slice(2, 4);
+  const numericMonth = Number(month);
+  const numericDay = Number(day);
+  const numericHour = Number(hour);
+  const numericMinute = Number(minute);
+  if (numericMonth < 1 || numericMonth > 12 || numericDay < 1 || numericDay > 31 || numericHour > 23 || numericMinute > 59) {
+    return null;
+  }
+  const offset = getPragueOffset(Number(year), numericMonth, numericDay, numericHour);
+
+  return {
+    slug,
+    requestedAtLabel: `${year}-${month}-${day} ${hour}:${minute} Europe/Prague`,
+    requestedAtIso: `${year}-${month}-${day}T${hour}:${minute}:00${offset}`
+  };
+}
+
+function getLastSundayOfMonth(year, monthIndex) {
+  const date = new Date(Date.UTC(year, monthIndex + 1, 0));
+  date.setUTCDate(date.getUTCDate() - date.getUTCDay());
+  return date.getUTCDate();
+}
+
+function getPragueOffset(year, month, day, hour) {
+  const dstStartDay = getLastSundayOfMonth(year, 2);
+  const dstEndDay = getLastSundayOfMonth(year, 9);
+  const afterDstStart = month > 3 || (month === 3 && (day > dstStartDay || (day === dstStartDay && hour >= 3)));
+  const beforeDstEnd = month < 10 || (month === 10 && (day < dstEndDay || (day === dstEndDay && hour < 3)));
+  return afterDstStart && beforeDstEnd ? '+02:00' : '+01:00';
+}
+
+async function getServiceBookingTitle(slug) {
+  try {
+    const { data, error } = await supabase
+      .from('services')
+      .select('title')
+      .eq('slug', slug)
+      .maybeSingle();
+    if (!error && data && data.title) return data.title;
+  } catch (err) {
+    console.warn('[Bot] Service lookup failed:', err.message);
+  }
+
+  return SERVICE_BOOKING_TITLES[slug] || slug;
+}
+
+async function startServiceBookingFromPayload(ctx, payload) {
+  const booking = parseServiceBookingPayload(payload);
+  if (!booking) {
+    return ctx.reply('Не вдалося прочитати дату/час бронювання. Відкрийте сторінку послуг і спробуйте ще раз.');
+  }
+
+  const adminId = ADMIN_CHAT_ID;
+  const profileId = ctx.dbUser ? ctx.dbUser.id : null;
+  const serviceTitle = await getServiceBookingTitle(booking.slug);
+  const title = `Бронювання: ${serviceTitle}`;
+  const details = `Бажаний час: ${booking.requestedAtLabel}\nПослуга: ${serviceTitle}`;
+  const payloadData = {
+    purpose: 'service_booking',
+    workflow_status: 'pending',
+    service_slug: booking.slug,
+    service_title: serviceTitle,
+    requested_at: booking.requestedAtIso,
+    telegram: {
+      id: ctx.from.id,
+      username: ctx.from.username || null,
+      name: getFullName(ctx.from)
+    }
+  };
+
+  let savedSubmission = null;
+
+  try {
+    const { data, error } = await supabase.from('submissions').insert({
+      id: randomUUID(),
+      kind: 'service',
+      title,
+      description: 'Запит на бронювання часу для послуги.',
+      details,
+      submitted_by: profileId,
+      telegram_id: ctx.from.id,
+      status: 'pending',
+      payload: payloadData
+    }).select('id, kind, title, description, details, submitted_by, telegram_id, status, payload, created_at, updated_at').single();
+
+    if (error) throw error;
+    savedSubmission = data;
+  } catch (err) {
+    console.error('[Bot] Service booking save error:', err);
+    return ctx.reply('Не вдалося зберегти заявку. Напишіть адміну напряму або спробуйте ще раз трохи пізніше.');
+  }
+
+  const summary = `🕒 Нова заявка на бронювання послуги\n\n` +
+    `👤 Автор: ${getFullName(ctx.from)} (@${ctx.from.username || 'n/a'}, ID: ${ctx.from.id})\n` +
+    `🏷️ Послуга: ${serviceTitle}\n` +
+    `📅 Бажаний час: ${booking.requestedAtLabel}\n\n` +
+    `🔗 Чат: tg://user?id=${ctx.from.id}`;
+
+  try {
+    await bot.telegram.sendMessage(adminId, summary, submissionActionKeyboard(savedSubmission.id));
+  } catch (err) {
+    console.error('[Bot] Service booking admin notification error:', err);
+  }
+
+  await ctx.reply(
+    `Дякуємо! Заявку на "${serviceTitle}" отримано.\nБажаний час: ${booking.requestedAtLabel}.\nАдмін підтвердить або запропонує інший слот.`,
+    portalLoginKeyboard(ctx.from.id, '🔓 Відкрити кабінет')
   );
 }
 
@@ -617,6 +741,10 @@ bot.start(async (ctx) => {
   if (startPayload === 'openmic') {
     ctx.session = { state: 'openmic_name' };
     return ctx.reply('Open Mic & Santiago Talks 🎤\n\nЯк до вас звертатися?');
+  }
+
+  if (startPayload && startPayload.startsWith('book_')) {
+    return startServiceBookingFromPayload(ctx, startPayload);
   }
 
   if (startPayload && startPayload.startsWith('attach_event_')) {

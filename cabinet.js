@@ -150,31 +150,78 @@
       return;
     }
 
+    let eventBookings = [];
+    let serviceRequests = [];
+
     try {
       const { data, error } = await window.supabaseClient.rpc('get_profile_booking_status', {
         p_user_id: user.id,
         p_event_ids: null
       });
       if (error) throw error;
+      eventBookings = data || [];
+    } catch (err) {
+      console.warn('[Cabinet] Booking status unavailable:', err);
+    }
 
-      if (!data || !data.length) {
-        container.innerHTML = emptyState('Записів поки немає.');
-        return;
+    try {
+      const { data, error } = await window.supabaseClient.rpc('get_profile_service_booking_requests', {
+        p_user_id: user.id
+      });
+      if (error) throw error;
+      serviceRequests = data || [];
+    } catch (err) {
+      console.warn('[Cabinet] Service booking requests unavailable:', err);
+      try {
+        const { data, error } = await window.supabaseClient.rpc('get_profile_submissions', {
+          p_user_id: user.id
+        });
+        if (error) throw error;
+        serviceRequests = (data || [])
+          .filter((submission) => submission.kind === 'service' && String(submission.title || '').startsWith('Бронювання:'))
+          .map((submission) => ({
+            service_title: String(submission.title || '').replace(/^Бронювання:\s*/, '') || 'Послуга',
+            requested_at: null,
+            requested_text: String(submission.details || '').split('\n')[0].replace(/^Бажаний час:\s*/, ''),
+            status: submission.status,
+            display_status: submission.display_status,
+            created_at: submission.created_at
+          }));
+      } catch (fallbackErr) {
+        console.warn('[Cabinet] Service booking fallback unavailable:', fallbackErr);
       }
+    }
 
-      container.innerHTML = data.map((booking) => `
+    if (!eventBookings.length && !serviceRequests.length) {
+      container.innerHTML = emptyState('Записів поки немає.');
+      return;
+    }
+
+    const eventRows = eventBookings.map((booking) => `
         <article class="cabinet-data-item">
           <div class="cabinet-data-item__top">
             <h4 class="cabinet-data-item__title">${escapeHtml(booking.title || 'Подія')}</h4>
             <span class="cabinet-status-pill cabinet-status-pill--${escapeHtml(booking.status)}">${escapeHtml(statusLabel(booking.status))}</span>
           </div>
-          <p class="cabinet-data-item__meta">${escapeHtml(formatDate(booking.start_time) || 'Дата уточнюється')}</p>
+          <p class="cabinet-data-item__meta">${escapeHtml(formatDate(booking.start_time) || 'Дата уточнюється')} · Подія</p>
         </article>
-      `).join('');
-    } catch (err) {
-      console.warn('[Cabinet] Booking status unavailable:', err);
-      container.innerHTML = emptyState('Статуси записів зʼявляться після оновлення бази.');
-    }
+      `);
+
+    const serviceRows = serviceRequests.map((request) => {
+      const status = request.display_status || request.status;
+      const requestedTime = formatDate(request.requested_at) || request.requested_text || formatDate(request.created_at) || 'Час уточнюється';
+      return `
+        <article class="cabinet-data-item">
+          <div class="cabinet-data-item__top">
+            <h4 class="cabinet-data-item__title">${escapeHtml(request.service_title || 'Послуга')}</h4>
+            <span class="cabinet-status-pill cabinet-status-pill--${escapeHtml(status)}">${escapeHtml(statusLabel(status))}</span>
+          </div>
+          <p class="cabinet-data-item__meta">${escapeHtml(requestedTime)} · Послуга</p>
+        </article>
+      `;
+    });
+
+    container.innerHTML = [...eventRows, ...serviceRows].join('');
   }
 
   async function renderSubmissions(user) {

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
   <link rel="stylesheet" href="favorites.css?v=3">
 </head>
 <body class="calendar-page">
@@ -113,6 +113,20 @@
     <header class="cal-header">
       <h1 data-i18n="calTitle">Studio Schedule</h1>
       <p class="cal-subtitle" data-i18n="calSubtitle">Book a session, join community events, or reserve studio space.</p>
+      <div class="cal-header-actions" id="master-calendar-cta" hidden>
+        <a class="cal-header-action cal-header-action--primary" id="master-create-event-link" href="https://t.me/santioago_bot?start=create_event" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2v4"></path>
+            <path d="M16 2v4"></path>
+            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+            <path d="M3 10h18"></path>
+            <path d="M12 14v4"></path>
+            <path d="M10 16h4"></path>
+          </svg>
+          <span id="master-create-event-label">Додати подію</span>
+        </a>
+        <span class="cal-header-actions__hint" id="master-create-event-hint">Оберіть день у календарі, щоб передати дату в заявку.</span>
+      </div>
     </header>
 
     <!-- Always Available Section (Evergreen Services) -->
@@ -273,7 +287,7 @@
   <script src="auth.js"></script>
   <script src="menu.js"></script>
   <script src="favorites.js?v=2"></script>
-  <script src="calendar.js?v=3"></script>
+  <script src="calendar.js?v=4"></script>
   <script>
     // Theme toggle for calendar page
     const body = document.body;

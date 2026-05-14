@@ -1937,6 +1937,207 @@ body.grayscale-mode .preview-card {
   transform: translateX(3px);
 }
 
+.preview-card__book {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(95, 255, 224, 0.28);
+  background: rgba(95, 255, 224, 0.1);
+  color: #77f6e4;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.preview-card__book:hover {
+  transform: translateY(-1px);
+  border-color: rgba(95, 255, 224, 0.58);
+  background: rgba(95, 255, 224, 0.16);
+}
+
+.preview-card__book svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+}
+
+.service-booking-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2200;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+.service-booking-overlay[hidden] {
+  display: none;
+}
+
+.service-booking-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.service-booking-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 8, 18, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.service-booking-dialog {
+  position: relative;
+  width: min(460px, 100%);
+  padding: 24px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(13, 16, 34, 0.94);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+  color: var(--fg);
+  transform: translateY(8px);
+  transition: transform 0.18s ease;
+}
+
+.service-booking-overlay.open .service-booking-dialog {
+  transform: translateY(0);
+}
+
+.service-booking-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+  cursor: pointer;
+}
+
+.service-booking-dialog h2 {
+  margin: 0 40px 8px 0;
+  font-size: 1.22rem;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.service-booking-summary,
+.service-booking-status {
+  color: var(--fg-muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.service-booking-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.service-booking-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.service-booking-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--fg-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.service-booking-form input,
+.service-booking-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--fg);
+  font: inherit;
+  font-size: 0.92rem;
+  padding: 11px 12px;
+  outline: none;
+}
+
+.service-booking-form textarea {
+  resize: vertical;
+  min-height: 84px;
+}
+
+.service-booking-form input:focus,
+.service-booking-form textarea:focus {
+  border-color: rgba(95, 255, 224, 0.58);
+  box-shadow: 0 0 0 3px rgba(95, 255, 224, 0.12);
+}
+
+.service-booking-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.service-booking-submit,
+.service-booking-login,
+.service-booking-telegram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(95, 255, 224, 0.32);
+  background: rgba(95, 255, 224, 0.14);
+  color: #75f4e1;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.service-booking-login[hidden],
+.service-booking-telegram[hidden] {
+  display: none;
+}
+
+.service-booking-submit:disabled {
+  opacity: 0.62;
+  cursor: default;
+}
+
+.service-booking-status {
+  min-height: 1.4em;
+  margin: 0;
+}
+
+.service-booking-status[data-state="success"] {
+  color: #75f4a8;
+}
+
+.service-booking-status[data-state="error"] {
+  color: #fca5a5;
+}
+
 body.grayscale-mode .preview-card {
   background: rgba(20, 20, 40, 0.6);
   border-color: rgba(0, 255, 204, 0.2);
@@ -2348,6 +2549,55 @@ body.grayscale-mode .preview-card {
   color: var(--fg-muted);
   max-width: 500px;
   margin: 0 auto;
+}
+
+.cal-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.cal-header-actions[hidden] {
+  display: none;
+}
+
+.cal-header-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(95, 255, 224, 0.32);
+  background: rgba(95, 255, 224, 0.12);
+  color: #75f4e1;
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-out), border-color 0.2s var(--ease-out), background 0.2s var(--ease-out);
+}
+
+.cal-header-action:hover {
+  transform: translateY(-1px);
+  border-color: rgba(95, 255, 224, 0.58);
+  background: rgba(95, 255, 224, 0.18);
+}
+
+.cal-header-action svg {
+  width: 17px;
+  height: 17px;
+}
+
+.cal-header-actions__hint {
+  color: var(--fg-muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  max-width: 360px;
 }
 
 /* ── Glass Card (shared) ── */
@@ -4264,6 +4514,7 @@ body:not(.calendar-page):not(.grayscale-mode) .spec-card,
 body:not(.calendar-page):not(.grayscale-mode) .offer-card,
 body:not(.calendar-page):not(.grayscale-mode) .video-card,
 body:not(.calendar-page):not(.grayscale-mode) .modal-container,
+body:not(.calendar-page):not(.grayscale-mode) .service-booking-dialog,
 body:not(.calendar-page):not(.grayscale-mode) .preview-card,
 body:not(.calendar-page):not(.grayscale-mode) .services-filters,
 body:not(.calendar-page):not(.grayscale-mode) .om-format-card,
@@ -4321,10 +4572,32 @@ body:not(.calendar-page):not(.grayscale-mode) .om-cta-card__content p {
 
 body:not(.calendar-page):not(.grayscale-mode) .preview-card__cta,
 body:not(.calendar-page):not(.grayscale-mode) .preview-card:hover .preview-card__cta,
+body:not(.calendar-page):not(.grayscale-mode) .preview-card__book,
 body:not(.calendar-page):not(.grayscale-mode) .profile-actions .cta-card--primary,
 body:not(.calendar-page):not(.grayscale-mode) .profile-languages,
 body:not(.calendar-page):not(.grayscale-mode) .om-format-card__duration {
   color: #057c69;
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .service-booking-summary,
+body:not(.calendar-page):not(.grayscale-mode) .service-booking-status,
+body:not(.calendar-page):not(.grayscale-mode) .service-booking-form label {
+  color: var(--text-day-muted);
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .service-booking-form input,
+body:not(.calendar-page):not(.grayscale-mode) .service-booking-form textarea {
+  color: var(--text-day);
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(39, 58, 105, 0.14);
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .service-booking-submit,
+body:not(.calendar-page):not(.grayscale-mode) .service-booking-login,
+body:not(.calendar-page):not(.grayscale-mode) .service-booking-telegram,
+body:not(.calendar-page):not(.grayscale-mode) .preview-card__book {
+  background: rgba(5, 124, 105, 0.1);
+  border-color: rgba(5, 124, 105, 0.2);
 }
 
 body:not(.calendar-page):not(.grayscale-mode) .preview-badge {
@@ -4368,6 +4641,7 @@ body.grayscale-mode .spec-card,
 body.grayscale-mode .offer-card,
 body.grayscale-mode .video-card,
 body.grayscale-mode .modal-container,
+body.grayscale-mode .service-booking-dialog,
 body.grayscale-mode .services-filters,
 body.grayscale-mode .om-format-card,
 body.grayscale-mode .om-media-card,
@@ -4691,9 +4965,19 @@ body.calendar-page:not(.grayscale-mode) .cal-day {
   border-color: rgba(39, 58, 105, 0.08);
 }
 
+body.calendar-page:not(.grayscale-mode) .cal-day:not(.cal-day--empty) {
+  min-height: 48px;
+  background: rgba(20, 32, 51, 0.065) !important;
+  border-color: rgba(20, 32, 51, 0.16) !important;
+}
+
 body.calendar-page .cal-day__num {
   color: var(--fg) !important;
   text-shadow: none;
+}
+
+body.calendar-page:not(.grayscale-mode) .cal-day__num {
+  color: #142033 !important;
 }
 
 body.calendar-page .cal-day:not(.cal-day--empty):hover {
@@ -4710,6 +4994,12 @@ body.calendar-page .cal-day--selected {
 
 body.calendar-page:not(.grayscale-mode) .cal-day--selected {
   background: linear-gradient(145deg, rgba(95, 255, 224, 0.3), rgba(114, 167, 255, 0.2)) !important;
+}
+
+body.calendar-page:not(.grayscale-mode) .cal-day--today .cal-day__num,
+body.calendar-page:not(.grayscale-mode) .cal-day--selected .cal-day__num,
+body.calendar-page:not(.grayscale-mode) .cal-day--has-events .cal-day__num {
+  color: #063f4b !important;
 }
 
 body.calendar-page .cal-day--today {
@@ -4937,6 +5227,30 @@ body.calendar-page:not(.grayscale-mode) .cal-events-panel .event-card {
 
   body.calendar-page .cal-day {
     border-radius: 10px;
+  }
+
+  .cal-header-actions {
+    align-items: stretch;
+  }
+
+  .cal-header-action,
+  .cal-header-actions__hint {
+    width: 100%;
+    max-width: none;
+  }
+
+  .service-booking-dialog {
+    padding: 20px;
+  }
+
+  .service-booking-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .service-booking-submit,
+  .service-booking-login,
+  .service-booking-telegram {
+    width: 100%;
   }
 }
 

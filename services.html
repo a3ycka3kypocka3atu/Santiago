@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=5" />
   <link rel="stylesheet" href="favorites.css?v=2" />
 </head>
 <body>
@@ -96,6 +96,7 @@
             <option value="all" data-i18n="filter.allInstructors">All Instructors</option>
             <option value="ivan">Иван Протиняк</option>
             <option value="katerina">Катерина</option>
+            <option value="andrij">Andrij Pýcha</option>
           </select>
           <svg class="select-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
         </div>
@@ -112,6 +113,39 @@
     </div>
 
     <div class="gallery-grid" id="services-grid">
+    </div>
+  </div>
+
+  <div class="service-booking-overlay" id="service-booking-popup" aria-hidden="true" role="dialog" aria-labelledby="service-booking-title" hidden>
+    <div class="service-booking-backdrop" data-service-booking-close></div>
+    <div class="service-booking-dialog">
+      <button class="service-booking-close" type="button" aria-label="Close" data-service-booking-close>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+      </button>
+      <h2 id="service-booking-title">Забронювати час</h2>
+      <p class="service-booking-summary" id="service-booking-summary">Оберіть бажаний день і час для послуги.</p>
+      <form class="service-booking-form" id="service-booking-form">
+        <div class="service-booking-fields">
+          <label>
+            <span id="service-booking-date-label">Дата</span>
+            <input type="date" id="service-booking-date" required>
+          </label>
+          <label>
+            <span id="service-booking-time-label">Час</span>
+            <input type="time" id="service-booking-time" step="900" required>
+          </label>
+        </div>
+        <label>
+          <span id="service-booking-note-label">Коментар</span>
+          <textarea id="service-booking-note" rows="3" placeholder="Запит, побажання або контакт для уточнення"></textarea>
+        </label>
+        <div class="service-booking-actions">
+          <button class="service-booking-submit" id="service-booking-submit" type="submit">Надіслати заявку</button>
+          <a class="service-booking-login" id="service-booking-login" href="https://t.me/santioago_bot?start=login" target="_blank" rel="noopener" hidden>Увійти через Telegram</a>
+          <a class="service-booking-telegram" id="service-booking-telegram" href="https://t.me/santioago_bot" target="_blank" rel="noopener" hidden>Продовжити в Telegram</a>
+        </div>
+        <p class="service-booking-status" id="service-booking-status" role="status" aria-live="polite"></p>
+      </form>
     </div>
   </div>
 
@@ -152,12 +186,12 @@
     <p data-i18n="footer.text">© 2026 Сантьяго – Цифровой Дзен. Все права защищены.</p>
   </footer>
 
-  <script src="translations.js?v=7"></script>
+  <script src="translations.js?v=8"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=6"></script>
   <script src="favorites.js?v=2"></script>
-  <script src="services.js?v=6"></script>
+  <script src="services.js?v=8"></script>
   <script>
     const themeToggles = document.querySelectorAll('.theme-toggle-btn');
     if (localStorage.getItem('grayscale') === 'enabled') document.body.classList.add('grayscale-mode');
