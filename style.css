@@ -3951,6 +3951,9 @@ body.grayscale-mode .cal-theme-btn .toggle-thumb {
   transform: translateY(-2px);
   box-shadow: 0 0 15px rgba(255, 204, 0, 0.3);
 }
+.menu-controls .cabinet-btn {
+  margin-bottom: -0.5rem;
+}
 .cabinet-btn svg {
   width: 20px;
   height: 20px;
@@ -4147,6 +4150,10 @@ body.grayscale-mode .cal-theme-btn .toggle-thumb {
   padding: 8px;
   border-radius: 50%;
   justify-content: center;
+}
+.menu-controls .tg-login-btn.logged-in {
+  width: auto !important;
+  align-self: flex-end;
 }
 
 /* ── Calendar Expand/Collapse ── */

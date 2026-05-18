@@ -3,6 +3,41 @@ document.addEventListener('DOMContentLoaded', function() {
   const menu = document.querySelector('.quick-menu');
   const links = menu.querySelectorAll('a');
 
+  const CABINET_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>';
+
+  function createCabinetButton(extraClass = '') {
+    const button = document.createElement('a');
+    button.href = 'cabinet.html';
+    button.className = `cabinet-btn ${extraClass}`.trim();
+    button.title = 'Cabinet';
+    button.setAttribute('aria-label', 'Cabinet');
+    button.innerHTML = CABINET_ICON;
+    return button;
+  }
+
+  function ensureCabinetButtons() {
+    document.querySelectorAll('.desktop-controls').forEach((controls) => {
+      let button = controls.querySelector('.cabinet-btn');
+      if (!button) {
+        button = createCabinetButton();
+        const loginButton = controls.querySelector('.tg-login-btn');
+        controls.insertBefore(button, loginButton || controls.firstChild);
+      }
+      button.style.display = 'flex';
+    });
+
+    document.querySelectorAll('.menu-controls').forEach((controls) => {
+      let button = controls.querySelector('.cabinet-btn');
+      if (!button) {
+        button = createCabinetButton('cabinet-btn--menu');
+        controls.insertBefore(button, controls.firstChild);
+      }
+      button.style.display = 'flex';
+    });
+  }
+
+  ensureCabinetButtons();
+
   // toggle menu open/close
   triggers.forEach(trigger => {
     trigger.addEventListener('click', () => {
@@ -53,11 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle Cabinet button visibility
     const cabinetBtns = document.querySelectorAll('.cabinet-btn');
     cabinetBtns.forEach(btn => {
-      if (user && user.isLoggedIn) {
-        btn.style.display = 'flex';
-      } else {
-        btn.style.display = 'none';
-      }
+      btn.style.display = 'flex';
     });
   }
 
