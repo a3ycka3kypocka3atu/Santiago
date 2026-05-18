@@ -274,16 +274,15 @@
   function updateRoleSections(user) {
     const actualRole = normalizeRole(user);
     const role = getEffectiveRole(user);
-    const copy = ROLE_COPY[role] || ROLE_COPY.visitor;
+    const statusRole = actualRole === 'admin' ? 'admin' : role;
+    const copy = ROLE_COPY[statusRole] || ROLE_COPY.visitor;
     const badge = document.getElementById('cabinet-role-badge');
     const title = document.getElementById('cabinet-role-title');
     const text = document.getElementById('cabinet-role-text');
 
     if (badge) {
-      badge.className = `cabinet-role-badge cabinet-role-badge--${role}`;
-      if (actualRole === 'admin' && role !== 'admin') {
-        badge.textContent = `Admin as ${copy.label}`;
-      } else if (actualRole === 'instructor' && role !== 'instructor') {
+      badge.className = `cabinet-role-badge cabinet-role-badge--${statusRole}`;
+      if (actualRole === 'instructor' && role !== 'instructor') {
         badge.textContent = `Master as ${copy.label}`;
       } else {
         badge.textContent = copy.label;
