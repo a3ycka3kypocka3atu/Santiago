@@ -165,6 +165,9 @@
       cursor: wait;
       transform: none;
     }
+    .cabinet-action--full {
+      width: 100%;
+    }
     .cabinet-action svg {
       width: 16px;
       height: 16px;
@@ -516,6 +519,65 @@
     .cabinet-info-popup__list strong {
       color: var(--fg);
     }
+    .cabinet-request-form {
+      display: grid;
+      gap: 14px;
+    }
+    .cabinet-request-form label {
+      display: grid;
+      gap: 7px;
+      color: var(--fg);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+    .cabinet-request-form input,
+    .cabinet-request-form textarea {
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--fg);
+      font: inherit;
+      line-height: 1.45;
+      outline: none;
+    }
+    .cabinet-request-form input {
+      min-height: 42px;
+      padding: 0 12px;
+    }
+    .cabinet-request-form textarea {
+      min-height: 170px;
+      padding: 12px;
+      resize: vertical;
+    }
+    .cabinet-request-form input:focus,
+    .cabinet-request-form textarea:focus {
+      border-color: rgba(95, 255, 224, 0.5);
+      box-shadow: 0 0 0 3px rgba(95, 255, 224, 0.1);
+    }
+    .cabinet-request-form__hint,
+    .cabinet-request-form__status {
+      margin: 0;
+      color: var(--fg-muted);
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+    .cabinet-request-form__status {
+      min-height: 1.2em;
+      font-weight: 800;
+    }
+    .cabinet-request-form__status.is-error {
+      color: #fca5a5;
+    }
+    .cabinet-request-form__status.is-success {
+      color: #6ee7d8;
+    }
+    .cabinet-data-item__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
     @media (max-width: 680px) {
       .cabinet-page {
         padding-inline: 16px;
@@ -661,10 +723,10 @@
           </div>
           <p id="cabinet-role-text" class="cabinet-status__text">Увійдіть через Telegram, щоб кабінет підтягнув вашу роль і персональні розділи.</p>
           <div id="cabinet-view-switch" class="cabinet-view-switch" hidden aria-label="Admin view switch">
-            <button class="cabinet-view-switch__button is-active" type="button" data-cabinet-view="admin">Admin</button>
             <button class="cabinet-view-switch__button" type="button" data-cabinet-view="visitor">Visitor</button>
             <button class="cabinet-view-switch__button" type="button" data-cabinet-view="resident">Resident</button>
             <button class="cabinet-view-switch__button" type="button" data-cabinet-view="instructor">Master</button>
+            <button class="cabinet-view-switch__button is-active" type="button" data-cabinet-view="admin">Admin</button>
           </div>
         </div>
       </section>
@@ -688,7 +750,7 @@
           </div>
         </div>
         <div class="cabinet-role-grid">
-          <article class="cabinet-role-card">
+          <article class="cabinet-role-card" data-role-section data-roles="instructor" hidden>
             <div class="cabinet-role-card__top">
               <span class="cabinet-role-card__icon">
                 <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -696,7 +758,6 @@
                   <circle cx="12" cy="7" r="4"></circle>
                 </svg>
               </span>
-              <span class="cabinet-role-card__state cabinet-role-card__state--ready">Готово</span>
             </div>
             <h3>Профіль</h3>
             <p>Імʼя, роль і Telegram-звʼязка. Пізніше тут буде чисте редагування профілю без переходу в бот.</p>
@@ -712,7 +773,6 @@
                   <path d="M19 21 12 17 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"></path>
                 </svg>
               </span>
-              <span class="cabinet-role-card__state cabinet-role-card__state--ready">Готово</span>
             </div>
             <h3>Обране</h3>
             <p>Збережені події, послуги, майстри та майбутні типи контенту з платформи.</p>
@@ -729,7 +789,6 @@
                   <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                 </svg>
               </span>
-              <span class="cabinet-role-card__state cabinet-role-card__state--ready">MVP</span>
             </div>
             <h3>Нагадування</h3>
             <p>Події з обраного вже готують Telegram-нагадування за 24 години і за 3 години до старту.</p>
@@ -756,7 +815,6 @@
                   <path d="M12 2 15 8l6 .9-4.5 4.3 1.1 6.1L12 16.4 6.4 19.3l1.1-6.1L3 8.9 9 8Z"></path>
                 </svg>
               </span>
-              <span class="cabinet-role-card__state cabinet-role-card__state--ready">Роль</span>
             </div>
             <h3>Клубний статус</h3>
             <p>Показує, що користувач має доступ до клубних форматів і внутрішніх подій.</p>
@@ -772,7 +830,6 @@
                   <path d="M3 10h18"></path>
                 </svg>
               </span>
-              <span class="cabinet-role-card__state cabinet-role-card__state--next">Далі</span>
             </div>
             <h3>Клубні події</h3>
             <p>Наступним кроком підключимо вибірку club events і компактний список доступних подій.</p>
@@ -789,7 +846,6 @@
                   <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"></path>
                 </svg>
               </span>
-              <span class="cabinet-role-card__state cabinet-role-card__state--next">Пізніше</span>
             </div>
             <h3>Клубні матеріали</h3>
             <p>Зарезервований блок для контенту, записів, знижок і закритих матеріалів клубу.</p>
@@ -833,9 +889,9 @@
               <span class="cabinet-role-card__state cabinet-role-card__state--ready">Бот</span>
             </div>
             <h3>Профіль майстра</h3>
-            <p>Заявка на публічний профіль, біографію, практики, посилання і матеріали.</p>
+            <p>Надішліть адміну текст, що треба додати або змінити у вашому публічному профілі.</p>
             <div class="cabinet-role-card__actions">
-              <a class="cabinet-action" href="https://t.me/santioago_bot?start=create_profile" target="_blank" rel="noopener">Подати профіль</a>
+              <button class="cabinet-action" type="button" data-master-request="profile">Редагувати профіль</button>
             </div>
           </article>
 
@@ -852,9 +908,9 @@
               <span class="cabinet-role-card__state cabinet-role-card__state--ready">Бот</span>
             </div>
             <h3>Послуги</h3>
-            <p>Майстер може подати послугу або формат, який адмін перевірить перед публікацією.</p>
+            <p>Опубліковані послуги майстра видно нижче. Нову послугу створює адмін з вашого тексту.</p>
             <div class="cabinet-role-card__actions">
-              <a class="cabinet-action" href="https://t.me/santioago_bot?start=create_service" target="_blank" rel="noopener">Додати послугу</a>
+              <button class="cabinet-action" type="button" data-master-request="service">Нова послуга</button>
             </div>
           </article>
 
@@ -872,9 +928,9 @@
               <span class="cabinet-role-card__state cabinet-role-card__state--ready">Бот</span>
             </div>
             <h3>Події</h3>
-            <p>Нова подія створюється через заявку, а існуючу можна привʼязати до майстра з календаря.</p>
+            <p>Опубліковані події майстра видно нижче. Нову подію або привʼязку перевіряє адмін.</p>
             <div class="cabinet-role-card__actions">
-              <a class="cabinet-action" href="https://t.me/santioago_bot?start=create_event" target="_blank" rel="noopener">Нова подія</a>
+              <button class="cabinet-action" type="button" data-master-request="event">Нова подія</button>
               <a class="cabinet-action" href="calendar.html?masterAction=attach">Привʼязати існуючу</a>
             </div>
           </article>
@@ -893,9 +949,9 @@
               <span class="cabinet-role-card__state cabinet-role-card__state--ready">Бот</span>
             </div>
             <h3>Проєкти</h3>
-            <p>Заявка на новий проєкт, серію, колаборацію або довший формат, який має зʼявитися на платформі.</p>
+            <p>Надішліть ідею проєкту, серії або колаборації. Адмін оформить її на платформі.</p>
             <div class="cabinet-role-card__actions">
-              <a class="cabinet-action" href="https://t.me/santioago_bot?start=create_project" target="_blank" rel="noopener">Створити проєкт</a>
+              <button class="cabinet-action" type="button" data-master-request="project">Новий проєкт</button>
             </div>
           </article>
         </div>
@@ -968,6 +1024,12 @@
             <p>Події, послуги, майстри, проєкти і статуси `pending / approved / rejected / published`.</p>
           </article>
         </div>
+        <div class="cabinet-data-panel">
+          <h3 class="cabinet-data-panel__title">Заявки майстрів</h3>
+          <div id="cabinet-admin-submissions-list" class="cabinet-data-list">
+            <div class="favorites-empty">Завантажуємо заявки...</div>
+          </div>
+        </div>
       </section>
     </div>
 
@@ -995,6 +1057,29 @@
         <li><strong>Visitor</strong> може зберігати, отримувати нагадування і керувати сповіщеннями. <strong>Club member</strong> відкриває клубні події, спеціальні пропозиції і знижки.</li>
         <li><strong>Master</strong> зможе працювати зі своєю аудиторією, заявками, подіями, проєктами і послугами. <strong>Admin</strong> керує ролями, заявками і контентом.</li>
       </ul>
+    </div>
+  </div>
+
+  <div class="cabinet-info-popup" id="cabinet-request-popup" aria-hidden="true" role="dialog" aria-labelledby="cabinet-request-title">
+    <div class="cabinet-info-popup__panel">
+      <div class="cabinet-info-popup__top">
+        <h2 id="cabinet-request-title">Заявка майстра</h2>
+        <button class="cabinet-info-popup__close" type="button" data-master-request-close aria-label="Close">×</button>
+      </div>
+      <form class="cabinet-request-form" id="cabinet-request-form">
+        <input type="hidden" id="cabinet-request-kind" />
+        <p class="cabinet-request-form__hint" id="cabinet-request-hint">Опишіть, що треба створити або змінити. Адмін отримає текст у заявках.</p>
+        <label id="cabinet-request-title-wrap">
+          Назва
+          <input id="cabinet-request-title-input" name="title" autocomplete="off" />
+        </label>
+        <label>
+          Текст для адміна
+          <textarea id="cabinet-request-text" name="details" required></textarea>
+        </label>
+        <p class="cabinet-request-form__status" id="cabinet-request-status" aria-live="polite"></p>
+        <button class="cabinet-action cabinet-action--full" id="cabinet-request-submit" type="submit">Надіслати адміну</button>
+      </form>
     </div>
   </div>
 
@@ -1095,6 +1180,11 @@
         if (guidePopup) {
           guidePopup.classList.remove('open');
           guidePopup.setAttribute('aria-hidden', 'true');
+        }
+        const requestPopup = document.getElementById('cabinet-request-popup');
+        if (requestPopup) {
+          requestPopup.classList.remove('open');
+          requestPopup.setAttribute('aria-hidden', 'true');
         }
       }
     });

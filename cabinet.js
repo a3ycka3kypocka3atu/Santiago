@@ -4,6 +4,34 @@
   'use strict';
 
   let adminViewRole = 'admin';
+  let currentRequestKind = null;
+
+  const MASTER_REQUESTS = {
+    profile: {
+      title: 'Редагування профілю',
+      defaultTitle: 'Редагування профілю майстра',
+      hint: 'Напишіть, що треба змінити або додати у вашому профілі: біографія, практики, посилання, фото, формулювання.',
+      placeholder: 'Наприклад: додати новий опис практики, замінити біографію, оновити посилання...'
+    },
+    service: {
+      title: 'Нова послуга',
+      defaultTitle: '',
+      hint: 'Опишіть нову послугу так, щоб адмін міг оформити її на платформі.',
+      placeholder: 'Формат, тривалість, ціна, для кого, що людина отримує, public/club/internal...'
+    },
+    event: {
+      title: 'Нова подія',
+      defaultTitle: '',
+      hint: 'Опишіть подію або формат. Адмін перевірить текст і створить її у календарі.',
+      placeholder: 'Тема, дата/час, тривалість, місце, ціна, ліміт, хто веде, опис для сторінки...'
+    },
+    project: {
+      title: 'Новий проєкт',
+      defaultTitle: '',
+      hint: 'Опишіть проєкт, серію або колаборацію. Адмін оформить її на платформі вручну.',
+      placeholder: 'Ідея, ціль, формат, команда, матеріали, посилання, що має зʼявитися на платформі...'
+    }
+  };
 
   const ROLE_COPY = {
     guest: {
@@ -95,6 +123,120 @@
 
   function emptyState(text) {
     return `<div class="favorites-empty">${escapeHtml(text)}</div>`;
+  }
+
+  function getSubmissionTitle(kind, titleInput) {
+    const config = MASTER_REQUESTS[kind] || MASTER_REQUESTS.event;
+    const title = String(titleInput || '').trim();
+    if (title) return title;
+    return config.defaultTitle || config.title;
+  }
+
+  function setRequestStatus(text, type) {
+    const status = document.getElementById('cabinet-request-status');
+    if (!status) return;
+    status.textContent = text || '';
+    status.classList.toggle('is-error', type === 'error');
+    status.classList.toggle('is-success', type === 'success');
+  }
+
+  function openMasterRequest(kind) {
+    const user = getAuthUser();
+    if (normalizeRole(user) !== 'instructor' && normalizeRole(user) !== 'admin') return;
+
+    const config = MASTER_REQUESTS[kind] || MASTER_REQUESTS.event;
+    currentRequestKind = kind;
+
+    const popup = document.getElementById('cabinet-request-popup');
+    const title = document.getElementById('cabinet-request-title');
+    const hint = document.getElementById('cabinet-request-hint');
+    const kindInput = document.getElementById('cabinet-request-kind');
+    const titleWrap = document.getElementById('cabinet-request-title-wrap');
+    const titleInput = document.getElementById('cabinet-request-title-input');
+    const detailsInput = document.getElementById('cabinet-request-text');
+    const submit = document.getElementById('cabinet-request-submit');
+
+    if (!popup || !titleInput || !detailsInput || !kindInput) return;
+    if (title) title.textContent = config.title;
+    if (hint) hint.textContent = config.hint;
+    kindInput.value = kind;
+    titleInput.value = kind === 'profile' ? config.defaultTitle : '';
+    detailsInput.value = '';
+    detailsInput.placeholder = config.placeholder;
+    if (titleWrap) titleWrap.hidden = kind === 'profile';
+    if (submit) submit.disabled = false;
+    setRequestStatus('', null);
+
+    popup.classList.add('open');
+    popup.setAttribute('aria-hidden', 'false');
+    detailsInput.focus();
+  }
+
+  function closeMasterRequest() {
+    const popup = document.getElementById('cabinet-request-popup');
+    if (!popup) return;
+    popup.classList.remove('open');
+    popup.setAttribute('aria-hidden', 'true');
+    currentRequestKind = null;
+  }
+
+  async function submitMasterRequest(event) {
+    event.preventDefault();
+
+    const user = getAuthUser();
+    const kindInput = document.getElementById('cabinet-request-kind');
+    const titleInput = document.getElementById('cabinet-request-title-input');
+    const detailsInput = document.getElementById('cabinet-request-text');
+    const submit = document.getElementById('cabinet-request-submit');
+    const kind = (kindInput && kindInput.value) || currentRequestKind || 'event';
+    const details = detailsInput ? detailsInput.value.trim() : '';
+
+    if (!user || !user.isLoggedIn || !user.id) {
+      setRequestStatus('Увійдіть через Telegram, щоб надіслати заявку.', 'error');
+      return;
+    }
+
+    if (!details) {
+      setRequestStatus('Напишіть текст для адміна.', 'error');
+      return;
+    }
+
+    if (!window.supabaseClient) {
+      setRequestStatus('Supabase недоступний. Спробуйте пізніше.', 'error');
+      return;
+    }
+
+    const title = getSubmissionTitle(kind, titleInput && titleInput.value);
+    const originalText = submit ? submit.textContent : '';
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = 'Надсилаємо...';
+    }
+    setRequestStatus('', null);
+
+    try {
+      const { error } = await window.supabaseClient.rpc('create_master_submission', {
+        p_user_id: user.id,
+        p_kind: kind,
+        p_title: title,
+        p_description: details,
+        p_details: details,
+        p_mode: kind === 'profile' ? 'profile_edit' : 'create_new'
+      });
+      if (error) throw error;
+
+      setRequestStatus('Заявку надіслано адміну.', 'success');
+      renderSubmissions(user);
+      setTimeout(closeMasterRequest, 650);
+    } catch (err) {
+      console.warn('[Cabinet] Master request failed:', err);
+      setRequestStatus('Не вдалося надіслати заявку. Перевірте підключення або оновлення бази.', 'error');
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = originalText || 'Надіслати адміну';
+      }
+    }
   }
 
   function renderCabinetFavorites() {
@@ -239,7 +381,7 @@
       if (error) throw error;
 
       if (!data || !data.length) {
-        container.innerHTML = emptyState('Заявок поки немає. Створення профілю, послуги, проєкту або події відкривається через бот.');
+        container.innerHTML = emptyState('Заявок поки немає. Створіть заявку з блоку вище.');
         return;
       }
 
@@ -302,6 +444,84 @@
     }
   }
 
+  async function renderAdminSubmissions(user) {
+    const container = document.getElementById('cabinet-admin-submissions-list');
+    if (!container) return;
+    if (!user || !user.isLoggedIn || !user.id || !window.supabaseClient) {
+      container.innerHTML = emptyState('Увійдіть як адмін, щоб побачити заявки.');
+      return;
+    }
+
+    try {
+      const { data, error } = await window.supabaseClient.rpc('get_admin_submissions', {
+        p_user_id: user.id
+      });
+      if (error) throw error;
+
+      if (!data || !data.length) {
+        container.innerHTML = emptyState('Нових заявок немає.');
+        return;
+      }
+
+      container.innerHTML = data.map((submission) => {
+        const status = submission.display_status || submission.status;
+        const author = [submission.author_name, submission.author_username ? `@${submission.author_username}` : '']
+          .filter(Boolean)
+          .join(' · ');
+        const canAct = ['pending', 'needs_info'].includes(status);
+        return `
+          <article class="cabinet-data-item" data-admin-submission="${escapeHtml(submission.id)}">
+            <div class="cabinet-data-item__top">
+              <h4 class="cabinet-data-item__title">${escapeHtml(submission.title)}</h4>
+              <span class="cabinet-status-pill cabinet-status-pill--${escapeHtml(status)}">${escapeHtml(statusLabel(status))}</span>
+            </div>
+            <p class="cabinet-data-item__meta">${escapeHtml(submission.kind)} · ${escapeHtml(author || 'Майстер')} · ${escapeHtml(formatDate(submission.created_at))}</p>
+            ${submission.description ? `<p class="cabinet-data-item__text">${escapeHtml(submission.description)}</p>` : ''}
+            ${submission.details && submission.details !== submission.description ? `<p class="cabinet-data-item__text">${escapeHtml(submission.details)}</p>` : ''}
+            <div class="cabinet-data-item__actions">
+              ${canAct ? `<button class="cabinet-action" type="button" data-admin-submission-action="approved" data-submission-id="${escapeHtml(submission.id)}">Approve</button>` : ''}
+              ${canAct ? `<button class="cabinet-action" type="button" data-admin-submission-action="needs_info" data-submission-id="${escapeHtml(submission.id)}">Треба інфо</button>` : ''}
+              ${canAct ? `<button class="cabinet-action" type="button" data-admin-submission-action="rejected" data-submission-id="${escapeHtml(submission.id)}">Reject</button>` : ''}
+            </div>
+          </article>
+        `;
+      }).join('');
+    } catch (err) {
+      console.warn('[Cabinet] Admin submissions unavailable:', err);
+      container.innerHTML = emptyState('Заявки адміна зʼявляться після оновлення бази.');
+    }
+  }
+
+  async function updateAdminSubmission(event) {
+    const button = event.target.closest('[data-admin-submission-action]');
+    if (!button) return;
+
+    const user = getAuthUser();
+    const submissionId = button.dataset.submissionId;
+    const workflowStatus = button.dataset.adminSubmissionAction;
+    const originalText = button.textContent;
+
+    if (!submissionId || !workflowStatus || !window.supabaseClient) return;
+    button.disabled = true;
+    button.textContent = '...';
+
+    try {
+      const { error } = await window.supabaseClient.rpc('update_admin_submission_status', {
+        p_user_id: user.id,
+        p_submission_id: submissionId,
+        p_workflow_status: workflowStatus,
+        p_admin_message: null,
+        p_published_url: null
+      });
+      if (error) throw error;
+      renderAdminSubmissions(user);
+    } catch (err) {
+      console.warn('[Cabinet] Admin submission update failed:', err);
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  }
+
   function renderOperationalData(user) {
     const role = getEffectiveRole(user);
     renderBookings(user);
@@ -309,6 +529,10 @@
     if (role === 'instructor') {
       renderSubmissions(user);
       renderMentorActivity(user);
+    }
+
+    if (role === 'admin') {
+      renderAdminSubmissions(user);
     }
 
   }
@@ -330,6 +554,38 @@
         renderOperationalData(current);
       });
     });
+
+    document.querySelectorAll('[data-master-request]').forEach((button) => {
+      if (button.__ma3MasterRequestBound) return;
+      button.__ma3MasterRequestBound = true;
+      button.addEventListener('click', () => openMasterRequest(button.dataset.masterRequest));
+    });
+
+    document.querySelectorAll('[data-master-request-close]').forEach((button) => {
+      if (button.__ma3MasterRequestCloseBound) return;
+      button.__ma3MasterRequestCloseBound = true;
+      button.addEventListener('click', closeMasterRequest);
+    });
+
+    const requestPopup = document.getElementById('cabinet-request-popup');
+    if (requestPopup && !requestPopup.__ma3MasterRequestBackdropBound) {
+      requestPopup.__ma3MasterRequestBackdropBound = true;
+      requestPopup.addEventListener('click', (event) => {
+        if (event.target === requestPopup) closeMasterRequest();
+      });
+    }
+
+    const requestForm = document.getElementById('cabinet-request-form');
+    if (requestForm && !requestForm.__ma3MasterRequestSubmitBound) {
+      requestForm.__ma3MasterRequestSubmitBound = true;
+      requestForm.addEventListener('submit', submitMasterRequest);
+    }
+
+    const adminList = document.getElementById('cabinet-admin-submissions-list');
+    if (adminList && !adminList.__ma3AdminSubmissionBound) {
+      adminList.__ma3AdminSubmissionBound = true;
+      adminList.addEventListener('click', updateAdminSubmission);
+    }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -344,6 +600,7 @@
 
   window.MA3Cabinet = {
     renderCabinetFavorites,
-    updateRoleSections
+    updateRoleSections,
+    openMasterRequest
   };
 })();
