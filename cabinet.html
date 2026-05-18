@@ -790,7 +790,7 @@
         </div>
       </section>
 
-      <section class="cabinet-section" data-role-section data-roles="visitor resident instructor" aria-labelledby="cabinet-personal-title" hidden>
+      <section class="cabinet-section" data-role-section data-roles="visitor resident instructor admin" aria-labelledby="cabinet-personal-title" hidden>
         <div class="cabinet-section__header">
           <div class="cabinet-section__header-text">
             <span class="cabinet-section__eyebrow">Personal</span>
@@ -799,7 +799,7 @@
           </div>
         </div>
         <div class="cabinet-role-grid">
-          <article class="cabinet-role-card" data-role-section data-roles="instructor" hidden>
+          <article class="cabinet-role-card" data-role-section data-roles="instructor admin" hidden>
             <div class="cabinet-role-card__top">
               <span class="cabinet-role-card__icon">
                 <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -877,7 +877,7 @@
         </div>
       </section>
 
-      <section class="cabinet-section" data-role-section data-roles="visitor resident instructor" aria-labelledby="cabinet-bookings-title" hidden>
+      <section class="cabinet-section" data-role-section data-roles="visitor resident instructor admin" aria-labelledby="cabinet-bookings-title" hidden>
         <div class="cabinet-section__header">
           <div class="cabinet-section__header-text">
             <span class="cabinet-section__eyebrow">Bookings</span>
@@ -911,7 +911,7 @@
             <button class="cabinet-view-switch__button" type="button" data-cabinet-view="resident">Member view</button>
           </div>
         </div>
-        <div data-role-section data-roles="instructor">
+        <div data-role-section data-roles="instructor admin">
         <div class="cabinet-role-grid">
           <article class="cabinet-role-card cabinet-role-card--mentor">
             <div class="cabinet-role-card__top">
@@ -1022,6 +1022,9 @@
             </div>
             <h3>Заявки</h3>
             <p>Список заявок з `submissions`, перегляд деталей, approve/reject і повідомлення в Telegram.</p>
+            <div class="cabinet-role-card__actions">
+              <a class="cabinet-action" href="#cabinet-admin-submissions-list">Відкрити заявки</a>
+            </div>
           </article>
 
           <article class="cabinet-role-card cabinet-role-card--admin">
@@ -1038,6 +1041,9 @@
             </div>
             <h3>Користувачі</h3>
             <p>Пошук профілів, перегляд ролей і ручна зміна статусів після погодження.</p>
+            <div class="cabinet-role-card__actions">
+              <a class="cabinet-action" href="profile.html">Мій профіль</a>
+            </div>
           </article>
 
           <article class="cabinet-role-card cabinet-role-card--admin">
@@ -1054,6 +1060,10 @@
             </div>
             <h3>Контент</h3>
             <p>Події, послуги, майстри, проєкти і статуси `pending / approved / rejected / published`.</p>
+            <div class="cabinet-role-card__actions">
+              <a class="cabinet-action" href="services.html">Послуги</a>
+              <a class="cabinet-action" href="projects.html">Проєкти</a>
+            </div>
           </article>
         </div>
         <div class="cabinet-data-panel">
@@ -1065,7 +1075,7 @@
       </section>
     </div>
 
-    <section class="cabinet-favorites" data-role-section data-roles="visitor resident instructor" aria-labelledby="cabinet-favorites-title" hidden>
+    <section class="cabinet-favorites" data-role-section data-roles="visitor resident instructor admin" aria-labelledby="cabinet-favorites-title" hidden>
       <div class="cabinet-favorites__header">
         <h2 id="cabinet-favorites-title">Обране</h2>
         <p>Збережені події та послуги з платформи Santiago.</p>

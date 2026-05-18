@@ -308,7 +308,7 @@
     });
 
     document.querySelectorAll('[data-master-shell]').forEach((section) => {
-      section.hidden = !(actualRole === 'instructor' || (actualRole === 'admin' && adminViewRole === 'instructor'));
+      section.hidden = !(actualRole === 'instructor' || (actualRole === 'admin' && ['admin', 'instructor'].includes(adminViewRole)));
     });
   }
 
@@ -551,10 +551,11 @@
   }
 
   function renderOperationalData(user) {
+    const actualRole = normalizeRole(user);
     const role = getEffectiveRole(user);
     renderBookings(user);
 
-    if (role === 'instructor') {
+    if (role === 'instructor' || actualRole === 'admin') {
       renderSubmissions(user);
       renderMentorActivity(user);
     }
