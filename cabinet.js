@@ -251,18 +251,25 @@
 
   function updateViewSwitch(user, role) {
     const actualRole = normalizeRole(user);
-    const switcher = document.getElementById('cabinet-view-switch');
-    if (!switcher) return;
+    const switchers = document.querySelectorAll('[data-cabinet-view-switch]');
+    if (!switchers.length) return;
 
     const allowedViews = actualRole === 'admin'
       ? ['visitor', 'resident', 'instructor', 'admin']
       : (actualRole === 'instructor' ? ['instructor', 'visitor', 'resident'] : []);
 
-    switcher.hidden = !allowedViews.length;
-    switcher.setAttribute('aria-label', actualRole === 'instructor' ? 'Master cabinet view switch' : 'Admin view switch');
-    switcher.querySelectorAll('[data-cabinet-view]').forEach((button) => {
-      button.hidden = !allowedViews.includes(button.dataset.cabinetView);
-      button.classList.toggle('is-active', button.dataset.cabinetView === role);
+    switchers.forEach((switcher) => {
+      const scope = switcher.dataset.cabinetViewSwitch;
+      const isMasterSwitcher = scope === 'master';
+      const isAdminSwitcher = scope === 'admin';
+      switcher.hidden = !allowedViews.length ||
+        (isMasterSwitcher && role !== 'instructor') ||
+        (isAdminSwitcher && role === 'instructor');
+
+      switcher.querySelectorAll('[data-cabinet-view]').forEach((button) => {
+        button.hidden = !allowedViews.includes(button.dataset.cabinetView);
+        button.classList.toggle('is-active', button.dataset.cabinetView === role);
+      });
     });
   }
 
