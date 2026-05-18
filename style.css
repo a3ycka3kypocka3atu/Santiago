@@ -496,10 +496,11 @@ section:target {
   line-height: 1.6;
 }
 .cta-group {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
+  width: min(100%, 1020px);
+  margin: 0 auto;
 }
 .btn-primary {
   background: rgba(160, 90, 255, 0.25);
@@ -514,7 +515,20 @@ section:target {
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
+  min-height: 58px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.cta-wide {
+  grid-column: 1 / -1;
+  min-height: 64px;
+  font-size: 1rem;
 }
 
 /* Glossy sheen effect on hover */
@@ -661,6 +675,18 @@ section {
     padding: 2.5rem 1.25rem !important;
     margin: 0 1rem;
     width: auto;
+  }
+
+  .cta-group {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-primary,
+  .cta-wide {
+    width: 100%;
+    min-height: 54px;
+    padding: 0.8rem 1rem;
+    font-size: 0.92rem;
   }
 
   /* Carousel improvements */
