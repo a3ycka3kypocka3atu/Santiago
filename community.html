@@ -77,15 +77,15 @@
 
     .audience-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px;
       margin-top: 60px;
     }
     @media (max-width: 768px) {
       .audience-grid { grid-template-columns: 1fr; }
     }
     .audience-card {
-      padding: 50px;
+      padding: 38px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -104,8 +104,12 @@
       border-color: rgba(255, 204, 0, 0.3);
       box-shadow: 0 0 40px rgba(255, 204, 0, 0.05);
     }
+    .audience-card.visitor {
+      border-color: rgba(160, 190, 255, 0.28);
+      box-shadow: 0 0 40px rgba(160, 190, 255, 0.05);
+    }
     .audience-card h2 {
-      font-size: 2.2rem;
+      font-size: clamp(1.55rem, 3vw, 2.1rem);
       margin: 0;
       color: #fff;
     }
@@ -230,6 +234,11 @@
       </div>
     </div>
 
+    <div class="gallery-header" id="community-roles" style="text-align: center; margin: 80px 0 0;">
+      <h2 data-i18n="comm.roles.title" style="font-size: 2.5rem; color: #fff; margin-bottom: 15px;">Участник, мастер или гость</h2>
+      <p data-i18n="comm.roles.desc" style="color: rgba(255,255,255,0.6); font-size: 1.1rem; max-width: 820px; margin: 0 auto;">Santiago Community соединяет разные уровни участия. Кабинет помогает каждому видеть свои записи, избранное, заявки и доступные возможности.</p>
+    </div>
+
     <div class="audience-grid">
       <div class="audience-card resident">
         <h2 data-i18n="comm.target.res.title">Для Резидентов</h2>
@@ -241,6 +250,12 @@
         <h2 data-i18n="comm.target.inst.title">Для Мастеров</h2>
         <p data-i18n="comm.target.inst.desc" style="color: rgba(255,255,255,0.6);">Возможность делиться опытом с подготовленной аудиторией, реализовывать идеи при поддержке экосистемы и находить команду для новых проектов.</p>
         <a href="https://t.me/santioago_bot?start=apply" target="_blank" class="cta btn-primary" style="margin-top: auto; width: 100%; text-align: center; background: rgba(0, 255, 204, 0.2); border-color: rgba(0, 255, 204, 0.4);" data-i18n="comm.target.inst.cta">Стать частью команды</a>
+      </div>
+
+      <div class="audience-card visitor">
+        <h2 data-i18n="comm.target.vis.title">Для Гостей</h2>
+        <p data-i18n="comm.target.vis.desc" style="color: rgba(255,255,255,0.6);">Можно приходить на открытые события, сохранять интересные услуги и проекты, бронировать время и постепенно понять, какая роль в Santiago вам ближе.</p>
+        <a href="cabinet.html" class="cta btn-primary" style="margin-top: auto; width: 100%; text-align: center;" data-i18n="comm.target.vis.cta">Открыть свой кабинет</a>
       </div>
     </div>
 
