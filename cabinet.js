@@ -306,6 +306,10 @@
 
       section.hidden = !roles.includes(role);
     });
+
+    document.querySelectorAll('[data-master-shell]').forEach((section) => {
+      section.hidden = !(actualRole === 'instructor' || (actualRole === 'admin' && adminViewRole === 'instructor'));
+    });
   }
 
   async function renderBookings(user) {

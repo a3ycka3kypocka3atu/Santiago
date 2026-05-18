@@ -731,11 +731,6 @@
         </div>
       </section>
 
-      <div class="cabinet-view-switch cabinet-view-switch--master" data-cabinet-view-switch="master" hidden aria-label="Master cabinet view switch">
-        <button class="cabinet-view-switch__button is-active" type="button" data-cabinet-view="instructor">Master</button>
-        <button class="cabinet-view-switch__button" type="button" data-cabinet-view="resident">Club member</button>
-      </div>
-
       <section class="cabinet-section" data-role-section data-roles="guest" aria-labelledby="cabinet-login-title">
         <div class="cabinet-section__header">
           <div class="cabinet-section__header-text">
@@ -874,7 +869,7 @@
         </div>
       </section>
 
-      <section class="cabinet-section cabinet-section--master" data-role-section data-roles="instructor" aria-labelledby="cabinet-master-title" hidden>
+      <section class="cabinet-section cabinet-section--master" data-master-shell aria-labelledby="cabinet-master-title" hidden>
         <div class="cabinet-section__header">
           <div class="cabinet-section__header-text">
             <span class="cabinet-section__eyebrow">Master</span>
@@ -882,6 +877,11 @@
             <p>Робоча зона для профілю, послуг, подій, проєктів і заявок. Майстер може почати дію з кабінету або календаря.</p>
           </div>
         </div>
+        <div class="cabinet-view-switch cabinet-view-switch--master" data-cabinet-view-switch="master" hidden aria-label="Master cabinet view switch">
+          <button class="cabinet-view-switch__button is-active" type="button" data-cabinet-view="instructor">Master</button>
+          <button class="cabinet-view-switch__button" type="button" data-cabinet-view="resident">Club member</button>
+        </div>
+        <div data-role-section data-roles="instructor">
         <div class="cabinet-role-grid">
           <article class="cabinet-role-card cabinet-role-card--mentor">
             <div class="cabinet-role-card__top">
@@ -967,6 +967,7 @@
           <div id="cabinet-mentor-activity-list" class="cabinet-data-list">
             <div class="favorites-empty">Завантажуємо активності...</div>
           </div>
+        </div>
         </div>
       </section>
 
@@ -1124,7 +1125,7 @@
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=6"></script>
   <script src="favorites.js?v=2"></script>
-  <script src="cabinet.js?v=5"></script>
+  <script src="cabinet.js?v=6"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const body = document.body;
