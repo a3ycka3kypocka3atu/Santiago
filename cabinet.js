@@ -279,6 +279,8 @@
   function updateRoleSections(user) {
     const actualRole = normalizeRole(user);
     const role = getEffectiveRole(user);
+    const isMasterContext = actualRole === 'instructor' || (actualRole === 'admin' && adminViewRole === 'instructor');
+    const isMasterToolsView = isMasterContext && role === 'instructor';
     const statusRole = actualRole === 'admin' ? 'admin' : role;
     const copy = ROLE_COPY[statusRole] || ROLE_COPY.visitor;
     const badge = document.getElementById('cabinet-role-badge');
@@ -304,11 +306,11 @@
         .map((item) => item.trim())
         .filter(Boolean);
 
-      section.hidden = !roles.includes(role);
+      section.hidden = !roles.includes(role) || (isMasterToolsView && !section.closest('[data-master-shell]'));
     });
 
     document.querySelectorAll('[data-master-shell]').forEach((section) => {
-      section.hidden = !(actualRole === 'instructor' || (actualRole === 'admin' && ['admin', 'instructor'].includes(adminViewRole)));
+      section.hidden = !isMasterContext;
     });
   }
 
