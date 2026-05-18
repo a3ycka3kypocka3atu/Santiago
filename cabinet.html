@@ -158,6 +158,20 @@
       padding: 0 14px;
       background: rgba(255, 255, 255, 0.12);
     }
+    .cabinet-view-switch--master.is-tools-view {
+      border-color: rgba(59, 130, 246, 0.28);
+      background: rgba(59, 130, 246, 0.1);
+    }
+    .cabinet-view-switch--master.is-member-view {
+      border-color: rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .cabinet-view-switch--master.is-tools-view .cabinet-view-switch__copy strong {
+      color: var(--glow-blue);
+    }
+    .cabinet-view-switch--master.is-member-view .cabinet-view-switch__copy strong {
+      color: var(--glow-green);
+    }
     .cabinet-view-switch__copy {
       display: grid;
       gap: 4px;
@@ -807,7 +821,7 @@
           <div class="cabinet-section__header-text">
             <span class="cabinet-section__eyebrow">Personal</span>
             <h2 id="cabinet-personal-title">Мій простір</h2>
-            <p>Базові речі для всіх користувачів: профіль, збережене, нагадування і швидкий перехід до подій та послуг.</p>
+            <p id="cabinet-personal-text">Базові речі для всіх користувачів: профіль, збережене, нагадування і швидкий перехід до подій та послуг.</p>
           </div>
         </div>
         <div class="cabinet-role-grid">
@@ -910,13 +924,13 @@
           <div class="cabinet-section__header-text">
             <span class="cabinet-section__eyebrow">Master</span>
             <h2 id="cabinet-master-title">Кабінет майстра</h2>
-            <p>Робоча зона для профілю, послуг, подій, проєктів і заявок. Майстер може почати дію з кабінету або календаря.</p>
+            <p id="cabinet-master-text">Робоча зона для профілю, послуг, подій, проєктів і заявок. Майстер може почати дію з кабінету або календаря.</p>
           </div>
         </div>
         <div class="cabinet-view-switch cabinet-view-switch--master" data-cabinet-view-switch="master" hidden aria-label="Master cabinet view switch">
           <div class="cabinet-view-switch__copy">
-            <strong>Режим кабінету</strong>
-            <span>Master tools — заявки, профіль, послуги й події. Member view — простір учасника для подій, обраного та участі.</span>
+            <strong id="cabinet-master-switch-title">Кабінет майстра — ваші інструменти</strong>
+            <span id="cabinet-master-switch-text">Тут зібрані заявки, профіль, послуги, події та проєкти, які майстер передає адміну в роботу.</span>
           </div>
           <div class="cabinet-view-switch__buttons">
             <button class="cabinet-view-switch__button is-active" type="button" data-cabinet-view="instructor">Master tools</button>
@@ -935,9 +949,10 @@
               </span>
             </div>
             <h3>Профіль майстра</h3>
-            <p>Надішліть адміну текст, що треба додати або змінити у вашому публічному профілі.</p>
+            <p>Відкрийте публічний профіль Andrij Pýcha або надішліть адміну текст для оновлення опису.</p>
             <div class="cabinet-role-card__actions">
-              <button class="cabinet-action" type="button" data-master-request="profile">Редагувати профіль</button>
+              <a class="cabinet-action" href="profile-andrij.html">Мій профіль</a>
+              <button class="cabinet-action" type="button" data-master-request="profile">Заявка на правку</button>
             </div>
           </article>
 
@@ -953,8 +968,9 @@
               </span>
             </div>
             <h3>Послуги</h3>
-            <p>Опубліковані послуги майстра видно нижче. Нову послугу створює адмін з вашого тексту.</p>
+            <p>Відкрийте сторінку послуг з увімкненим фільтром Andrij Pýcha або створіть заявку на нову послугу.</p>
             <div class="cabinet-role-card__actions">
+              <a class="cabinet-action" href="services.html?instructor=andrij&mine=1">Мої послуги</a>
               <button class="cabinet-action" type="button" data-master-request="service">Нова послуга</button>
             </div>
           </article>
@@ -972,8 +988,9 @@
               </span>
             </div>
             <h3>Події</h3>
-            <p>Опубліковані події майстра видно нижче. Нову подію або привʼязку перевіряє адмін.</p>
+            <p>Відкрийте календар з фільтром “мої події” або створіть нову подію / привʼяжіть існуючу.</p>
             <div class="cabinet-role-card__actions">
+              <a class="cabinet-action" href="calendar.html?mine=1&instructor=andrij">Мої події</a>
               <button class="cabinet-action" type="button" data-master-request="event">Нова подія</button>
               <a class="cabinet-action" href="calendar.html?masterAction=attach">Привʼязати існуючу</a>
             </div>
@@ -992,8 +1009,9 @@
               </span>
             </div>
             <h3>Проєкти</h3>
-            <p>Надішліть ідею проєкту, серії або колаборації. Адмін оформить її на платформі.</p>
+            <p>Відкрийте проєкти з увімкненим фільтром Andrij Pýcha або надішліть нову ідею адміну.</p>
             <div class="cabinet-role-card__actions">
+              <a class="cabinet-action" href="projects.html?owner=andrijpycha&mine=1">Мої проєкти</a>
               <button class="cabinet-action" type="button" data-master-request="project">Новий проєкт</button>
             </div>
           </article>
@@ -1177,7 +1195,7 @@
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=6"></script>
   <script src="favorites.js?v=2"></script>
-  <script src="cabinet.js?v=6"></script>
+  <script src="cabinet.js?v=7"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const body = document.body;

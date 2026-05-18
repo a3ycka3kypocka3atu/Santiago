@@ -63,6 +63,40 @@
     }
   };
 
+  const PERSONAL_COPY = {
+    visitor: {
+      title: 'Мій простір',
+      text: 'Базові речі для відвідувача: профіль, збережене, нагадування і швидкий перехід до подій та послуг.'
+    },
+    resident: {
+      title: 'Простір учасника клубу',
+      text: 'Клубний режим: ваші записи, обране, нагадування і швидкий перехід до подій, де ви берете участь як member Santiago.'
+    },
+    instructor: {
+      title: 'Особистий простір майстра',
+      text: 'Персональна частина кабінету майстра: профіль, збережене, нагадування і записи окремо від робочих інструментів.'
+    },
+    admin: {
+      title: 'Особистий простір адміна',
+      text: 'Ваш власний простір адміна: профіль, обране, записи і швидкі переходи поруч з адміністративними інструментами.'
+    }
+  };
+
+  const MASTER_VIEW_COPY = {
+    instructor: {
+      title: 'Кабінет майстра — ваші інструменти',
+      text: 'Тут зібрані заявки, профіль, послуги, події та проєкти, які майстер передає адміну в роботу.',
+      header: 'Кабінет майстра',
+      headerText: 'Робоча зона для профілю, послуг, подій, проєктів і заявок. Майстер може почати дію з кабінету або календаря.'
+    },
+    resident: {
+      title: 'Кабінет майстра — простір учасника клубу',
+      text: 'Ви залишаєтесь у кабінеті майстра, але зараз дивитесь member view: клубні події, власні записи, обране і участь.',
+      header: 'Кабінет майстра: member view',
+      headerText: 'Це клубний простір всередині кабінету майстра. Тут видно те, що важливо для участі: події, записи, обране і нагадування.'
+    }
+  };
+
   function getAuthUser() {
     if (window.MA3Auth && window.MA3Auth.user) return window.MA3Auth.user;
     const id = localStorage.getItem('ma3-user-id');
@@ -145,6 +179,11 @@
     status.textContent = text || '';
     status.classList.toggle('is-error', type === 'error');
     status.classList.toggle('is-success', type === 'success');
+  }
+
+  function setText(id, value) {
+    const element = document.getElementById(id);
+    if (element) element.textContent = value;
   }
 
   function openMasterRequest(kind) {
@@ -262,7 +301,7 @@
       const scope = switcher.dataset.cabinetViewSwitch;
       const allowedViews = scope === 'admin'
         ? (actualRole === 'admin' ? ['visitor', 'resident', 'instructor', 'admin'] : [])
-        : (actualRole === 'instructor' || (actualRole === 'admin' && adminViewRole === 'instructor') ? ['instructor', 'resident'] : []);
+        : (actualRole === 'instructor' || (actualRole === 'admin' && ['admin', 'instructor'].includes(adminViewRole)) ? ['instructor', 'resident'] : []);
       const activeRole = scope === 'admin'
         ? adminViewRole
         : (actualRole === 'admin' ? adminMasterViewRole : masterViewRole);
@@ -273,13 +312,18 @@
         button.hidden = !allowedViews.includes(button.dataset.cabinetView);
         button.classList.toggle('is-active', button.dataset.cabinetView === activeRole);
       });
+
+      if (scope === 'master') {
+        switcher.classList.toggle('is-tools-view', activeRole === 'instructor');
+        switcher.classList.toggle('is-member-view', activeRole === 'resident');
+      }
     });
   }
 
   function updateRoleSections(user) {
     const actualRole = normalizeRole(user);
     const role = getEffectiveRole(user);
-    const isMasterContext = actualRole === 'instructor' || (actualRole === 'admin' && adminViewRole === 'instructor');
+    const isMasterContext = actualRole === 'instructor' || (actualRole === 'admin' && ['admin', 'instructor'].includes(adminViewRole));
     const isMasterToolsView = isMasterContext && role === 'instructor';
     const statusRole = actualRole === 'admin' ? 'admin' : role;
     const copy = ROLE_COPY[statusRole] || ROLE_COPY.visitor;
@@ -298,6 +342,17 @@
 
     if (title) title.textContent = copy.title;
     if (text) text.textContent = copy.text;
+
+    const personalCopy = PERSONAL_COPY[role] || PERSONAL_COPY.visitor;
+    setText('cabinet-personal-title', personalCopy.title);
+    setText('cabinet-personal-text', personalCopy.text);
+
+    const masterCopy = MASTER_VIEW_COPY[role] || MASTER_VIEW_COPY.instructor;
+    setText('cabinet-master-title', masterCopy.header);
+    setText('cabinet-master-text', masterCopy.headerText);
+    setText('cabinet-master-switch-title', masterCopy.title);
+    setText('cabinet-master-switch-text', masterCopy.text);
+
     updateViewSwitch(user, role);
 
     document.querySelectorAll('[data-role-section]').forEach((section) => {

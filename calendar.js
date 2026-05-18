@@ -31,6 +31,7 @@ window.onTelegramAuth = function(user) {
   let currentFilter = 'all'; // 'all' | 'online' | 'offline_studio' | 'offline_external'
   let preselectedServiceId = null;  // Pre-filter from URL param ?service=ID
   let preselectedInstructor = null; // Pre-filter from URL param ?instructor=NAME
+  let showOnlyMyEvents = false;     // Pre-filter from URL param ?mine=1
   const TELEGRAM_BOT_URL = 'https://t.me/santioago_bot';
 
   // ── Parse URL pre-filter params ──
@@ -38,12 +39,16 @@ window.onTelegramAuth = function(user) {
     const params = new URLSearchParams(window.location.search);
     const svc = params.get('service');
     const instr = params.get('instructor');
+    const mine = params.get('mine');
     if (svc) {
       preselectedServiceId = svc.trim();
       currentFilter = 'all'; // Don't override location filter, just scroll/highlight
     }
     if (instr) {
       preselectedInstructor = instr.trim().toLowerCase();
+    }
+    if (mine === '1') {
+      showOnlyMyEvents = true;
     }
   })();
 
@@ -392,6 +397,10 @@ window.onTelegramAuth = function(user) {
       if (currentUser.role === 'resident') return e.type === 'public' || e.type === 'club';
       return e.type === 'public'; // Guest/Visitor — shows public, hides club/internal
     });
+
+    if (showOnlyMyEvents && currentUser && currentUser.id) {
+      eventsCache = eventsCache.filter(e => String(e.instructor_id || '') === String(currentUser.id));
+    }
 
     await refreshEventState();
     renderCalendar();

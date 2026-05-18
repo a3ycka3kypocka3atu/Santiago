@@ -411,6 +411,22 @@
     render();
   }
 
+  function applyUrlFilters() {
+    const params = new URLSearchParams(window.location.search);
+    const ownerParam = params.get('owner');
+    const mineParam = params.get('mine');
+    const ownerValue = ownerParam || (mineParam === '1' ? 'andrijpycha' : '');
+    if (!ownerValue) return;
+
+    const owner = document.getElementById('projects-owner-filter');
+    const normalizedOwner = normalizeOwner(ownerValue);
+    const hasOwner = owner && Array.from(owner.options).some(option => option.value === normalizedOwner);
+    if (!hasOwner) return;
+
+    state.owner = normalizedOwner;
+    owner.value = normalizedOwner;
+  }
+
   function init() {
     document.querySelectorAll('#projects-filters .filter-tab').forEach(tab => {
       tab.addEventListener('click', () => {
@@ -439,6 +455,7 @@
     const reset = document.getElementById('projects-reset-filters');
     if (reset) reset.addEventListener('click', resetFilters);
 
+    applyUrlFilters();
     render();
   }
 
