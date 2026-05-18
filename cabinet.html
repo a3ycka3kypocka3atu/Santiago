@@ -138,6 +138,45 @@
       background: rgba(255, 204, 0, 0.13);
       color: var(--glow-yellow);
     }
+    .cabinet-view-switch--master {
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 0;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(95, 255, 224, 0.22);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 14px 38px rgba(15, 23, 42, 0.1);
+    }
+    .cabinet-view-switch--master .cabinet-view-switch__button {
+      min-height: 40px;
+      padding: 0 14px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+    .cabinet-view-switch__copy {
+      display: grid;
+      gap: 4px;
+      min-width: 220px;
+      max-width: 680px;
+    }
+    .cabinet-view-switch__copy strong {
+      color: var(--fg);
+      font-size: 0.92rem;
+      font-weight: 900;
+    }
+    .cabinet-view-switch__copy span {
+      color: var(--fg-muted);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+    .cabinet-view-switch__buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      flex: 0 0 auto;
+    }
     .cabinet-action {
       display: inline-flex;
       align-items: center;
@@ -601,6 +640,16 @@
       .cabinet-guide__button {
         width: 100%;
       }
+      .cabinet-view-switch--master {
+        align-items: stretch;
+      }
+      .cabinet-view-switch__copy {
+        min-width: 0;
+      }
+      .cabinet-view-switch__buttons,
+      .cabinet-view-switch__buttons .cabinet-view-switch__button {
+        width: 100%;
+      }
       .cabinet-data-stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -878,8 +927,14 @@
           </div>
         </div>
         <div class="cabinet-view-switch cabinet-view-switch--master" data-cabinet-view-switch="master" hidden aria-label="Master cabinet view switch">
-          <button class="cabinet-view-switch__button is-active" type="button" data-cabinet-view="instructor">Master</button>
-          <button class="cabinet-view-switch__button" type="button" data-cabinet-view="resident">Club member</button>
+          <div class="cabinet-view-switch__copy">
+            <strong>Режим кабінету</strong>
+            <span>Master tools — заявки, профіль, послуги й події. Member view — простір учасника для подій, обраного та участі.</span>
+          </div>
+          <div class="cabinet-view-switch__buttons">
+            <button class="cabinet-view-switch__button is-active" type="button" data-cabinet-view="instructor">Master tools</button>
+            <button class="cabinet-view-switch__button" type="button" data-cabinet-view="resident">Member view</button>
+          </div>
         </div>
         <div data-role-section data-roles="instructor">
         <div class="cabinet-role-grid">
