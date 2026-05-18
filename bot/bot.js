@@ -14,7 +14,7 @@ const NOTIFICATION_POLL_MS = Number(process.env.NOTIFICATION_POLL_MS || 60000);
 const NOTIFICATION_TIME_ZONE = process.env.NOTIFICATION_TIME_ZONE || 'Europe/Prague';
 
 const ADMINS = ['andrisav', 'waysantiago24'];
-const INSTRUCTORS = ['kateryna_mihailovna'];
+const INSTRUCTORS = ['kateryna_mihailovna', 'andrisav'];
 
 if (!BOT_TOKEN || !SUPABASE_URL || !SUPABASE_KEY) {
   console.error("Missing required environment variables.");
