@@ -27,7 +27,7 @@ window.translations = {
     "hero.cta.calendar": "Календарь",
     "hero.cta.events": "События",
     "hero.cta.space": "Пространство",
-    "hero.cta.cabinet": "Стать участником / мастером / гостем со своим кабинетом",
+    "hero.cta.cabinet": "Стать участником / мастером / гостем — свой кабинет",
     
     // Index.html - Events
     "events.title": "Ближайшие события",
@@ -997,7 +997,7 @@ window.translations = {
     "hero.cta.calendar": "Kalendář",
     "hero.cta.events": "Události",
     "hero.cta.space": "Prostor",
-    "hero.cta.cabinet": "Staňte se členem / mistrem / návštěvníkem se svým kabinetem",
+    "hero.cta.cabinet": "Staňte se členem / mistrem / hostem — vlastní kabinet",
     
     "events.title": "Nadcházející události",
     "events.1.title": "Sociální hra \"Echo\"",
@@ -1473,7 +1473,7 @@ window.translations = {
     "hero.cta.calendar": "Календар",
     "hero.cta.events": "Події",
     "hero.cta.space": "Простір",
-    "hero.cta.cabinet": "Стати учасником / майстром / гостем зі своїм кабінетом",
+    "hero.cta.cabinet": "Стати учасником / майстром / гостем — свій кабінет",
     
     "events.title": "Найближчі події",
     "events.1.title": "Соціальна гра \"Ехо\"",

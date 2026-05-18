@@ -520,6 +520,7 @@ section:target {
   overflow: hidden;
   letter-spacing: 0;
   min-height: 58px;
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -658,13 +659,16 @@ section {
 /* Responsive Adjustments */
 @media (max-width: 600px) {
   .title {
-    font-size: clamp(1.75rem, 8vw, 2.2rem);
+    font-size: 1.25rem;
     max-width: 100%;
     overflow-wrap: anywhere;
+    white-space: normal;
   }
   .manifest {
-    font-size: 0.95rem;
+    font-size: 0.84rem;
     padding: 0 0.5rem;
+    max-width: 100%;
+    overflow-wrap: anywhere;
   }
 
   /* Mobile-only controls (hidden on desktop) */
@@ -682,10 +686,10 @@ section {
   }
 
   .hero-content {
-    padding: 2.5rem 1.25rem !important;
-    margin: 0;
-    width: calc(100% - 2rem);
-    max-width: calc(100vw - 2rem);
+    padding: 2rem 1rem !important;
+    margin: 0 auto !important;
+    width: min(300px, calc(100vw - 3rem)) !important;
+    max-width: calc(100vw - 3rem) !important;
   }
 
   .cta-group {
@@ -698,6 +702,12 @@ section {
     min-height: 54px;
     padding: 0.8rem 1rem;
     font-size: 0.92rem;
+  }
+
+  .cta-wide {
+    font-size: 0.78rem;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
   }
 
   /* Carousel improvements */
