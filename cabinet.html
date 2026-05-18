@@ -142,6 +142,10 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      justify-self: stretch;
       margin-top: 0;
       padding: 14px 16px;
       border-radius: 16px;
@@ -157,6 +161,7 @@
     .cabinet-view-switch__copy {
       display: grid;
       gap: 4px;
+      flex: 1 1 auto;
       min-width: 220px;
       max-width: 680px;
     }
@@ -171,11 +176,14 @@
       line-height: 1.45;
     }
     .cabinet-view-switch__buttons {
-      display: flex;
-      align-items: center;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
-      flex-wrap: wrap;
-      flex: 0 0 auto;
+      width: min(100%, 330px);
+      flex: 0 0 min(100%, 330px);
+    }
+    .cabinet-view-switch__buttons .cabinet-view-switch__button {
+      width: 100%;
     }
     .cabinet-action {
       display: inline-flex;
@@ -216,9 +224,13 @@
       order: 2;
       display: grid;
       gap: 16px;
+      width: 100%;
+      min-width: 0;
+      justify-self: stretch;
     }
     .cabinet-section--master {
       order: 1;
+      align-self: start;
     }
     .cabinet-section[hidden] {
       display: none !important;
