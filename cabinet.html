@@ -139,8 +139,9 @@
       color: var(--glow-yellow);
     }
     .cabinet-view-switch--master {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
       align-items: center;
-      justify-content: space-between;
       gap: 16px;
       width: 100%;
       min-width: 0;
@@ -175,9 +176,8 @@
     .cabinet-view-switch__copy {
       display: grid;
       gap: 4px;
-      flex: 1 1 auto;
-      min-width: 220px;
-      max-width: 680px;
+      min-width: 0;
+      max-width: 720px;
     }
     .cabinet-view-switch__copy strong {
       color: var(--fg);
@@ -193,11 +193,12 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
-      width: min(100%, 330px);
-      flex: 0 0 min(100%, 330px);
+      justify-self: stretch;
+      min-width: 0;
     }
     .cabinet-view-switch__buttons .cabinet-view-switch__button {
       width: 100%;
+      min-width: 0;
     }
     .cabinet-action {
       display: inline-flex;
@@ -667,6 +668,7 @@
         width: 100%;
       }
       .cabinet-view-switch--master {
+        grid-template-columns: 1fr;
         align-items: stretch;
       }
       .cabinet-view-switch__copy {
@@ -1195,7 +1197,7 @@
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=6"></script>
   <script src="favorites.js?v=2"></script>
-  <script src="cabinet.js?v=7"></script>
+  <script src="cabinet.js?v=9"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const body = document.body;

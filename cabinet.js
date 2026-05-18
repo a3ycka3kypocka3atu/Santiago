@@ -97,6 +97,33 @@
     }
   };
 
+  const STATIC_MASTER_ACTIVITY = [
+    {
+      type: 'Профіль',
+      title: 'Andrij Pýcha',
+      meta: 'Публічний профіль майстра',
+      url: 'profile-andrij.html'
+    },
+    {
+      type: 'Послуги',
+      title: 'Формати Andrij',
+      meta: 'Послуги з фільтром майстра',
+      url: 'services.html?instructor=andrij&mine=1'
+    },
+    {
+      type: 'Події',
+      title: 'Формати подій Andrij',
+      meta: 'Календар з фільтром майстра',
+      url: 'calendar.html?mine=1&instructor=andrij'
+    },
+    {
+      type: 'Проєкти',
+      title: 'Повʼязані проєкти Andrij',
+      meta: 'Проєкти з фільтром куратора',
+      url: 'projects.html?owner=andrijpycha&mine=1'
+    }
+  ];
+
   function getAuthUser() {
     if (window.MA3Auth && window.MA3Auth.user) return window.MA3Auth.user;
     const id = localStorage.getItem('ma3-user-id');
@@ -164,6 +191,22 @@
 
   function emptyState(text) {
     return `<div class="favorites-empty">${escapeHtml(text)}</div>`;
+  }
+
+  function renderStaticMasterActivity(container, introText = '') {
+    if (!container) return;
+    const intro = introText ? `<div class="favorites-empty">${escapeHtml(introText)}</div>` : '';
+    const rows = STATIC_MASTER_ACTIVITY.map((item) => `
+      <article class="cabinet-data-item">
+        <div class="cabinet-data-item__top">
+          <h4 class="cabinet-data-item__title">${escapeHtml(item.title)}</h4>
+          <span class="cabinet-status-pill">${escapeHtml(item.type)}</span>
+        </div>
+        <p class="cabinet-data-item__meta">${escapeHtml(item.meta)}</p>
+        <a class="cabinet-action" href="${escapeHtml(item.url)}">Відкрити</a>
+      </article>
+    `).join('');
+    container.innerHTML = `${intro}${rows}`;
   }
 
   function getSubmissionTitle(kind, titleInput) {
@@ -325,6 +368,7 @@
     const role = getEffectiveRole(user);
     const isMasterContext = actualRole === 'instructor' || (actualRole === 'admin' && ['admin', 'instructor'].includes(adminViewRole));
     const isMasterToolsView = isMasterContext && role === 'instructor';
+    const masterViewCopyRole = actualRole === 'admin' && isMasterContext ? adminMasterViewRole : role;
     const statusRole = actualRole === 'admin' ? 'admin' : role;
     const copy = ROLE_COPY[statusRole] || ROLE_COPY.visitor;
     const badge = document.getElementById('cabinet-role-badge');
@@ -347,7 +391,7 @@
     setText('cabinet-personal-title', personalCopy.title);
     setText('cabinet-personal-text', personalCopy.text);
 
-    const masterCopy = MASTER_VIEW_COPY[role] || MASTER_VIEW_COPY.instructor;
+    const masterCopy = MASTER_VIEW_COPY[masterViewCopyRole] || MASTER_VIEW_COPY.instructor;
     setText('cabinet-master-title', masterCopy.header);
     setText('cabinet-master-text', masterCopy.headerText);
     setText('cabinet-master-switch-title', masterCopy.title);
@@ -505,7 +549,7 @@
       if (error) throw error;
 
       if (!data || !data.length) {
-        container.innerHTML = emptyState('Поки немає опублікованих подій або послуг, привʼязаних до цього профілю.');
+        renderStaticMasterActivity(container, 'Поки база не повернула привʼязані активності, нижче є прямі переходи до ваших сторінок.');
         return;
       }
 
@@ -525,7 +569,7 @@
       `).join('');
     } catch (err) {
       console.warn('[Cabinet] Mentor activity unavailable:', err);
-      container.innerHTML = emptyState('Активності зʼявляться після оновлення бази.');
+      renderStaticMasterActivity(container, 'Активності з бази тимчасово недоступні. Прямі переходи працюють нижче.');
     }
   }
 
@@ -641,7 +685,7 @@
         if (scope === 'admin' && actualRole === 'admin') {
           adminViewRole = requestedRole;
           if (requestedRole === 'instructor') adminMasterViewRole = 'instructor';
-        } else if (scope === 'master' && actualRole === 'admin' && adminViewRole === 'instructor' && ['instructor', 'resident'].includes(requestedRole)) {
+        } else if (scope === 'master' && actualRole === 'admin' && ['admin', 'instructor'].includes(adminViewRole) && ['instructor', 'resident'].includes(requestedRole)) {
           adminMasterViewRole = requestedRole;
         } else if (scope === 'master' && actualRole === 'instructor' && ['instructor', 'resident'].includes(requestedRole)) {
           masterViewRole = requestedRole;
