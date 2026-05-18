@@ -88,12 +88,28 @@
         </div>
       </div>
       <div class="filter-group filter-group--instructor">
+        <div class="filter-label" data-i18n="filter.curator">Куратор</div>
+        <div class="filter-select-wrap">
+          <select class="filter-select" id="projects-owner-filter" data-filter="owner" aria-label="Select project curator">
+            <option value="all" data-i18n="filter.allCurators">Все кураторы</option>
+            <option value="santiagoway">Santiago Way</option>
+            <option value="santiagoclub">Santiago Club</option>
+            <option value="santiagoincubator">Santiago Incubator</option>
+            <option value="openmic">Open Mic</option>
+            <option value="santiagoplatform">Santiago Platform</option>
+            <option value="andrijpycha">Andrij Pýcha</option>
+          </select>
+          <svg class="select-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="filter-group filter-group--instructor">
         <div class="filter-label" data-i18n="filter.sort">Сортировка</div>
         <div class="filter-select-wrap">
           <select class="filter-select" id="projects-sort" aria-label="Sort projects">
             <option value="priority" data-i18n="filter.sortPriority">По приоритету</option>
             <option value="title" data-i18n="filter.sortTitle">По названию</option>
             <option value="status" data-i18n="filter.sortStatus">По статусу</option>
+            <option value="owner" data-i18n="filter.sortCurator">По куратору</option>
           </select>
           <svg class="select-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
         </div>

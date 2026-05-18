@@ -4,7 +4,7 @@
   const STORAGE_KEY = 'language';
   const DEFAULT_LANG = 'ru';
   const SUPPORTED = ['en', 'cz', 'ru', 'ua'];
-  const state = { category: 'all', status: 'all', sort: 'priority' };
+  const state = { category: 'all', status: 'all', owner: 'all', sort: 'priority' };
   let currentLang = detectLanguage();
 
   const labels = {
@@ -296,6 +296,14 @@
     return value[currentLang] || value[DEFAULT_LANG] || Object.values(value)[0] || '';
   }
 
+  function normalizeOwner(value) {
+    return String(value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '');
+  }
+
   function t(key) {
     const dictionary = labels[currentLang] || labels[DEFAULT_LANG];
     return key.split('.').reduce((acc, part) => acc && acc[part], dictionary) || key;
@@ -305,12 +313,14 @@
     const result = projects.filter(project => {
       const category = state.category === 'all' || project.category === state.category;
       const status = state.status === 'all' || project.status === state.status;
-      return category && status;
+      const owner = state.owner === 'all' || normalizeOwner(project.owner) === state.owner;
+      return category && status && owner;
     });
 
     return result.sort((a, b) => {
       if (state.sort === 'title') return localize(a.title).localeCompare(localize(b.title));
       if (state.sort === 'status') return a.status.localeCompare(b.status) || a.priority - b.priority;
+      if (state.sort === 'owner') return a.owner.localeCompare(b.owner) || a.priority - b.priority;
       return a.priority - b.priority;
     });
   }
@@ -387,6 +397,7 @@
   function resetFilters() {
     state.category = 'all';
     state.status = 'all';
+    state.owner = 'all';
     state.sort = 'priority';
     document.querySelectorAll('#projects-filters .filter-tab').forEach(tab => {
       const active = tab.dataset.value === 'all';
@@ -395,6 +406,8 @@
     });
     const sort = document.getElementById('projects-sort');
     if (sort) sort.value = 'priority';
+    const owner = document.getElementById('projects-owner-filter');
+    if (owner) owner.value = 'all';
     render();
   }
 
@@ -411,6 +424,14 @@
     if (sort) {
       sort.addEventListener('change', () => {
         state.sort = sort.value;
+        render();
+      });
+    }
+
+    const owner = document.getElementById('projects-owner-filter');
+    if (owner) {
+      owner.addEventListener('change', () => {
+        state.owner = owner.value;
         render();
       });
     }

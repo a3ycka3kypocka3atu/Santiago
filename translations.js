@@ -399,10 +399,13 @@ window.translations = {
     "filter.active": "Активные",
     "filter.building": "В сборке",
     "filter.concept": "Концепт",
+    "filter.curator": "Куратор",
+    "filter.allCurators": "Все кураторы",
     "filter.sort": "Сортировка",
     "filter.sortPriority": "По приоритету",
     "filter.sortTitle": "По названию",
     "filter.sortStatus": "По статусу",
+    "filter.sortCurator": "По куратору",
     
     // Cabinet.html
     "cabinet.title": "Личный кабинет",
@@ -866,10 +869,13 @@ window.translations = {
     "filter.active": "Active",
     "filter.building": "Building",
     "filter.concept": "Concept",
+    "filter.curator": "Curator",
+    "filter.allCurators": "All curators",
     "filter.sort": "Sort",
     "filter.sortPriority": "By priority",
     "filter.sortTitle": "By title",
     "filter.sortStatus": "By status",
+    "filter.sortCurator": "By curator",
 
     // Cabinet.html
     "cabinet.title": "Resident Cabinet",
@@ -1332,10 +1338,13 @@ window.translations = {
     "filter.active": "Aktivní",
     "filter.building": "Ve vývoji",
     "filter.concept": "Koncept",
+    "filter.curator": "Kurátor",
+    "filter.allCurators": "Všichni kurátoři",
     "filter.sort": "Řazení",
     "filter.sortPriority": "Podle priority",
     "filter.sortTitle": "Podle názvu",
     "filter.sortStatus": "Podle statusu",
+    "filter.sortCurator": "Podle kurátora",
 
     "cabinet.title": "Osobní kabinet",
     "cabinet.subtitle": "Prostor pro správu vašich projektů a služeb v Santiago Studio.",
@@ -1798,10 +1807,13 @@ window.translations = {
     "filter.active": "Активні",
     "filter.building": "У збірці",
     "filter.concept": "Концепт",
+    "filter.curator": "Куратор",
+    "filter.allCurators": "Усі куратори",
     "filter.sort": "Сортування",
     "filter.sortPriority": "За пріоритетом",
     "filter.sortTitle": "За назвою",
     "filter.sortStatus": "За статусом",
+    "filter.sortCurator": "За куратором",
     "event.viewService": "Детальніше про послугу →",
 
     // Community.html
