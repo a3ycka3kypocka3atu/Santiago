@@ -3,7 +3,8 @@
 (function () {
   'use strict';
 
-  let cabinetViewRole = null;
+  let adminViewRole = 'admin';
+  let masterViewRole = 'instructor';
   let currentRequestKind = null;
 
   const MASTER_REQUESTS = {
@@ -82,9 +83,9 @@
 
   function getEffectiveRole(user) {
     const role = normalizeRole(user);
-    if (role === 'admin') return cabinetViewRole || 'admin';
-    if (role === 'instructor' && ['visitor', 'resident', 'instructor'].includes(cabinetViewRole)) {
-      return cabinetViewRole;
+    if (role === 'admin') return adminViewRole || 'admin';
+    if (role === 'instructor' && ['resident', 'instructor'].includes(masterViewRole)) {
+      return masterViewRole;
     }
     return role;
   }
@@ -254,21 +255,18 @@
     const switchers = document.querySelectorAll('[data-cabinet-view-switch]');
     if (!switchers.length) return;
 
-    const allowedViews = actualRole === 'admin'
-      ? ['visitor', 'resident', 'instructor', 'admin']
-      : (actualRole === 'instructor' ? ['instructor', 'visitor', 'resident'] : []);
-
     switchers.forEach((switcher) => {
       const scope = switcher.dataset.cabinetViewSwitch;
-      const isMasterSwitcher = scope === 'master';
-      const isAdminSwitcher = scope === 'admin';
-      switcher.hidden = !allowedViews.length ||
-        (isMasterSwitcher && role !== 'instructor') ||
-        (isAdminSwitcher && role === 'instructor');
+      const allowedViews = scope === 'admin'
+        ? (actualRole === 'admin' ? ['visitor', 'resident', 'instructor', 'admin'] : [])
+        : (actualRole === 'instructor' ? ['instructor', 'resident'] : []);
+      const activeRole = scope === 'admin' ? adminViewRole : masterViewRole;
+
+      switcher.hidden = !allowedViews.length;
 
       switcher.querySelectorAll('[data-cabinet-view]').forEach((button) => {
         button.hidden = !allowedViews.includes(button.dataset.cabinetView);
-        button.classList.toggle('is-active', button.dataset.cabinetView === role);
+        button.classList.toggle('is-active', button.dataset.cabinetView === activeRole);
       });
     });
   }
@@ -572,10 +570,12 @@
         const current = getAuthUser();
         const actualRole = normalizeRole(current);
         const requestedRole = button.dataset.cabinetView || actualRole;
-        if (actualRole === 'admin') {
-          cabinetViewRole = requestedRole;
-        } else if (actualRole === 'instructor' && ['instructor', 'visitor', 'resident'].includes(requestedRole)) {
-          cabinetViewRole = requestedRole;
+        const switcher = button.closest('[data-cabinet-view-switch]');
+        const scope = switcher ? switcher.dataset.cabinetViewSwitch : '';
+        if (scope === 'admin' && actualRole === 'admin') {
+          adminViewRole = requestedRole;
+        } else if (scope === 'master' && actualRole === 'instructor' && ['instructor', 'resident'].includes(requestedRole)) {
+          masterViewRole = requestedRole;
         }
         updateRoleSections(current);
         renderCabinetFavorites();
