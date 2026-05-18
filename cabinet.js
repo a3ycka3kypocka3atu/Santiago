@@ -368,6 +368,7 @@
     const role = getEffectiveRole(user);
     const isMasterContext = actualRole === 'instructor' || (actualRole === 'admin' && adminViewRole === 'instructor');
     const isMasterToolsView = isMasterContext && role === 'instructor';
+    const showMasterShell = isMasterContext && role !== 'admin';
     const masterViewCopyRole = actualRole === 'admin' && isMasterContext ? adminMasterViewRole : role;
     const statusRole = actualRole === 'admin' ? 'admin' : role;
     const copy = ROLE_COPY[statusRole] || ROLE_COPY.visitor;
@@ -409,7 +410,7 @@
     });
 
     document.querySelectorAll('[data-master-shell]').forEach((section) => {
-      section.hidden = !isMasterContext;
+      section.hidden = !showMasterShell;
     });
   }
 
