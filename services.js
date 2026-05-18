@@ -533,6 +533,72 @@
         format: 'individual',
         instructor_name: 'Katerina',
         detail_page: 'offer-katerina.html'
+      },
+      {
+        slug: 'purpose-brand-discovery',
+        title: 'services.andrij.purpose.name',
+        description: 'services.andrij.purpose.short',
+        price: 'services.andrij.purpose.price',
+        icon_emoji: '🧭',
+        category: 'mind',
+        format: 'individual',
+        instructor_name: 'Andrij Pýcha',
+        detail_page: 'profile-andrij.html'
+      },
+      {
+        slug: 'conscious-networking-facilitation',
+        title: 'services.andrij.networking.name',
+        description: 'services.andrij.networking.short',
+        price: 'services.andrij.networking.price',
+        icon_emoji: '🤝',
+        category: 'space',
+        format: 'group',
+        instructor_name: 'Andrij Pýcha',
+        detail_page: 'events.html'
+      },
+      {
+        slug: 'interview-recording-production',
+        title: 'services.andrij.recording.name',
+        description: 'services.andrij.recording.short',
+        price: 'services.andrij.recording.price',
+        icon_emoji: '🎙️',
+        category: 'incubator',
+        format: 'individual',
+        instructor_name: 'Andrij Pýcha',
+        detail_page: 'openmic.html'
+      },
+      {
+        slug: 'startup-marketing-automation',
+        title: 'services.andrij.automation.name',
+        description: 'services.andrij.automation.short',
+        price: 'services.andrij.automation.price',
+        icon_emoji: '🚀',
+        category: 'incubator',
+        format: 'individual',
+        instructor_name: 'Andrij Pýcha',
+        detail_page: 'projects.html'
+      },
+      {
+        slug: 'conscious-relationship-discovery',
+        title: 'services.andrij.relationship.name',
+        description: 'services.andrij.relationship.short',
+        price: 'services.andrij.relationship.price',
+        icon_emoji: '💞',
+        category: 'mind',
+        format: 'group',
+        instructor_name: 'Andrij Pýcha',
+        detail_page: 'events.html'
+      },
+      {
+        slug: 'alternative-knowledge-workshop',
+        title: 'services.andrij.knowledge.name',
+        description: 'services.andrij.knowledge.short',
+        price: 'services.andrij.knowledge.price',
+        icon_emoji: '📚',
+        category: 'mind',
+        format: 'group',
+        instructor_name: 'Andrij Pýcha',
+        detail_page: 'events.html'
       }
     ];
 
@@ -540,6 +606,17 @@
     setupFilters();
 
     const params = new URLSearchParams(window.location.search);
+    const instructorParam = params.get('instructor');
+    if (instructorParam) {
+      const instSelect = document.getElementById('instructor-filter');
+      const hasOption = instSelect && Array.from(instSelect.options).some(option => option.value === instructorParam);
+      if (hasOption) {
+        instSelect.value = instructorParam;
+        state.instructor = instructorParam;
+        applyFilters();
+      }
+    }
+
     const bookingSlug = params.get('book');
     if (bookingSlug) {
       const requestedService = staticServices.find(service => service.slug === bookingSlug);

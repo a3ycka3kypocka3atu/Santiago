@@ -74,8 +74,11 @@
         <div class="filter-tabs" role="tablist" aria-label="Master direction">
           <button class="filter-tab active" data-filter="direction" data-value="all" role="tab" aria-selected="true" data-i18n="filter.all">Все</button>
           <button class="filter-tab" data-filter="direction" data-value="body" role="tab" aria-selected="false" data-i18n="filter.body">Тело</button>
+          <button class="filter-tab" data-filter="direction" data-value="mind" role="tab" aria-selected="false" data-i18n="filter.mind">Разум</button>
           <button class="filter-tab" data-filter="direction" data-value="wellness" role="tab" aria-selected="false" data-i18n="filter.wellness">Wellness</button>
           <button class="filter-tab" data-filter="direction" data-value="media" role="tab" aria-selected="false" data-i18n="filter.media">Медиа</button>
+          <button class="filter-tab" data-filter="direction" data-value="community" role="tab" aria-selected="false" data-i18n="filter.community">Комьюнити</button>
+          <button class="filter-tab" data-filter="direction" data-value="incubator" role="tab" aria-selected="false" data-i18n="filter.incubator">Инкубатор</button>
         </div>
       </div>
       <div class="filter-group">
@@ -147,6 +150,24 @@
         </div>
       </a>
 
+      <!-- Master Card: Andrij -->
+      <a href="profile-andrij.html" class="preview-card" id="card-andrij" data-direction="mind media community incubator digital" data-format="individual group b2b" data-role="practices production">
+        <div class="preview-card__icon">🧭</div>
+        <div class="preview-card__body">
+          <div class="preview-card__meta">
+            <span class="preview-badge" data-i18n="filter.community">Комьюнити</span>
+            <span class="preview-format" data-i18n="filter.group">Групповые</span>
+          </div>
+          <h3 data-i18n="masters.andrij.name">Andrij Pýcha</h3>
+          <span class="preview-role" data-i18n="masters.andrij.role">Фасилитатор связей · Идеолог · Медиа и AI-проекты</span>
+          <p data-i18n="masters.andrij.short">Помогает людям увидеть потенциал, найти союзников, оформить идеи в проекты, записать сильный контент и создать осознанные форматы встреч.</p>
+          <span class="preview-card__cta">
+            <span data-i18n="btn.details">Подробнее</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+          </span>
+        </div>
+      </a>
+
       <!-- Placeholder for future masters -->
 
     </div>
@@ -190,11 +211,11 @@
     <p data-i18n="footer.text">© 2026 Сантьяго – Цифровой Дзен. Все права защищены.</p>
   </footer>
 
-  <script src="translations.js?v=7"></script>
+  <script src="translations.js?v=8"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=6"></script>
-  <script src="masters.js?v=1"></script>
+  <script src="masters.js?v=2"></script>
   <script>
     const themeToggles = document.querySelectorAll('.theme-toggle-btn');
     if (localStorage.getItem('grayscale') === 'enabled') document.body.classList.add('grayscale-mode');
