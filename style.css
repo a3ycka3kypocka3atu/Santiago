@@ -676,9 +676,14 @@ section {
   }
 
   /* Hero content refinement */
+  .hero {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
   .hero-content {
     padding: 2.5rem 1.25rem !important;
-    margin: 0 1rem;
+    margin: 0;
     width: calc(100% - 2rem);
     max-width: calc(100vw - 2rem);
   }
