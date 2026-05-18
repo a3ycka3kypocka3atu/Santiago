@@ -344,7 +344,7 @@
       const scope = switcher.dataset.cabinetViewSwitch;
       const allowedViews = scope === 'admin'
         ? (actualRole === 'admin' ? ['visitor', 'resident', 'instructor', 'admin'] : [])
-        : (actualRole === 'instructor' || (actualRole === 'admin' && ['admin', 'instructor'].includes(adminViewRole)) ? ['instructor', 'resident'] : []);
+        : (actualRole === 'instructor' || (actualRole === 'admin' && adminViewRole === 'instructor') ? ['instructor', 'resident'] : []);
       const activeRole = scope === 'admin'
         ? adminViewRole
         : (actualRole === 'admin' ? adminMasterViewRole : masterViewRole);
@@ -366,7 +366,7 @@
   function updateRoleSections(user) {
     const actualRole = normalizeRole(user);
     const role = getEffectiveRole(user);
-    const isMasterContext = actualRole === 'instructor' || (actualRole === 'admin' && ['admin', 'instructor'].includes(adminViewRole));
+    const isMasterContext = actualRole === 'instructor' || (actualRole === 'admin' && adminViewRole === 'instructor');
     const isMasterToolsView = isMasterContext && role === 'instructor';
     const masterViewCopyRole = actualRole === 'admin' && isMasterContext ? adminMasterViewRole : role;
     const statusRole = actualRole === 'admin' ? 'admin' : role;
@@ -656,7 +656,7 @@
     const role = getEffectiveRole(user);
     renderBookings(user);
 
-    if (role === 'instructor' || actualRole === 'admin') {
+    if (role === 'instructor') {
       renderSubmissions(user);
       renderMentorActivity(user);
     }
@@ -685,7 +685,7 @@
         if (scope === 'admin' && actualRole === 'admin') {
           adminViewRole = requestedRole;
           if (requestedRole === 'instructor') adminMasterViewRole = 'instructor';
-        } else if (scope === 'master' && actualRole === 'admin' && ['admin', 'instructor'].includes(adminViewRole) && ['instructor', 'resident'].includes(requestedRole)) {
+        } else if (scope === 'master' && actualRole === 'admin' && adminViewRole === 'instructor' && ['instructor', 'resident'].includes(requestedRole)) {
           adminMasterViewRole = requestedRole;
         } else if (scope === 'master' && actualRole === 'instructor' && ['instructor', 'resident'].includes(requestedRole)) {
           masterViewRole = requestedRole;
