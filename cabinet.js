@@ -3,7 +3,7 @@
 (function () {
   'use strict';
 
-  let adminViewRole = 'admin';
+  let cabinetViewRole = null;
   let currentRequestKind = null;
 
   const MASTER_REQUESTS = {
@@ -82,7 +82,10 @@
 
   function getEffectiveRole(user) {
     const role = normalizeRole(user);
-    if (role === 'admin' && adminViewRole) return adminViewRole;
+    if (role === 'admin') return cabinetViewRole || 'admin';
+    if (role === 'instructor' && ['visitor', 'resident', 'instructor'].includes(cabinetViewRole)) {
+      return cabinetViewRole;
+    }
     return role;
   }
 
@@ -251,8 +254,14 @@
     const switcher = document.getElementById('cabinet-view-switch');
     if (!switcher) return;
 
-    switcher.hidden = actualRole !== 'admin';
+    const allowedViews = actualRole === 'admin'
+      ? ['visitor', 'resident', 'instructor', 'admin']
+      : (actualRole === 'instructor' ? ['instructor', 'visitor', 'resident'] : []);
+
+    switcher.hidden = !allowedViews.length;
+    switcher.setAttribute('aria-label', actualRole === 'instructor' ? 'Master cabinet view switch' : 'Admin view switch');
     switcher.querySelectorAll('[data-cabinet-view]').forEach((button) => {
+      button.hidden = !allowedViews.includes(button.dataset.cabinetView);
       button.classList.toggle('is-active', button.dataset.cabinetView === role);
     });
   }
@@ -267,7 +276,13 @@
 
     if (badge) {
       badge.className = `cabinet-role-badge cabinet-role-badge--${role}`;
-      badge.textContent = actualRole === 'admin' && role !== 'admin' ? `Admin as ${copy.label}` : copy.label;
+      if (actualRole === 'admin' && role !== 'admin') {
+        badge.textContent = `Admin as ${copy.label}`;
+      } else if (actualRole === 'instructor' && role !== 'instructor') {
+        badge.textContent = `Master as ${copy.label}`;
+      } else {
+        badge.textContent = copy.label;
+      }
     }
 
     if (title) title.textContent = copy.title;
@@ -547,8 +562,14 @@
       if (button.__ma3CabinetViewBound) return;
       button.__ma3CabinetViewBound = true;
       button.addEventListener('click', () => {
-        adminViewRole = button.dataset.cabinetView || 'admin';
         const current = getAuthUser();
+        const actualRole = normalizeRole(current);
+        const requestedRole = button.dataset.cabinetView || actualRole;
+        if (actualRole === 'admin') {
+          cabinetViewRole = requestedRole;
+        } else if (actualRole === 'instructor' && ['instructor', 'visitor', 'resident'].includes(requestedRole)) {
+          cabinetViewRole = requestedRole;
+        }
         updateRoleSections(current);
         renderCabinetFavorites();
         renderOperationalData(current);

@@ -321,7 +321,10 @@ section:target {
 /* Fluffy clouds — built with box-shadows */
 .hero-content {
   text-align: center;
+  width: min(100%, 950px);
   max-width: 950px;
+  min-width: 0;
+  box-sizing: border-box;
   position: relative;
   z-index: 2;
   padding: 4rem 2rem !important;
@@ -656,6 +659,8 @@ section {
 @media (max-width: 600px) {
   .title {
     font-size: clamp(1.75rem, 8vw, 2.2rem);
+    max-width: 100%;
+    overflow-wrap: anywhere;
   }
   .manifest {
     font-size: 0.95rem;
@@ -674,7 +679,8 @@ section {
   .hero-content {
     padding: 2.5rem 1.25rem !important;
     margin: 0 1rem;
-    width: auto;
+    width: calc(100% - 2rem);
+    max-width: calc(100vw - 2rem);
   }
 
   .cta-group {
