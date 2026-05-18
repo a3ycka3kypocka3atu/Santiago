@@ -299,6 +299,17 @@
       background: linear-gradient(160deg, rgba(255, 255, 255, 0.072), rgba(255, 255, 255, 0.026));
       box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
     }
+    .cabinet-role-card[data-master-card-link] {
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .cabinet-role-card[data-master-card-link]:hover,
+    .cabinet-role-card[data-master-card-link]:focus-visible {
+      transform: translateY(-2px);
+      border-color: rgba(95, 255, 224, 0.34);
+      background: linear-gradient(160deg, rgba(95, 255, 224, 0.11), rgba(255, 255, 255, 0.032));
+      outline: none;
+    }
     .cabinet-role-card__top {
       display: flex;
       align-items: flex-start;
@@ -788,7 +799,6 @@
         <h1 class="cabinet-guide__title">Особистий простір Santiago</h1>
         <span>Тут зібрані збережені події, майстри, послуги та майбутні підписки.</span>
       </div>
-      <button class="cabinet-guide__button" id="cabinet-guide-open" type="button">Як це працює?</button>
     </section>
 
     <div class="cabinet-shell">
@@ -870,7 +880,7 @@
             <h3>Нагадування</h3>
             <p>Події з обраного вже готують Telegram-нагадування за 24 години і за 3 години до старту.</p>
             <div class="cabinet-role-card__actions">
-              <a class="cabinet-action" href="calendar.html">Календар</a>
+              <a class="cabinet-action" href="events.html">Події</a>
             </div>
           </article>
         </div>
@@ -899,7 +909,7 @@
             <h3>Клубні події</h3>
             <p>Наступним кроком підключимо вибірку club events і компактний список доступних подій.</p>
             <div class="cabinet-role-card__actions">
-              <a class="cabinet-action" href="calendar.html">Дивитись календар</a>
+              <a class="cabinet-action" href="events.html">Дивитись події</a>
             </div>
           </article>
         </div>
@@ -941,7 +951,7 @@
         </div>
         <div data-role-section data-roles="instructor admin">
         <div class="cabinet-role-grid">
-          <article class="cabinet-role-card cabinet-role-card--mentor">
+          <article class="cabinet-role-card cabinet-role-card--mentor" data-master-card-link="profile-andrij.html" tabindex="0" aria-label="Відкрити профіль майстра">
             <div class="cabinet-role-card__top">
               <span class="cabinet-role-card__icon">
                 <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -953,12 +963,11 @@
             <h3>Профіль майстра</h3>
             <p>Відкрийте публічний профіль Andrij Pýcha або надішліть адміну текст для оновлення опису.</p>
             <div class="cabinet-role-card__actions">
-              <a class="cabinet-action" href="profile-andrij.html">Мій профіль</a>
               <button class="cabinet-action" type="button" data-master-request="profile">Заявка на правку</button>
             </div>
           </article>
 
-          <article class="cabinet-role-card cabinet-role-card--mentor">
+          <article class="cabinet-role-card cabinet-role-card--mentor" data-master-card-link="services.html?instructor=andrij&mine=1" tabindex="0" aria-label="Відкрити мої послуги">
             <div class="cabinet-role-card__top">
               <span class="cabinet-role-card__icon">
                 <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -972,12 +981,11 @@
             <h3>Послуги</h3>
             <p>Відкрийте сторінку послуг з увімкненим фільтром Andrij Pýcha або створіть заявку на нову послугу.</p>
             <div class="cabinet-role-card__actions">
-              <a class="cabinet-action" href="services.html?instructor=andrij&mine=1">Мої послуги</a>
               <button class="cabinet-action" type="button" data-master-request="service">Нова послуга</button>
             </div>
           </article>
 
-          <article class="cabinet-role-card cabinet-role-card--mentor">
+          <article class="cabinet-role-card cabinet-role-card--mentor" data-master-card-link="events.html?mine=1&instructor=andrij" tabindex="0" aria-label="Відкрити мої події">
             <div class="cabinet-role-card__top">
               <span class="cabinet-role-card__icon">
                 <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -990,15 +998,13 @@
               </span>
             </div>
             <h3>Події</h3>
-            <p>Відкрийте календар з фільтром “мої події” або створіть нову подію / привʼяжіть існуючу.</p>
+            <p>Відкрийте сторінку подій з фільтром “мої події” або створіть нову подію.</p>
             <div class="cabinet-role-card__actions">
-              <a class="cabinet-action" href="calendar.html?mine=1&instructor=andrij">Мої події</a>
               <button class="cabinet-action" type="button" data-master-request="event">Нова подія</button>
-              <a class="cabinet-action" href="calendar.html?masterAction=attach">Привʼязати існуючу</a>
             </div>
           </article>
 
-          <article class="cabinet-role-card cabinet-role-card--mentor">
+          <article class="cabinet-role-card cabinet-role-card--mentor" data-master-card-link="projects.html?owner=andrijpycha&mine=1" tabindex="0" aria-label="Відкрити мої проєкти">
             <div class="cabinet-role-card__top">
               <span class="cabinet-role-card__icon">
                 <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1013,7 +1019,6 @@
             <h3>Проєкти</h3>
             <p>Відкрийте проєкти з увімкненим фільтром Andrij Pýcha або надішліть нову ідею адміну.</p>
             <div class="cabinet-role-card__actions">
-              <a class="cabinet-action" href="projects.html?owner=andrijpycha&mine=1">Мої проєкти</a>
               <button class="cabinet-action" type="button" data-master-request="project">Новий проєкт</button>
             </div>
           </article>
@@ -1022,12 +1027,6 @@
           <h3 class="cabinet-data-panel__title">Мої заявки</h3>
           <div id="cabinet-submissions-list" class="cabinet-data-list">
             <div class="favorites-empty">Завантажуємо заявки...</div>
-          </div>
-        </div>
-        <div class="cabinet-data-panel">
-          <h3 class="cabinet-data-panel__title">Опубліковані / привʼязані активності</h3>
-          <div id="cabinet-mentor-activity-list" class="cabinet-data-list">
-            <div class="favorites-empty">Завантажуємо активності...</div>
           </div>
         </div>
         </div>
@@ -1118,22 +1117,6 @@
     </section>
   </main>
 
-  <div class="cabinet-info-popup" id="cabinet-info-popup" aria-hidden="true" role="dialog" aria-labelledby="cabinet-info-title">
-    <div class="cabinet-info-popup__panel">
-      <div class="cabinet-info-popup__top">
-        <h2 id="cabinet-info-title">Як працює кабінет</h2>
-        <button class="cabinet-info-popup__close" id="cabinet-guide-close" type="button" aria-label="Close">×</button>
-      </div>
-      <ul class="cabinet-info-popup__list">
-        <li><strong>Збережене</strong> — ваша особиста бібліотека подій, майстрів, послуг, проєктів і контенту.</li>
-        <li><strong>Нагадування</strong> — для збережених подій бот автоматично готує повідомлення за 24 години і за 3 години до старту.</li>
-        <li><strong>Підписка на майстра</strong> — окремий дозвіл на ширші повідомлення від майстра через бот.</li>
-        <li><strong>Visitor</strong> може зберігати, отримувати нагадування і керувати сповіщеннями. <strong>Club member</strong> відкриває клубні події, спеціальні пропозиції і знижки.</li>
-        <li><strong>Master</strong> зможе працювати зі своєю аудиторією, заявками, подіями, проєктами і послугами. <strong>Admin</strong> керує ролями, заявками і контентом.</li>
-      </ul>
-    </div>
-  </div>
-
   <div class="cabinet-info-popup" id="cabinet-request-popup" aria-hidden="true" role="dialog" aria-labelledby="cabinet-request-title">
     <div class="cabinet-info-popup__panel">
       <div class="cabinet-info-popup__top">
@@ -1197,7 +1180,7 @@
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=6"></script>
   <script src="favorites.js?v=2"></script>
-  <script src="cabinet.js?v=10"></script>
+  <script src="cabinet.js?v=11"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const body = document.body;
@@ -1223,38 +1206,10 @@
       });
       syncThemeToggles();
 
-      const guideOpen = document.getElementById('cabinet-guide-open');
-      const guideClose = document.getElementById('cabinet-guide-close');
-      const guidePopup = document.getElementById('cabinet-info-popup');
-
-      function closeGuide() {
-        if (!guidePopup) return;
-        guidePopup.classList.remove('open');
-        guidePopup.setAttribute('aria-hidden', 'true');
-      }
-
-      if (guideOpen && guidePopup) {
-        guideOpen.addEventListener('click', () => {
-          guidePopup.classList.add('open');
-          guidePopup.setAttribute('aria-hidden', 'false');
-        });
-      }
-
-      if (guideClose) guideClose.addEventListener('click', closeGuide);
-      if (guidePopup) {
-        guidePopup.addEventListener('click', (event) => {
-          if (event.target === guidePopup) closeGuide();
-        });
-      }
     });
 
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
-        const guidePopup = document.getElementById('cabinet-info-popup');
-        if (guidePopup) {
-          guidePopup.classList.remove('open');
-          guidePopup.setAttribute('aria-hidden', 'true');
-        }
         const requestPopup = document.getElementById('cabinet-request-popup');
         if (requestPopup) {
           requestPopup.classList.remove('open');

@@ -10,18 +10,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    .events-page {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 120px 20px 70px;
-      min-height: 100vh;
-    }
     .events-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
       justify-content: center;
-      margin: 28px 0 40px;
+      margin: -8px auto 24px;
+      padding: 0 20px;
     }
     .events-action {
       display: inline-flex;
@@ -42,102 +37,8 @@
       border-color: var(--glow-yellow);
       background: rgba(255, 204, 0, 0.12);
     }
-    .events-program {
-      display: grid;
-      gap: 26px;
-      margin-top: 20px;
-    }
-    .events-section-head {
-      max-width: 820px;
-      margin: 0 auto;
-      text-align: center;
-    }
-    .events-section-head h2 {
-      margin: 0 0 10px;
-      color: var(--glow-yellow);
-      font-size: clamp(1.55rem, 3vw, 2.2rem);
-    }
-    .events-section-head p {
-      margin: 0;
-      color: var(--fg-muted);
-      line-height: 1.7;
-    }
-    .events-format-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 16px;
-    }
-    .events-format-card {
-      display: grid;
-      gap: 12px;
-      min-height: 260px;
-      padding: 22px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.07);
-      backdrop-filter: blur(14px);
-      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-    }
-    .events-format-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(255, 204, 0, 0.55);
-      background: rgba(255, 255, 255, 0.1);
-    }
-    .events-format-card__top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .events-format-card__icon {
-      font-size: 1.8rem;
-    }
-    .events-format-card__badge {
-      border: 1px solid rgba(255, 204, 0, 0.4);
-      border-radius: 999px;
-      color: var(--glow-yellow);
-      font-size: 0.76rem;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      padding: 5px 9px;
-      text-transform: uppercase;
-    }
-    .events-format-card h3 {
-      margin: 0;
-      color: var(--fg);
-      font-size: 1.16rem;
-      line-height: 1.25;
-    }
-    .events-format-card p {
-      margin: 0;
-      color: var(--fg-muted);
-      line-height: 1.65;
-      font-size: 0.95rem;
-    }
-    .events-format-card__link {
-      align-self: end;
-      color: var(--glow-yellow);
-      font-weight: 800;
-      text-decoration: none;
-    }
-    .events-flow {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
-      margin-top: 10px;
-    }
-    .events-flow-step {
-      border-left: 3px solid var(--glow-yellow);
-      padding: 6px 0 6px 16px;
-    }
-    .events-flow-step strong {
-      display: block;
-      color: var(--fg);
-      margin-bottom: 5px;
-    }
-    .events-flow-step span {
-      color: var(--fg-muted);
-      line-height: 1.55;
+    .events-page .gallery-grid {
+      max-width: 1060px;
     }
   </style>
 </head>
@@ -186,7 +87,7 @@
     <button class="menu-trigger" aria-label="Open menu">☰</button>
   </div>
 
-  <main class="events-page">
+  <main class="page-wrapper events-page">
     <div class="gallery-header">
       <h1 data-i18n="events.page.title">Живые события Santiago</h1>
       <p data-i18n="events.page.desc">События здесь — не просто расписание. Это способ знакомиться глубже, находить союзников, тестировать идеи, записывать контент и превращать встречи в реальные проекты.</p>
@@ -198,84 +99,62 @@
       <a class="events-action" href="https://t.me/santioago_bot?start=create_event" target="_blank" rel="noopener" data-i18n="events.action.propose">Предложить событие</a>
     </div>
 
-    <section class="events-program" aria-labelledby="events-formats-title">
-      <div class="events-section-head">
-        <h2 id="events-formats-title" data-i18n="events.formats.title">Основные форматы</h2>
-        <p data-i18n="events.formats.desc">Каждый формат может жить как отдельная встреча, серия событий или вход в более глубокую платформу Santiago.</p>
-      </div>
-
-      <div class="events-format-grid">
-        <article class="events-format-card">
-          <div class="events-format-card__top">
-            <span class="events-format-card__icon">🤝</span>
-            <span class="events-format-card__badge" data-i18n="events.badge.network">Network</span>
-          </div>
-          <h3 data-i18n="events.network.title">Нетворкинг взаимопомощи</h3>
-          <p data-i18n="events.network.desc">Камерные встречи, где каждый коротко показывает, кто он, что создает, кому может помочь и кого ищет для следующего шага.</p>
-          <a class="events-format-card__link" href="services.html?book=conscious-networking-facilitation" data-i18n="events.card.book">Забронировать формат</a>
-        </article>
-
-        <article class="events-format-card">
-          <div class="events-format-card__top">
-            <span class="events-format-card__icon">💞</span>
-            <span class="events-format-card__badge" data-i18n="events.badge.relation">Relation</span>
-          </div>
-          <h3 data-i18n="events.relationship.title">Осознанные знакомства</h3>
-          <p data-i18n="events.relationship.desc">Формат для людей, которые хотят искать отношения через ценности, открытый разговор, совместимость и уважение к внутреннему миру друг друга.</p>
-          <a class="events-format-card__link" href="services.html?book=conscious-relationship-discovery" data-i18n="events.card.book">Забронировать формат</a>
-        </article>
-
-        <article class="events-format-card">
-          <div class="events-format-card__top">
-            <span class="events-format-card__icon">🎙️</span>
-            <span class="events-format-card__badge" data-i18n="events.badge.media">Media</span>
-          </div>
-          <h3 data-i18n="events.talks.title">Santiago Talks и интервью</h3>
-          <p data-i18n="events.talks.desc">Разговоры с людьми о пути, проектах, опыте и идеях. Формат может быть живой встречей, записью интервью или открытым разговором для аудитории.</p>
-          <a class="events-format-card__link" href="openmic.html" data-i18n="events.card.openmic">Открыть Open Mic</a>
-        </article>
-
-        <article class="events-format-card">
-          <div class="events-format-card__top">
-            <span class="events-format-card__icon">🚀</span>
-            <span class="events-format-card__badge" data-i18n="events.badge.project">Project</span>
-          </div>
-          <h3 data-i18n="events.projects.title">Круг со-творчества проектов</h3>
-          <p data-i18n="events.projects.desc">Вечер для идей, стартапов и инициатив: участники презентуют задумки, получают обратную связь, находят роли, команду и первые тесты.</p>
-          <a class="events-format-card__link" href="projects.html" data-i18n="events.card.projects">Смотреть проекты</a>
-        </article>
-
-        <article class="events-format-card">
-          <div class="events-format-card__top">
-            <span class="events-format-card__icon">📚</span>
-            <span class="events-format-card__badge" data-i18n="events.badge.knowledge">Knowledge</span>
-          </div>
-          <h3 data-i18n="events.knowledge.title">Альтернативная история, наука и энергия</h3>
-          <p data-i18n="events.knowledge.desc">Лекции и обсуждения о необычных взглядах на историю, науку, восприятие, энергию и скрытые процессы, которые можно исследовать вместе.</p>
-          <a class="events-format-card__link" href="services.html?book=alternative-knowledge-workshop" data-i18n="events.card.book">Забронировать формат</a>
-        </article>
-      </div>
-
-      <div class="events-section-head">
-        <h2 data-i18n="events.flow.title">От встречи к платформе</h2>
-        <p data-i18n="events.flow.desc">Событие — это первая точка контакта. После него связь может продолжиться через профиль, сервис, проект, запись, Telegram-бота или будущую цифровую платформу.</p>
-      </div>
-
-      <div class="events-flow">
-        <div class="events-flow-step">
-          <strong data-i18n="events.flow.step1.title">1. Встреча</strong>
-          <span data-i18n="events.flow.step1.desc">Люди знакомятся, проявляют запросы, видят сильные стороны и находят живой интерес.</span>
-        </div>
-        <div class="events-flow-step">
-          <strong data-i18n="events.flow.step2.title">2. Связь</strong>
-          <span data-i18n="events.flow.step2.desc">Появляются пары, команды, обмены, интервью, заявки на сервисы и идеи для совместной работы.</span>
-        </div>
-        <div class="events-flow-step">
-          <strong data-i18n="events.flow.step3.title">3. Реализация</strong>
-          <span data-i18n="events.flow.step3.desc">Лучшие связи переходят в проекты, регулярные форматы, медиа, платформенные инструменты и поддержку сообщества.</span>
+    <div class="services-filters" id="events-filters">
+      <div class="filter-group">
+        <div class="filter-label" data-events-label="category">Категория</div>
+        <div class="filter-tabs" role="tablist" aria-label="Event category">
+          <button class="filter-tab active" data-filter="category" data-value="all" role="tab" aria-selected="true" data-i18n="filter.all">Все</button>
+          <button class="filter-tab" data-filter="category" data-value="networking" role="tab" aria-selected="false">Нетворкинг</button>
+          <button class="filter-tab" data-filter="category" data-value="relationship" role="tab" aria-selected="false">Отношения</button>
+          <button class="filter-tab" data-filter="category" data-value="media" role="tab" aria-selected="false" data-i18n="filter.media">Медиа</button>
+          <button class="filter-tab" data-filter="category" data-value="project" role="tab" aria-selected="false" data-i18n="nav.projects">Проекты</button>
+          <button class="filter-tab" data-filter="category" data-value="knowledge" role="tab" aria-selected="false">Знание</button>
         </div>
       </div>
-    </section>
+      <div class="filter-group">
+        <div class="filter-label" data-events-label="status">Статус</div>
+        <div class="filter-tabs" role="tablist" aria-label="Event status">
+          <button class="filter-tab active" data-filter="status" data-value="all" role="tab" aria-selected="true" data-i18n="filter.all">Все</button>
+          <button class="filter-tab" data-filter="status" data-value="regular" role="tab" aria-selected="false">Регулярно</button>
+          <button class="filter-tab" data-filter="status" data-value="upcoming" role="tab" aria-selected="false">Ближайшие</button>
+          <button class="filter-tab" data-filter="status" data-value="concept" role="tab" aria-selected="false" data-i18n="filter.concept">Концепт</button>
+        </div>
+      </div>
+      <div class="filter-group filter-group--instructor">
+        <div class="filter-label" data-events-label="owner">Куратор</div>
+        <div class="filter-select-wrap">
+          <select class="filter-select" id="events-owner-filter" aria-label="Select event host">
+            <option value="all" data-i18n="filter.allCurators">Все кураторы</option>
+            <option value="andrijpycha">Andrij Pýcha</option>
+            <option value="openmic">Open Mic</option>
+            <option value="santiagoincubator">Santiago Incubator</option>
+          </select>
+          <svg class="select-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="filter-group filter-group--instructor">
+        <div class="filter-label" data-events-label="sort">Сортировка</div>
+        <div class="filter-select-wrap">
+          <select class="filter-select" id="events-sort" aria-label="Sort events">
+            <option value="priority" data-i18n="filter.sortPriority">По приоритету</option>
+            <option value="title" data-i18n="filter.sortTitle">По названию</option>
+            <option value="category" data-i18n="filter.category">По категории</option>
+            <option value="status" data-i18n="filter.sortStatus">По статусу</option>
+          </select>
+          <svg class="select-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="services-empty" id="events-empty" hidden>
+      <div class="services-empty__icon">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6"/></svg>
+      </div>
+      <p class="services-empty__text">По этим критериям событий не найдено</p>
+      <button class="services-empty__reset" id="events-reset-filters" data-i18n="services.empty.reset">Сбросить фильтры</button>
+    </div>
+
+    <div class="gallery-grid" id="events-grid"></div>
   </main>
 
   <nav class="quick-menu" aria-label="Navigation">
@@ -315,6 +194,7 @@
   <script src="translations.js?v=8"></script>
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=6"></script>
+  <script src="events.js?v=1"></script>
   <script>
     const themeToggles = document.querySelectorAll('.theme-toggle-btn');
     if (localStorage.getItem('grayscale') === 'enabled') document.body.classList.add('grayscale-mode');

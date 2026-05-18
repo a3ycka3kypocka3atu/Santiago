@@ -77,8 +77,8 @@
       text: 'Персональна частина кабінету майстра: профіль, збережене, нагадування і записи окремо від робочих інструментів.'
     },
     admin: {
-      title: 'Особистий простір адміна',
-      text: 'Ваш власний простір адміна: профіль, обране, записи і швидкі переходи поруч з адміністративними інструментами.'
+      title: 'Особистий простір майстра',
+      text: 'Персональна частина кабінету майстра: профіль, збережене, нагадування і записи окремо від робочих інструментів.'
     }
   };
 
@@ -96,33 +96,6 @@
       headerText: 'Це клубний простір всередині кабінету майстра. Тут видно те, що важливо для участі: події, записи, обране і нагадування.'
     }
   };
-
-  const STATIC_MASTER_ACTIVITY = [
-    {
-      type: 'Профіль',
-      title: 'Andrij Pýcha',
-      meta: 'Публічний профіль майстра',
-      url: 'profile-andrij.html'
-    },
-    {
-      type: 'Послуги',
-      title: 'Формати Andrij',
-      meta: 'Послуги з фільтром майстра',
-      url: 'services.html?instructor=andrij&mine=1'
-    },
-    {
-      type: 'Події',
-      title: 'Формати подій Andrij',
-      meta: 'Календар з фільтром майстра',
-      url: 'calendar.html?mine=1&instructor=andrij'
-    },
-    {
-      type: 'Проєкти',
-      title: 'Повʼязані проєкти Andrij',
-      meta: 'Проєкти з фільтром куратора',
-      url: 'projects.html?owner=andrijpycha&mine=1'
-    }
-  ];
 
   function getAuthUser() {
     if (window.MA3Auth && window.MA3Auth.user) return window.MA3Auth.user;
@@ -191,22 +164,6 @@
 
   function emptyState(text) {
     return `<div class="favorites-empty">${escapeHtml(text)}</div>`;
-  }
-
-  function renderStaticMasterActivity(container, introText = '') {
-    if (!container) return;
-    const intro = introText ? `<div class="favorites-empty">${escapeHtml(introText)}</div>` : '';
-    const rows = STATIC_MASTER_ACTIVITY.map((item) => `
-      <article class="cabinet-data-item">
-        <div class="cabinet-data-item__top">
-          <h4 class="cabinet-data-item__title">${escapeHtml(item.title)}</h4>
-          <span class="cabinet-status-pill">${escapeHtml(item.type)}</span>
-        </div>
-        <p class="cabinet-data-item__meta">${escapeHtml(item.meta)}</p>
-        <a class="cabinet-action" href="${escapeHtml(item.url)}">Відкрити</a>
-      </article>
-    `).join('');
-    container.innerHTML = `${intro}${rows}`;
   }
 
   function getSubmissionTitle(kind, titleInput) {
@@ -535,45 +492,6 @@
     }
   }
 
-  async function renderMentorActivity(user) {
-    const container = document.getElementById('cabinet-mentor-activity-list');
-    if (!container) return;
-    if (!user || !user.isLoggedIn || !user.id || !window.supabaseClient) {
-      container.innerHTML = emptyState('Увійдіть через Telegram, щоб побачити активності.');
-      return;
-    }
-
-    try {
-      const { data, error } = await window.supabaseClient.rpc('get_mentor_activity_summary', {
-        p_user_id: user.id
-      });
-      if (error) throw error;
-
-      if (!data || !data.length) {
-        renderStaticMasterActivity(container, 'Поки база не повернула привʼязані активності, нижче є прямі переходи до ваших сторінок.');
-        return;
-      }
-
-      container.innerHTML = data.map((item) => `
-        <article class="cabinet-data-item">
-          <div class="cabinet-data-item__top">
-            <h4 class="cabinet-data-item__title">${escapeHtml(item.title)}</h4>
-            <span class="cabinet-status-pill">${escapeHtml(item.item_type)}</span>
-          </div>
-          <p class="cabinet-data-item__meta">
-            ${item.start_time ? `${escapeHtml(formatDate(item.start_time))} · ` : ''}
-            saved ${Number(item.favorite_count || 0)} · public coming ${Number(item.participant_count || 0)} · bookings ${Number(item.booking_count || 0)}
-          </p>
-          ${item.capacity ? `<p class="cabinet-data-item__text">Ліміт: ${Number(item.participant_count || 0)} / ${Number(item.capacity)}</p>` : ''}
-          ${item.url ? `<a class="cabinet-action" href="${escapeHtml(item.url)}">Відкрити</a>` : ''}
-        </article>
-      `).join('');
-    } catch (err) {
-      console.warn('[Cabinet] Mentor activity unavailable:', err);
-      renderStaticMasterActivity(container, 'Активності з бази тимчасово недоступні. Прямі переходи працюють нижче.');
-    }
-  }
-
   async function renderAdminSubmissions(user) {
     const container = document.getElementById('cabinet-admin-submissions-list');
     if (!container) return;
@@ -659,7 +577,6 @@
 
     if (role === 'instructor') {
       renderSubmissions(user);
-      renderMentorActivity(user);
     }
 
     if (role === 'admin') {
@@ -701,6 +618,25 @@
       if (button.__ma3MasterRequestBound) return;
       button.__ma3MasterRequestBound = true;
       button.addEventListener('click', () => openMasterRequest(button.dataset.masterRequest));
+    });
+
+    document.querySelectorAll('[data-master-card-link]').forEach((card) => {
+      if (card.__ma3MasterCardLinkBound) return;
+      card.__ma3MasterCardLinkBound = true;
+      const openCardLink = () => {
+        const href = card.dataset.masterCardLink;
+        if (href) window.location.href = href;
+      };
+      card.addEventListener('click', (event) => {
+        if (event.target.closest('a, button, input, textarea, select')) return;
+        openCardLink();
+      });
+      card.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        if (event.target.closest('a, button, input, textarea, select')) return;
+        event.preventDefault();
+        openCardLink();
+      });
     });
 
     document.querySelectorAll('[data-master-request-close]').forEach((button) => {

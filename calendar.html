@@ -113,6 +113,19 @@
     <header class="cal-header">
       <h1 data-i18n="calTitle">Studio Schedule</h1>
       <p class="cal-subtitle" data-i18n="calSubtitle">Book a session, join community events, or reserve studio space.</p>
+      <div class="cal-header-actions">
+        <a class="cal-header-action" href="events.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 6h13"></path>
+            <path d="M8 12h13"></path>
+            <path d="M8 18h13"></path>
+            <path d="M3 6h.01"></path>
+            <path d="M3 12h.01"></path>
+            <path d="M3 18h.01"></path>
+          </svg>
+          <span data-i18n="calendar.viewEvents">Всі події</span>
+        </a>
+      </div>
       <div class="cal-header-actions" id="master-calendar-cta" hidden>
         <a class="cal-header-action cal-header-action--primary" id="master-create-event-link" href="https://t.me/santioago_bot?start=create_event" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -283,7 +296,7 @@
   <!-- rrule library for recurrence expansion -->
   <script src="https://cdn.jsdelivr.net/npm/rrule@2.7.2/dist/es5/rrule.min.js"></script>
   <!-- Scripts -->
-  <script src="translations.js"></script>
+  <script src="translations.js?v=9"></script>
   <script src="auth.js"></script>
   <script src="menu.js"></script>
   <script src="favorites.js?v=2"></script>
