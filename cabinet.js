@@ -4,6 +4,7 @@
   'use strict';
 
   let adminViewRole = 'admin';
+  let adminMasterViewRole = 'instructor';
   let masterViewRole = 'instructor';
   let currentRequestKind = null;
 
@@ -83,7 +84,9 @@
 
   function getEffectiveRole(user) {
     const role = normalizeRole(user);
-    if (role === 'admin') return adminViewRole || 'admin';
+    if (role === 'admin') {
+      return adminViewRole === 'instructor' ? adminMasterViewRole : (adminViewRole || 'admin');
+    }
     if (role === 'instructor' && ['resident', 'instructor'].includes(masterViewRole)) {
       return masterViewRole;
     }
@@ -259,8 +262,10 @@
       const scope = switcher.dataset.cabinetViewSwitch;
       const allowedViews = scope === 'admin'
         ? (actualRole === 'admin' ? ['visitor', 'resident', 'instructor', 'admin'] : [])
-        : (actualRole === 'instructor' ? ['instructor', 'resident'] : []);
-      const activeRole = scope === 'admin' ? adminViewRole : masterViewRole;
+        : (actualRole === 'instructor' || (actualRole === 'admin' && adminViewRole === 'instructor') ? ['instructor', 'resident'] : []);
+      const activeRole = scope === 'admin'
+        ? adminViewRole
+        : (actualRole === 'admin' ? adminMasterViewRole : masterViewRole);
 
       switcher.hidden = !allowedViews.length;
 
@@ -573,6 +578,9 @@
         const scope = switcher ? switcher.dataset.cabinetViewSwitch : '';
         if (scope === 'admin' && actualRole === 'admin') {
           adminViewRole = requestedRole;
+          if (requestedRole === 'instructor') adminMasterViewRole = 'instructor';
+        } else if (scope === 'master' && actualRole === 'admin' && adminViewRole === 'instructor' && ['instructor', 'resident'].includes(requestedRole)) {
+          adminMasterViewRole = requestedRole;
         } else if (scope === 'master' && actualRole === 'instructor' && ['instructor', 'resident'].includes(requestedRole)) {
           masterViewRole = requestedRole;
         }
