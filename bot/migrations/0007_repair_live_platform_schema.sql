@@ -12,6 +12,10 @@ CREATE TABLE IF NOT EXISTS public.services (
     duration_minutes INTEGER,
     instructor_id UUID REFERENCES public.profiles(id),
     instructor_name TEXT,
+    provider_type TEXT DEFAULT 'person' CHECK (provider_type IN ('person', 'project')),
+    provider_name TEXT,
+    provider_slug TEXT,
+    contact_person TEXT,
     category TEXT DEFAULT 'body' CHECK (category IN ('body', 'mind', 'incubator', 'space')),
     format TEXT DEFAULT 'individual' CHECK (format IN ('individual', 'group')),
     location_type TEXT DEFAULT 'offline_studio' CHECK (location_type IN ('online', 'offline_studio', 'offline_external')),
@@ -25,6 +29,13 @@ CREATE TABLE IF NOT EXISTS public.services (
 );
 
 ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE public.services
+    ADD COLUMN IF NOT EXISTS provider_type TEXT DEFAULT 'person'
+        CHECK (provider_type IN ('person', 'project')),
+    ADD COLUMN IF NOT EXISTS provider_name TEXT,
+    ADD COLUMN IF NOT EXISTS provider_slug TEXT,
+    ADD COLUMN IF NOT EXISTS contact_person TEXT;
 
 ALTER TABLE public.profiles
     ADD COLUMN IF NOT EXISTS bio TEXT,
@@ -68,6 +79,8 @@ CREATE INDEX IF NOT EXISTS idx_profiles_telegram_id ON public.profiles(telegram_
 CREATE INDEX IF NOT EXISTS idx_bookings_event_user ON public.bookings(event_id, user_id);
 CREATE INDEX IF NOT EXISTS idx_services_category ON public.services(category);
 CREATE INDEX IF NOT EXISTS idx_services_format ON public.services(format);
+CREATE INDEX IF NOT EXISTS idx_services_provider_type ON public.services(provider_type);
+CREATE INDEX IF NOT EXISTS idx_services_provider_slug ON public.services(provider_slug);
 CREATE INDEX IF NOT EXISTS idx_events_start_time ON public.events(start_time);
 CREATE INDEX IF NOT EXISTS idx_events_service_id ON public.events(service_id);
 CREATE INDEX IF NOT EXISTS idx_submissions_kind_status ON public.submissions(kind, status);
@@ -331,6 +344,9 @@ INSERT INTO public.services (
     price,
     duration_minutes,
     instructor_name,
+    provider_type,
+    provider_name,
+    provider_slug,
     category,
     format,
     location_type,
@@ -348,6 +364,9 @@ VALUES
         '1200 CZK · ≈ 48-50 EUR',
         120,
         'Ivan Protinak',
+        'person',
+        'Ivan Protinak',
+        'ivanprotinak',
         'body',
         'individual',
         'offline_studio',
@@ -364,6 +383,9 @@ VALUES
         'Индивидуально',
         120,
         'Katerina',
+        'person',
+        'Katerina',
+        'katerina',
         'body',
         'individual',
         'offline_studio',
@@ -380,6 +402,9 @@ DO UPDATE SET
     price = EXCLUDED.price,
     duration_minutes = EXCLUDED.duration_minutes,
     instructor_name = EXCLUDED.instructor_name,
+    provider_type = EXCLUDED.provider_type,
+    provider_name = EXCLUDED.provider_name,
+    provider_slug = EXCLUDED.provider_slug,
     category = EXCLUDED.category,
     format = EXCLUDED.format,
     location_type = EXCLUDED.location_type,

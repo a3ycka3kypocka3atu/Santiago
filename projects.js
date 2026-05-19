@@ -244,7 +244,7 @@
       status: 'building',
       format: 'online',
       priority: 10,
-      url: 'services.html?instructor=andrij',
+      url: 'services.html?provider=ethical-automation-agency',
       owner: 'Andrij Pýcha',
       title: {
         ru: 'Этичная агентура маркетинга и автоматизации',

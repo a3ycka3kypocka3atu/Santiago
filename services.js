@@ -415,6 +415,7 @@
     card.dataset.format = service.format || 'individual';
     card.dataset.providerType = getProviderType(service);
     card.dataset.providerSlug = getProviderSlug(service);
+    card.dataset.contactSlug = service.contact_person ? normalizeProvider(service.contact_person) : '';
     card.dataset.url = detailPage;
 
     const catLabel = t(`filter.${service.category}`) || service.category || '';
@@ -528,7 +529,8 @@
       const providerValue = normalizeProvider(state.provider);
       const matchProvider = state.provider === 'all'
         || card.dataset.providerType === providerValue
-        || card.dataset.providerSlug === providerValue;
+        || card.dataset.providerSlug === providerValue
+        || card.dataset.contactSlug === providerValue;
 
       if (matchCategory && matchFormat && matchProvider) {
         card.style.display = '';

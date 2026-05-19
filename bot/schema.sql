@@ -25,6 +25,10 @@ CREATE TABLE IF NOT EXISTS public.services (
     duration_minutes INTEGER,
     instructor_id UUID REFERENCES public.profiles(id),
     instructor_name TEXT,
+    provider_type TEXT DEFAULT 'person' CHECK (provider_type IN ('person', 'project')),
+    provider_name TEXT,
+    provider_slug TEXT,
+    contact_person TEXT,
     category TEXT DEFAULT 'body' CHECK (category IN ('body', 'mind', 'incubator', 'space')),
     format TEXT DEFAULT 'individual' CHECK (format IN ('individual', 'group')),
     location_type TEXT DEFAULT 'offline_studio' CHECK (location_type IN ('online', 'offline_studio', 'offline_external')),
@@ -569,6 +573,12 @@ BEGIN
             'service_slug', p_service_slug,
             'service_title', v_service_title,
             'service_id', v_service.id,
+            'provider', jsonb_build_object(
+                'type', coalesce(nullif(v_service.provider_type, ''), 'person'),
+                'name', nullif(v_service.provider_name, ''),
+                'slug', nullif(v_service.provider_slug, ''),
+                'contact_person', nullif(v_service.contact_person, '')
+            ),
             'requested_at', p_requested_at,
             'note', nullif(trim(p_note), ''),
             'telegram', jsonb_build_object(
@@ -1300,3 +1310,5 @@ CREATE INDEX IF NOT EXISTS idx_services_slug ON public.services(slug);
 CREATE INDEX IF NOT EXISTS idx_services_location_type ON public.services(location_type);
 CREATE INDEX IF NOT EXISTS idx_services_category ON public.services(category);
 CREATE INDEX IF NOT EXISTS idx_services_format ON public.services(format);
+CREATE INDEX IF NOT EXISTS idx_services_provider_type ON public.services(provider_type);
+CREATE INDEX IF NOT EXISTS idx_services_provider_slug ON public.services(provider_slug);

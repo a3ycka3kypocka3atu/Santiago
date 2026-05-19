@@ -18,8 +18,8 @@
     service: {
       title: 'Нова послуга',
       defaultTitle: '',
-      hint: 'Опишіть нову послугу так, щоб адмін міг оформити її на платформі.',
-      placeholder: 'Формат, тривалість, ціна, для кого, що людина отримує, public/club/internal...'
+      hint: 'Опишіть нову послугу так, щоб адмін міг оформити її на платформі. Вкажіть, хто її надає: людина чи проєкт/команда.',
+      placeholder: 'Формат, тривалість, ціна, для кого, що людина отримує, public/club/internal...\nprovider_type: person або project\nprovider_name: назва людини або проєкту\nprovider_slug: короткий ключ\ncontact_person: якщо provider_type project'
     },
     event: {
       title: 'Нова подія',

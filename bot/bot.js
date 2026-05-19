@@ -188,7 +188,7 @@ const SUBMISSION_TYPES = {
     label: 'послугу',
     titlePrompt: 'Назва послуги?',
     descriptionPrompt: 'Опишіть послугу: що людина отримує, формат, тривалість, кому підходить.',
-    detailsPrompt: 'Ціна, бажана сторінка, фото/посилання, чи це public/club/internal, і все що треба знати адміну.'
+    detailsPrompt: 'Ціна, бажана сторінка, фото/посилання, чи це public/club/internal. Обовʼязково додайте provider_type: person або project, provider_name, provider_slug, а для project ще contact_person.'
   },
   project: {
     label: 'проєкт',
@@ -302,6 +302,10 @@ function buildSubmissionAdminText(submission) {
     ? `Привʼязка події: ${payload.attach_event_title || payload.attach_event_id} (${payload.attach_event_id})\n`
     : '';
   const selectedDateLine = payload.selected_date ? `Дата з календаря: ${payload.selected_date}\n` : '';
+  const provider = payload.provider || {};
+  const providerLine = submission.kind === 'service' && (provider.type || provider.name || provider.contact_person)
+    ? `Постачальник: ${provider.type || 'person'}${provider.name ? ` · ${provider.name}` : ''}${provider.contact_person ? ` · контакт: ${provider.contact_person}` : ''}\n`
+    : '';
 
   return `🧩 Заявка: ${config.label.toUpperCase()}\n\n` +
     `Статус: ${submissionStatusLabel(status)}\n` +
@@ -309,6 +313,7 @@ function buildSubmissionAdminText(submission) {
     `Автор: ${author.name || 'n/a'} (@${author.username || 'n/a'}, TG ${submission.telegram_id || author.id || 'n/a'})\n` +
     eventLinkLine +
     selectedDateLine +
+    providerLine +
     `Назва: ${submission.title}\n\n` +
     `Опис:\n${compactText(submission.description, 1000)}\n\n` +
     `Деталі / час / ціна / лінки:\n${compactText(submission.details, 1000)}\n\n` +
@@ -345,6 +350,46 @@ function statusToDbStatus(workflowStatus) {
 function extractFirstUrl(text) {
   const match = String(text || '').match(/https?:\/\/[^\s]+/i);
   return match ? match[0] : null;
+}
+
+function normalizeProviderSlug(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function extractLabeledValue(text, labels) {
+  const lines = String(text || '').split(/\r?\n/);
+  for (const line of lines) {
+    for (const label of labels) {
+      const pattern = new RegExp(`^\\s*${label}\\s*[:=\\-–]\\s*(.+)\\s*$`, 'i');
+      const match = line.match(pattern);
+      if (match && match[1]) return match[1].trim();
+    }
+  }
+  return '';
+}
+
+function parseServiceProviderInfo(submission) {
+  const source = [submission.description, submission.details].filter(Boolean).join('\n');
+  const rawType = extractLabeledValue(source, ['provider_type', 'provider type', 'тип постачальника', 'тип поставщика', 'тип провайдера']);
+  const inferredType = /^(project|team|проєкт|проект|команда)$/i.test(rawType)
+    || /\b(project|team|проєкт|проект|команда)\b/i.test(source)
+      ? 'project'
+      : 'person';
+  const providerName = extractLabeledValue(source, ['provider_name', 'provider name', 'provider', 'постачальник', 'поставщик', 'провайдер', 'надає']);
+  const contactPerson = extractLabeledValue(source, ['contact_person', 'contact person', 'contact', 'контакт', 'контактна особа', 'ответственный']);
+  const providerSlug = extractLabeledValue(source, ['provider_slug', 'provider slug', 'slug', 'ключ']);
+
+  return {
+    type: inferredType,
+    name: providerName,
+    slug: providerSlug || normalizeProviderSlug(providerName),
+    contact_person: contactPerson
+  };
 }
 
 async function startSubmission(ctx, kind, options = {}) {
@@ -1203,6 +1248,10 @@ async function finishContentSubmission(ctx) {
     selected_date: ctx.session.selectedDate || null,
     attach_event_id: ctx.session.attachEventId || null,
     attach_event_title: ctx.session.attachEventTitle || null,
+    provider: kind === 'service' ? parseServiceProviderInfo({
+      description: ctx.session.submissionDescription,
+      details: ctx.session.submissionDetails
+    }) : null,
     telegram: {
       id: ctx.from.id,
       username: ctx.from.username || null,
