@@ -1,7 +1,7 @@
 {
   "name": "ma3-studio-bot",
   "version": "1.0.0",
-  "description": "Telegram bot for MA3 Studio management",
+  "description": "Telegram bot for Santiago management",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"

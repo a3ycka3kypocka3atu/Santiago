@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   MA3 STUDIO — CALENDAR ENGINE
+   SANTIAGO — CALENDAR ENGINE
    Supabase Integration · Role-based Views · Event Management
    ═══════════════════════════════════════════════════════════ */
 
@@ -33,6 +33,10 @@ window.onTelegramAuth = function(user) {
   let preselectedInstructor = null; // Pre-filter from URL param ?instructor=NAME
   let showOnlyMyEvents = false;     // Pre-filter from URL param ?mine=1
   const TELEGRAM_BOT_URL = 'https://t.me/santioago_bot';
+  const MASTER_DRAFT_EVENTS_KEY = 'ma3-master-calendar-drafts';
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  let masterEventMode = 'attach';
+  let masterProfileEventsCache = [];
 
   // ── Parse URL pre-filter params ──
   (function parseUrlParams() {
@@ -53,13 +57,19 @@ window.onTelegramAuth = function(user) {
   })();
 
   // ── i18n (reuse from main site) ──
-  const STORAGE_KEY = 'ma3-lang';
+  const STORAGE_KEY = 'language';
+  const LEGACY_STORAGE_KEY = 'ma3-lang';
   const DEFAULT_LANG = 'en';
   const SUPPORTED = ['en', 'cz', 'ru', 'ua'];
 
   function detectLanguage() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored && SUPPORTED.includes(stored)) return stored;
+    const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (legacy && SUPPORTED.includes(legacy)) {
+      localStorage.setItem(STORAGE_KEY, legacy);
+      return legacy;
+    }
     const nav = (navigator.language || '').toLowerCase();
     if (nav.startsWith('cs') || nav.startsWith('cz')) return 'cz';
     if (nav.startsWith('ru')) return 'ru';
@@ -72,6 +82,7 @@ window.onTelegramAuth = function(user) {
   function applyTranslations(lang) {
     currentLang = lang;
     localStorage.setItem(STORAGE_KEY, lang);
+    localStorage.setItem(LEGACY_STORAGE_KEY, lang);
     const langMap = { en: 'en', cz: 'cs', ru: 'ru', ua: 'uk' };
     document.documentElement.lang = langMap[lang] || 'en';
 
@@ -107,6 +118,10 @@ window.onTelegramAuth = function(user) {
 
   function buildTelegramStartUrl(payload) {
     return `${TELEGRAM_BOT_URL}?start=${encodeURIComponent(payload)}`;
+  }
+
+  function isUuid(value) {
+    return UUID_RE.test(String(value || ''));
   }
 
   function formatDatePayload(day) {
@@ -146,7 +161,6 @@ window.onTelegramAuth = function(user) {
 
     const datePayload = selectedDay ? formatDatePayload(selectedDay) : null;
     masterCalendarCta.hidden = false;
-    masterCreateEventLink.href = buildTelegramStartUrl(datePayload ? `create_event_${datePayload}` : 'create_event');
     masterCreateEventLabel.textContent = MASTER_CTA_LABELS.action[currentLang] || MASTER_CTA_LABELS.action.en;
     masterCreateEventHint.textContent = datePayload
       ? `${MASTER_CTA_LABELS.selected[currentLang] || MASTER_CTA_LABELS.selected.en} ${datePayload}`
@@ -158,8 +172,8 @@ window.onTelegramAuth = function(user) {
     const selectedDate = formatDatePayload(day);
     return `
       <div class="master-calendar-actions">
-        <a class="master-calendar-actions__button" href="${buildTelegramStartUrl(`create_event_${selectedDate}`)}" target="_blank" rel="noopener">Нова подія на цей день</a>
-        <span>Існуючу подію можна привʼязати з її картки.</span>
+        <button class="master-calendar-actions__button" type="button" data-master-open-event data-master-event-date="${selectedDate}">Přidat událost na tento den</button>
+        <span>Připojte existující událost, pošlete novou adminovi, nebo si zapište krátkou jednorázovou položku.</span>
       </div>
     `;
   }
@@ -170,7 +184,7 @@ window.onTelegramAuth = function(user) {
     if (!eventId) return '';
     return `
       <div class="event-card__actions">
-        <a class="event-card__master-link" href="${buildTelegramStartUrl(`attach_event_${eventId}`)}" target="_blank" rel="noopener">Привʼязати до себе</a>
+        <button class="event-card__master-link" type="button" data-master-attach-event="${escapeHtml(eventId)}">Naplánovat znovu</button>
       </div>
     `;
   }
@@ -206,7 +220,7 @@ window.onTelegramAuth = function(user) {
       return;
     }
 
-    const eventIds = [...new Set(eventsCache.map(event => getEventBaseId(event)).filter(Boolean))];
+    const eventIds = [...new Set(eventsCache.map(event => getEventBaseId(event)).filter(isUuid))];
     if (!eventIds.length) return;
 
     try {
@@ -274,6 +288,355 @@ window.onTelegramAuth = function(user) {
   const masterCreateEventLink = document.getElementById('master-create-event-link');
   const masterCreateEventLabel = document.getElementById('master-create-event-label');
   const masterCreateEventHint = document.getElementById('master-create-event-hint');
+  const masterEventPopup = document.getElementById('master-event-popup');
+  const masterEventPopupClose = document.getElementById('master-event-popup-close');
+  const masterEventForm = document.getElementById('master-event-form');
+  const masterEventModeBadge = document.getElementById('master-event-mode-badge');
+  const masterEventSourceWrap = document.getElementById('master-event-source-wrap');
+  const masterEventSource = document.getElementById('master-event-source');
+  const masterEventName = document.getElementById('master-event-name');
+  const masterEventDescription = document.getElementById('master-event-description');
+  const masterEventDate = document.getElementById('master-event-date');
+  const masterEventTime = document.getElementById('master-event-time');
+  const masterEventDuration = document.getElementById('master-event-duration');
+  const masterEventType = document.getElementById('master-event-type');
+  const masterEventLocation = document.getElementById('master-event-location');
+  const masterEventStatus = document.getElementById('master-event-status');
+  const masterEventSubmit = document.getElementById('master-event-submit');
+
+  // ═══════════════════════════════════════════════════════════
+  //  MASTER EVENT DRAFTS
+  // ═══════════════════════════════════════════════════════════
+
+  function getMasterDraftOwnerId() {
+    return currentUser && currentUser.id ? String(currentUser.id) : 'guest';
+  }
+
+  function readMasterDraftEvents() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(MASTER_DRAFT_EVENTS_KEY) || '[]');
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function writeMasterDraftEvents(items) {
+    localStorage.setItem(MASTER_DRAFT_EVENTS_KEY, JSON.stringify(items.slice(-120)));
+  }
+
+  function saveMasterDraftEvent(event) {
+    const all = readMasterDraftEvents().filter(item => item.id !== event.id);
+    all.push(event);
+    writeMasterDraftEvents(all);
+  }
+
+  function getMasterDraftEventsForMonth() {
+    const ownerId = getMasterDraftOwnerId();
+    const start = new Date(currentYear, currentMonth, 1);
+    const end = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
+    return readMasterDraftEvents().filter(event => {
+      if (String(event.owner_id || '') !== ownerId) return false;
+      const eventStart = new Date(event.start_time);
+      return eventStart >= start && eventStart <= end;
+    });
+  }
+
+  function getSelectedDateValue() {
+    if (selectedDay) return formatDatePayload(selectedDay);
+    const today = new Date();
+    if (today.getMonth() === currentMonth && today.getFullYear() === currentYear) {
+      return formatDatePayload(today.getDate());
+    }
+    return `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-01`;
+  }
+
+  function setMasterEventStatus(text, type) {
+    if (!masterEventStatus) return;
+    masterEventStatus.textContent = text || '';
+    masterEventStatus.classList.toggle('is-error', type === 'error');
+    masterEventStatus.classList.toggle('is-success', type === 'success');
+  }
+
+  function setMasterEventMode(mode) {
+    masterEventMode = ['attach', 'create', 'quick'].includes(mode) ? mode : 'attach';
+    document.querySelectorAll('[data-master-event-mode]').forEach(button => {
+      button.classList.toggle('is-active', button.dataset.masterEventMode === masterEventMode);
+    });
+
+    if (masterEventSourceWrap) masterEventSourceWrap.hidden = masterEventMode !== 'attach';
+    if (masterEventModeBadge) {
+      const labels = {
+        attach: 'Připojit',
+        create: 'Žádost adminovi',
+        quick: 'Krátký zápis'
+      };
+      masterEventModeBadge.textContent = labels[masterEventMode] || labels.attach;
+    }
+    if (masterEventSubmit) {
+      const labels = {
+        attach: 'Přidat do kalendáře',
+        create: 'Poslat adminovi a zobrazit',
+        quick: 'Zapsat do kalendáře'
+      };
+      masterEventSubmit.textContent = labels[masterEventMode] || labels.attach;
+    }
+  }
+
+  function getFallbackMasterProfileEvents() {
+    const ownerId = getMasterDraftOwnerId();
+    const byOwner = eventsCache.filter(event => (
+      !event.is_local_master_event &&
+      String(event.instructor_id || '') === ownerId &&
+      isUuid(getEventBaseId(event))
+    ));
+    const seen = new Set();
+    return byOwner.filter(event => {
+      const id = getEventBaseId(event);
+      if (seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+  }
+
+  async function loadMasterProfileEvents() {
+    if (!isMasterUser() || !currentUser.id) return [];
+    if (!sb) {
+      masterProfileEventsCache = getFallbackMasterProfileEvents();
+      return masterProfileEventsCache;
+    }
+
+    try {
+      const { data, error } = await sb
+        .from('events')
+        .select('id,title,description,start_time,end_time,type,status,instructor_id,location_type,service_id,capacity')
+        .eq('instructor_id', currentUser.id)
+        .eq('status', 'confirmed')
+        .order('start_time', { ascending: false })
+        .limit(60);
+      if (error) throw error;
+      masterProfileEventsCache = data || [];
+    } catch (err) {
+      console.warn('[Calendar] Master profile events unavailable:', err.message || err);
+      masterProfileEventsCache = getFallbackMasterProfileEvents();
+    }
+
+    return masterProfileEventsCache;
+  }
+
+  function renderMasterEventSourceOptions(selectedId) {
+    if (!masterEventSource) return;
+    if (!masterProfileEventsCache.length) {
+      masterEventSource.innerHTML = '<option value="">Žádné události v profilu mastera</option>';
+      masterEventSource.disabled = true;
+      return;
+    }
+
+    masterEventSource.disabled = false;
+    masterEventSource.innerHTML = masterProfileEventsCache.map(event => {
+      const start = event.start_time ? ` · ${new Date(event.start_time).toLocaleDateString()}` : '';
+      const id = getEventBaseId(event);
+      return `<option value="${escapeHtml(id)}"${String(id) === String(selectedId) ? ' selected' : ''}>${escapeHtml(event.title)}${escapeHtml(start)}</option>`;
+    }).join('');
+    syncMasterEventFromSource();
+  }
+
+  function syncMasterEventFromSource() {
+    if (!masterEventSource || masterEventMode !== 'attach') return;
+    const selected = masterProfileEventsCache.find(event => String(getEventBaseId(event)) === String(masterEventSource.value));
+    if (!selected) return;
+
+    if (masterEventName) masterEventName.value = selected.title || '';
+    if (masterEventDescription) masterEventDescription.value = selected.description || '';
+    if (masterEventType) masterEventType.value = selected.type || 'public';
+    if (masterEventLocation) masterEventLocation.value = selected.location_type || 'offline_studio';
+
+    const start = new Date(selected.start_time);
+    const end = new Date(selected.end_time);
+    const duration = Math.max(30, Math.round((end - start) / 60000));
+    if (masterEventDuration && Number.isFinite(duration)) {
+      const hasOption = [...masterEventDuration.options].some(option => Number(option.value) === duration);
+      masterEventDuration.value = hasOption ? String(duration) : '60';
+    }
+  }
+
+  async function openMasterEventPopup(options = {}) {
+    if (!isMasterUser()) {
+      alert('Tato akce je dostupná pro mastera nebo admina.');
+      return;
+    }
+
+    const mode = options.mode || 'attach';
+    setMasterEventMode(mode);
+    setMasterEventStatus('', null);
+
+    if (masterEventDate) masterEventDate.value = options.date || getSelectedDateValue();
+    if (masterEventTime) masterEventTime.value = '18:00';
+    if (masterEventDuration) masterEventDuration.value = '60';
+    if (masterEventName) masterEventName.value = '';
+    if (masterEventDescription) masterEventDescription.value = '';
+    if (masterEventType) masterEventType.value = 'public';
+    if (masterEventLocation) masterEventLocation.value = 'offline_studio';
+
+    if (masterEventPopup) {
+      masterEventPopup.classList.add('open');
+      masterEventPopup.setAttribute('aria-hidden', 'false');
+    }
+
+    await loadMasterProfileEvents();
+    renderMasterEventSourceOptions(options.eventId);
+
+    if (mode !== 'attach') {
+      if (masterEventName) masterEventName.focus();
+    } else if (masterEventTime) {
+      masterEventTime.focus();
+    }
+  }
+
+  function buildMasterDraftEvent(submissionId) {
+    const dateValue = masterEventDate ? masterEventDate.value : '';
+    const timeValue = masterEventTime ? masterEventTime.value : '';
+    const duration = Number(masterEventDuration ? masterEventDuration.value : 60) || 60;
+    const start = new Date(`${dateValue}T${timeValue || '18:00'}:00`);
+    const end = new Date(start.getTime() + duration * 60000);
+    const sourceEvent = masterEventMode === 'attach'
+      ? masterProfileEventsCache.find(event => String(getEventBaseId(event)) === String(masterEventSource && masterEventSource.value))
+      : null;
+
+    return {
+      id: `local_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+      title: (masterEventName && masterEventName.value.trim()) || (sourceEvent && sourceEvent.title) || 'Událost',
+      description: (masterEventDescription && masterEventDescription.value.trim()) || (sourceEvent && sourceEvent.description) || '',
+      start_time: start.toISOString(),
+      end_time: end.toISOString(),
+      type: (masterEventType && masterEventType.value) || (sourceEvent && sourceEvent.type) || 'public',
+      status: masterEventMode === 'create' ? 'pending' : 'confirmed',
+      instructor_id: currentUser.id,
+      owner_id: getMasterDraftOwnerId(),
+      location_type: (masterEventLocation && masterEventLocation.value) || (sourceEvent && sourceEvent.location_type) || 'offline_studio',
+      service_id: sourceEvent && sourceEvent.service_id ? sourceEvent.service_id : null,
+      capacity: sourceEvent && sourceEvent.capacity ? sourceEvent.capacity : null,
+      is_local_master_event: true,
+      master_event_mode: masterEventMode,
+      source_event_id: sourceEvent ? getEventBaseId(sourceEvent) : null,
+      submission_id: submissionId || null
+    };
+  }
+
+  function buildMasterSubmissionDetails(draftEvent) {
+    const start = new Date(draftEvent.start_time);
+    const end = new Date(draftEvent.end_time);
+    const sourceLine = draftEvent.source_event_id ? `Zdrojová událost: ${draftEvent.source_event_id}` : null;
+    return [
+      `Čas: ${start.toLocaleString()} - ${formatTime(end)}`,
+      `Viditelnost: ${draftEvent.type}`,
+      `Místo: ${draftEvent.location_type}`,
+      sourceLine,
+      '',
+      draftEvent.description
+    ].filter(Boolean).join('\n');
+  }
+
+  async function submitMasterEventForm(event) {
+    event.preventDefault();
+
+    if (!currentUser || !currentUser.isLoggedIn || !currentUser.id) {
+      setMasterEventStatus('Přihlaste se přes Telegram.', 'error');
+      return;
+    }
+
+    if (masterEventMode === 'attach' && (!masterEventSource || !masterEventSource.value)) {
+      setMasterEventStatus('Nejdřív vyberte událost z profilu mastera.', 'error');
+      return;
+    }
+
+    if (!masterEventDate.value || !masterEventTime.value || !masterEventName.value.trim()) {
+      setMasterEventStatus('Doplňte název, datum a čas.', 'error');
+      return;
+    }
+
+    const originalText = masterEventSubmit ? masterEventSubmit.textContent : '';
+    if (masterEventSubmit) {
+      masterEventSubmit.disabled = true;
+      masterEventSubmit.textContent = 'Ukládám...';
+    }
+    setMasterEventStatus('', null);
+
+    let submissionId = null;
+    const draftEvent = buildMasterDraftEvent();
+    let persistedToCalendar = false;
+    let usedLocalFallback = false;
+
+    try {
+      if (masterEventMode === 'create') {
+        if (!sb) throw new Error('Supabase unavailable');
+        const details = buildMasterSubmissionDetails(draftEvent);
+        const { data, error } = await sb.rpc('create_master_submission', {
+          p_user_id: currentUser.id,
+          p_kind: 'event',
+          p_title: draftEvent.title,
+          p_description: draftEvent.description || details,
+          p_details: details,
+          p_mode: 'create_event_from_calendar'
+        });
+        if (error) throw error;
+        submissionId = data || null;
+        draftEvent.submission_id = submissionId;
+      } else if (sb) {
+        try {
+          const { data, error } = await sb.rpc('create_master_calendar_event', {
+            p_user_id: currentUser.id,
+            p_title: draftEvent.title,
+            p_description: draftEvent.description,
+            p_start_time: draftEvent.start_time,
+            p_end_time: draftEvent.end_time,
+            p_type: draftEvent.type,
+            p_location_type: draftEvent.location_type,
+            p_source_event_id: isUuid(draftEvent.source_event_id) ? draftEvent.source_event_id : null,
+            p_mode: masterEventMode
+          });
+          if (error) throw error;
+          if (data) draftEvent.id = data;
+          draftEvent.is_local_master_event = false;
+          draftEvent.status = 'confirmed';
+          persistedToCalendar = true;
+        } catch (persistErr) {
+          usedLocalFallback = true;
+          console.warn('[Calendar] Master calendar RPC unavailable, using local draft:', persistErr.message || persistErr);
+        }
+      } else {
+        usedLocalFallback = true;
+      }
+
+      if (masterEventMode === 'create' || usedLocalFallback) {
+        saveMasterDraftEvent(draftEvent);
+      }
+      eventsCache = eventsCache.filter(item => item.id !== draftEvent.id).concat(draftEvent);
+      selectedDay = new Date(draftEvent.start_time).getDate();
+      renderCalendar();
+      renderUpcomingStrip();
+      renderEventsForDay(selectedDay);
+      setMasterEventStatus(
+        masterEventMode === 'create'
+          ? 'Žádost odešla adminovi. Dočasná událost je vidět v kalendáři.'
+          : persistedToCalendar
+          ? 'Událost je uložená v kalendáři.'
+          : usedLocalFallback
+          ? 'Událost je dočasně zapsaná v tomto zařízení. Po nasazení databázové migrace se uloží natrvalo.'
+          : 'Událost je zapsaná v kalendáři.',
+        'success'
+      );
+      setTimeout(() => closePopup(masterEventPopup), 700);
+    } catch (err) {
+      console.warn('[Calendar] Master event submit failed:', err);
+      setMasterEventStatus('Nepodařilo se uložit. Zkontrolujte připojení nebo databázovou migraci.', 'error');
+    } finally {
+      if (masterEventSubmit) {
+        masterEventSubmit.disabled = false;
+        masterEventSubmit.textContent = originalText || 'Uložit do kalendáře';
+      }
+    }
+  }
 
   // ═══════════════════════════════════════════════════════════
   //  CALENDAR RENDERING
@@ -355,6 +718,23 @@ window.onTelegramAuth = function(user) {
     updateMasterCalendarCta();
   }
 
+  function resetEventsPanel() {
+    const selectDayText = (typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang].calSelectDay)
+      ? translations[currentLang].calSelectDay
+      : 'Select a day';
+    const noEventsText = (typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang].calNoEvents)
+      ? translations[currentLang].calNoEvents
+      : 'Click a date to view events';
+
+    eventsPanelTitle.textContent = selectDayText;
+    eventsList.innerHTML = `
+      <div class="events-empty">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+        <p>${noEventsText}</p>
+      </div>
+    `;
+  }
+
   // ═══════════════════════════════════════════════════════════
   //  EVENTS FETCHING & RENDERING
   // ═══════════════════════════════════════════════════════════
@@ -400,6 +780,12 @@ window.onTelegramAuth = function(user) {
 
     if (showOnlyMyEvents && currentUser && currentUser.id) {
       eventsCache = eventsCache.filter(e => String(e.instructor_id || '') === String(currentUser.id));
+    }
+
+    const localDrafts = getMasterDraftEventsForMonth();
+    if (localDrafts.length) {
+      const existingIds = new Set(eventsCache.map(event => String(event.id)));
+      eventsCache = eventsCache.concat(localDrafts.filter(event => !existingIds.has(String(event.id))));
     }
 
     await refreshEventState();
@@ -558,7 +944,7 @@ window.onTelegramAuth = function(user) {
             <span class="upcoming-card__badge upcoming-card__badge--${event.type}">${typeBadge}</span>
             <span class="upcoming-card__time">${timeStr}</span>
           </div>
-          <h4 class="upcoming-card__title">${title}</h4>
+          <h4 class="upcoming-card__title">${escapeHtml(title)}</h4>
           <p class="upcoming-card__date">${dateLabel}</p>
         </div>
       `;
@@ -653,14 +1039,14 @@ window.onTelegramAuth = function(user) {
           <span class="event-card__badge event-card__badge--${event.type}">${typeBadge}</span>
           <span class="event-card__time">${timeStr}</span>
         </div>
-        <h4 class="event-card__title">${title}</h4>
-        ${desc ? `<p class="event-card__desc">${desc}</p>` : ''}
+        <h4 class="event-card__title">${escapeHtml(title)}</h4>
+        ${desc ? `<p class="event-card__desc">${escapeHtml(desc)}</p>` : ''}
         ${capacityText ? `<p class="event-card__desc event-card__desc--stats">${capacityText}</p>` : ''}
         ${renderAttachEventAction(event)}
       `;
 
-      card.querySelectorAll('a').forEach((link) => {
-        link.addEventListener('click', (clickEvent) => clickEvent.stopPropagation());
+      card.querySelectorAll('a, button').forEach((control) => {
+        control.addEventListener('click', (clickEvent) => clickEvent.stopPropagation());
       });
 
       card.addEventListener('click', () => {
@@ -728,7 +1114,9 @@ window.onTelegramAuth = function(user) {
       .map(participant => `<span>${escapeHtml(participant.name || 'Santiago user')}</span>`)
       .join('');
     const participantMore = participants.length > 8 ? `<span>+${participants.length - 8}</span>` : '';
-    const statsText = capacity
+    const statsText = event.is_local_master_event
+      ? (event.master_event_mode === 'create' ? 'Dočasně v kalendáři, čeká na admina' : 'Zapsáno masterem')
+      : capacity
       ? `${participantCount} / ${capacity} places`
       : `${participantCount} coming`;
     const eventFavoriteItem = () => ({
@@ -750,7 +1138,7 @@ window.onTelegramAuth = function(user) {
     eventPopupContent.innerHTML = `
       <div class="event-detail">
         <span class="event-detail__badge event-card__badge--${event.type}">${typeBadge}</span>
-        <h2 class="event-detail__title">${event.title}</h2>
+        <h2 class="event-detail__title">${escapeHtml(event.title)}</h2>
         <div class="event-detail__meta">
           <div class="event-detail__meta-item">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
@@ -761,26 +1149,26 @@ window.onTelegramAuth = function(user) {
             <span>${timeStr}</span>
           </div>
         </div>
-        ${event.description ? `<p class="event-detail__desc">${event.description}</p>` : ''}
+        ${event.description ? `<p class="event-detail__desc">${escapeHtml(event.description)}</p>` : ''}
         <div class="event-detail__stats">
           <strong>${statsText}</strong>
           ${capacity ? `<span>${Math.max(capacity - participantCount, 0)} places left</span>` : ''}
         </div>
-        ${participants.length ? `<div class="event-detail__participants">${participantNames}${participantMore}</div>` : ''}
+        ${participants.length && !event.is_local_master_event ? `<div class="event-detail__participants">${participantNames}${participantMore}</div>` : ''}
         ${event.service_id ? `<a href="${event.detail_page || 'services.html'}" class="event-detail__service-link" target="_blank" data-i18n="event.viewService">View Service Details →</a>` : ''}
         <div class="event-detail__actions">
           <button class="event-detail__favorite-btn" type="button" data-event-favorite aria-label="Save event"></button>
           <button class="event-detail__reminder-btn" type="button" data-event-reminder aria-label="Remind me"></button>
-          ${currentUser.isLoggedIn
+          ${!event.is_local_master_event && currentUser.isLoggedIn
             ? `<button class="event-detail__participation-btn ${userAttending ? 'is-active' : ''}" type="button" onclick="toggleEventParticipation('${baseEventId}', ${!userAttending})">${userAttending ? (participationLabels.leave[currentLang] || participationLabels.leave.en) : (participationLabels.join[currentLang] || participationLabels.join.en)}</button>`
-            : `<button class="event-detail__participation-btn" type="button" onclick="alert('Please log in via Telegram first.')">${participationLabels.login[currentLang] || participationLabels.login.en}</button>`
+            : (!event.is_local_master_event ? `<button class="event-detail__participation-btn" type="button" onclick="alert('Please log in via Telegram first.')">${participationLabels.login[currentLang] || participationLabels.login.en}</button>` : '')
           }
-          ${currentUser.isLoggedIn
+          ${!event.is_local_master_event && currentUser.isLoggedIn
             ? `<button class="event-detail__book-btn" ${bookingStatus === 'pending' || bookingStatus === 'confirmed' ? 'disabled' : ''} onclick="submitBooking('${baseEventId}')">${bookingLabel || (bookBtnLabel[currentLang] || bookBtnLabel.en)}</button>`
-            : `<button class="event-detail__book-btn" onclick="alert('Please log in via Telegram first.')">Log in to book</button>`
+            : (!event.is_local_master_event ? `<button class="event-detail__book-btn" onclick="alert('Please log in via Telegram first.')">Log in to book</button>` : '')
           }
-          ${isMasterUser() && baseEventId
-            ? `<a class="event-detail__book-btn event-detail__master-link" href="${buildTelegramStartUrl(`attach_event_${baseEventId}`)}" target="_blank" rel="noopener">Привʼязати до себе</a>`
+          ${isMasterUser() && baseEventId && !event.is_local_master_event
+            ? `<button class="event-detail__book-btn event-detail__master-link" type="button" data-master-attach-event="${escapeHtml(baseEventId)}">Naplánovat znovu</button>`
             : ''
           }
         </div>
@@ -1002,6 +1390,7 @@ window.onTelegramAuth = function(user) {
     currentMonth--;
     if (currentMonth < 0) { currentMonth = 11; currentYear--; }
     selectedDay = null;
+    resetEventsPanel();
     fetchEventsForMonth();
   });
 
@@ -1010,25 +1399,70 @@ window.onTelegramAuth = function(user) {
     currentMonth++;
     if (currentMonth > 11) { currentMonth = 0; currentYear++; }
     selectedDay = null;
+    resetEventsPanel();
     fetchEventsForMonth();
   });
-
-  // Calendar card: clicking ANYWHERE on the card expands/collapses
-  const calCard = document.querySelector('.cal-card');
-  if (calCard) {
-    calCard.style.cursor = 'pointer';
-    calCard.addEventListener('click', (e) => {
-      // Don't toggle when clicking on specific interactive elements inside
-      if (e.target.closest('.cal-day') || e.target.closest('.filter-tab') || e.target.closest('.cal-ctrl-btn')) return;
-      calCard.classList.toggle('collapsed');
-    });
-  }
 
   // Popup close handlers
   eventPopupClose.addEventListener('click', () => closePopup(eventPopup));
   clubGateClose.addEventListener('click', () => closePopup(clubGatePopup));
+  if (masterEventPopupClose) {
+    masterEventPopupClose.addEventListener('click', () => closePopup(masterEventPopup));
+  }
 
-  [eventPopup, clubGatePopup].forEach(popup => {
+  if (masterCreateEventLink) {
+    masterCreateEventLink.addEventListener('click', () => openMasterEventPopup({ mode: 'attach' }));
+  }
+
+  if (masterEventForm) {
+    masterEventForm.addEventListener('submit', submitMasterEventForm);
+  }
+
+  document.querySelectorAll('[data-master-event-mode]').forEach(button => {
+    button.addEventListener('click', () => {
+      setMasterEventMode(button.dataset.masterEventMode);
+      if (masterEventMode === 'attach') {
+        syncMasterEventFromSource();
+      } else {
+        if (masterEventName) masterEventName.value = '';
+        if (masterEventDescription) masterEventDescription.value = '';
+        if (masterEventType) masterEventType.value = 'public';
+        if (masterEventLocation) masterEventLocation.value = 'offline_studio';
+      }
+      setMasterEventStatus('', null);
+    });
+  });
+
+  if (masterEventSource) {
+    masterEventSource.addEventListener('change', syncMasterEventFromSource);
+  }
+
+  if (eventsList) {
+    eventsList.addEventListener('click', (event) => {
+      const openButton = event.target.closest('[data-master-open-event]');
+      if (openButton) {
+        openMasterEventPopup({ mode: 'attach', date: openButton.dataset.masterEventDate });
+        return;
+      }
+
+      const attachButton = event.target.closest('[data-master-attach-event]');
+      if (attachButton) {
+        openMasterEventPopup({ mode: 'attach', eventId: attachButton.dataset.masterAttachEvent });
+      }
+    });
+  }
+
+  if (eventPopupContent) {
+    eventPopupContent.addEventListener('click', (event) => {
+      const attachButton = event.target.closest('[data-master-attach-event]');
+      if (!attachButton) return;
+      closePopup(eventPopup);
+      openMasterEventPopup({ mode: 'attach', eventId: attachButton.dataset.masterAttachEvent });
+    });
+  }
+
+  [eventPopup, clubGatePopup, masterEventPopup].forEach(popup => {
+    if (!popup) return;
     popup.addEventListener('click', (e) => {
       if (e.target === popup || e.target.classList.contains('popup-backdrop')) {
         closePopup(popup);
@@ -1040,6 +1474,7 @@ window.onTelegramAuth = function(user) {
     if (e.key === 'Escape') {
       closePopup(eventPopup);
       closePopup(clubGatePopup);
+      closePopup(masterEventPopup);
     }
   });
 
@@ -1078,6 +1513,8 @@ window.onTelegramAuth = function(user) {
     if (currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
       selectedDay = today.getDate();
     }
+    renderCalendar();
+    resetEventsPanel();
     await fetchEventsForMonth();
     await fetchEvergreenServices();
     // After calendar renders, show today's events

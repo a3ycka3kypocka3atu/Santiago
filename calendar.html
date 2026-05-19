@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="MA3 Studio — Schedule and Events Calendar. Yoga, Networking, Community.">
-  <title>Schedule — MA3 Studio</title>
+  <meta name="description" content="Santiago — Schedule and Events Calendar. Yoga, Networking, Community.">
+  <title>Schedule — Santiago</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=7">
   <link rel="stylesheet" href="favorites.css?v=3">
 </head>
 <body class="calendar-page">
@@ -127,7 +127,7 @@
         </a>
       </div>
       <div class="cal-header-actions" id="master-calendar-cta" hidden>
-        <a class="cal-header-action cal-header-action--primary" id="master-create-event-link" href="https://t.me/santioago_bot?start=create_event" target="_blank" rel="noopener">
+        <button class="cal-header-action cal-header-action--primary" id="master-create-event-link" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M8 2v4"></path>
             <path d="M16 2v4"></path>
@@ -137,7 +137,7 @@
             <path d="M10 16h4"></path>
           </svg>
           <span id="master-create-event-label">Додати подію</span>
-        </a>
+        </button>
         <span class="cal-header-actions__hint" id="master-create-event-hint">Оберіть день у календарі, щоб передати дату в заявку.</span>
       </div>
     </header>
@@ -164,7 +164,7 @@
     </section>
 
     <!-- Calendar + Events Panel -->
-    <div class="cal-layout">
+    <div class="cal-layout" id="full-calendar">
 
       <!-- Calendar Grid -->
       <div class="cal-card glass-card">
@@ -238,6 +238,87 @@
     </div>
   </div>
 
+  <!-- ═══ MASTER EVENT POPUP ═══ -->
+  <div class="popup-overlay" id="master-event-popup" aria-hidden="true" role="dialog" aria-labelledby="master-event-title">
+    <div class="popup-backdrop"></div>
+    <div class="popup-container master-event-popup">
+      <button class="popup-close" id="master-event-popup-close" type="button" aria-label="Close">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+      </button>
+      <form class="master-event-form" id="master-event-form">
+        <div class="master-event-form__header">
+          <span class="event-detail__badge event-card__badge--internal" id="master-event-mode-badge">Master</span>
+          <h2 id="master-event-title">Přidat událost do kalendáře</h2>
+        </div>
+
+        <div class="master-event-mode" role="tablist" aria-label="Event mode">
+          <button class="master-event-mode__button is-active" type="button" data-master-event-mode="attach">Připojit</button>
+          <button class="master-event-mode__button" type="button" data-master-event-mode="create">Vytvořit novou</button>
+          <button class="master-event-mode__button" type="button" data-master-event-mode="quick">Krátký zápis</button>
+        </div>
+
+        <label class="master-event-field" id="master-event-source-wrap">
+          <span>Událost z profilu mastera</span>
+          <select id="master-event-source"></select>
+        </label>
+
+        <label class="master-event-field">
+          <span>Název</span>
+          <input id="master-event-name" name="title" type="text" maxlength="120" autocomplete="off" required>
+        </label>
+
+        <label class="master-event-field">
+          <span>Krátký opis</span>
+          <textarea id="master-event-description" name="description" rows="4" maxlength="700"></textarea>
+        </label>
+
+        <div class="master-event-form__grid">
+          <label class="master-event-field">
+            <span>Datum</span>
+            <input id="master-event-date" name="date" type="date" required>
+          </label>
+          <label class="master-event-field">
+            <span>Začátek</span>
+            <input id="master-event-time" name="time" type="time" required>
+          </label>
+          <label class="master-event-field">
+            <span>Trvání</span>
+            <select id="master-event-duration" name="duration">
+              <option value="30">30 min</option>
+              <option value="45">45 min</option>
+              <option value="60" selected>60 min</option>
+              <option value="90">90 min</option>
+              <option value="120">120 min</option>
+              <option value="180">180 min</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="master-event-form__grid">
+          <label class="master-event-field">
+            <span>Viditelnost</span>
+            <select id="master-event-type" name="type">
+              <option value="public">Veřejné</option>
+              <option value="club">Klub</option>
+              <option value="internal">Interní</option>
+            </select>
+          </label>
+          <label class="master-event-field">
+            <span>Místo</span>
+            <select id="master-event-location" name="location">
+              <option value="offline_studio">Studio</option>
+              <option value="online">Online</option>
+              <option value="offline_external">Mimo studio</option>
+            </select>
+          </label>
+        </div>
+
+        <p class="master-event-form__status" id="master-event-status" aria-live="polite"></p>
+        <button class="event-detail__book-btn master-event-form__submit" id="master-event-submit" type="submit">Uložit do kalendáře</button>
+      </form>
+    </div>
+  </div>
+
   <!-- ═══ CLUB GATE POPUP (for guests clicking club events) ═══ -->
   <div class="popup-overlay" id="club-gate-popup" aria-hidden="true" role="dialog">
     <div class="popup-backdrop"></div>
@@ -296,11 +377,11 @@
   <!-- rrule library for recurrence expansion -->
   <script src="https://cdn.jsdelivr.net/npm/rrule@2.7.2/dist/es5/rrule.min.js"></script>
   <!-- Scripts -->
-  <script src="translations.js?v=9"></script>
+  <script src="translations.js?v=10"></script>
   <script src="auth.js"></script>
   <script src="menu.js?v=10"></script>
   <script src="favorites.js?v=2"></script>
-  <script src="calendar.js?v=5"></script>
+  <script src="calendar.js?v=8"></script>
   <script>
     // Theme toggle for calendar page
     const body = document.body;

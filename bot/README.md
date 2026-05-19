@@ -1,13 +1,13 @@
-# MA3 Studio Telegram Bot
+# Santiago Telegram Bot
 
-This is the backend controller for the MA3 Studio scheduling and club management system.
+This is the backend controller for the Santiago scheduling and club management system.
 
 ## Setup Instructions
 
 1. Make sure you have [Node.js](https://nodejs.org/) installed on your machine or server.
 2. Open your terminal and navigate to this `bot` folder:
    ```bash
-   cd path/to/MA3/bot
+   cd path/to/Santiago/bot
    ```
 3. Install the required dependencies:
    ```bash

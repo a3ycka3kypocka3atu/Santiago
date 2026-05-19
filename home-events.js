@@ -5,7 +5,8 @@
   if (!track) return;
 
   const sb = window.supabaseClient;
-  const STORAGE_KEY = 'ma3-lang';
+  const STORAGE_KEY = 'language';
+  const LEGACY_STORAGE_KEY = 'ma3-lang';
   const SUPPORTED = ['en', 'cz', 'ru', 'ua'];
   const DEFAULT_LANG = 'ru';
   const MAX_EVENTS = 5;
@@ -21,6 +22,11 @@
   function getLang() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored && SUPPORTED.includes(stored)) return stored;
+    const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (legacy && SUPPORTED.includes(legacy)) {
+      localStorage.setItem(STORAGE_KEY, legacy);
+      return legacy;
+    }
     const pageLang = document.documentElement.lang;
     if (pageLang === 'cs') return 'cz';
     if (pageLang === 'uk') return 'ua';

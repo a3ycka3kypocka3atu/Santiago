@@ -8,7 +8,7 @@
   let GRID, EMPTY_STATE, RESET_BTN;
   let bookingPopup, bookingForm, bookingTitle, bookingSummary, bookingDate, bookingTime, bookingNote, bookingSubmit, bookingLogin, bookingTelegram, bookingStatus;
   let activeBookingService = null;
-  const state = { category: 'all', format: 'all', instructor: 'all' };
+  const state = { category: 'all', format: 'all', provider: 'all', sort: 'default' };
   let allCards = [];
   let currentUser = window.MA3Auth ? window.MA3Auth.user : { role: 'guest', isLoggedIn: false };
 
@@ -141,6 +141,69 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
+  }
+
+  function normalizeProvider(value) {
+    return String(value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, '');
+  }
+
+  function getProviderType(service) {
+    return service.provider_type === 'project' ? 'project' : 'person';
+  }
+
+  function getProviderName(service) {
+    return service.provider_name || service.instructor_name || '';
+  }
+
+  function getProviderSlug(service) {
+    return service.provider_slug || normalizeProvider(getProviderName(service));
+  }
+
+  function getProviderLabel(service) {
+    const providerName = getProviderName(service);
+    if (!providerName) return '';
+    const labels = {
+      person: { ru: 'Мастер', en: 'Provider', cz: 'Poskytovatel', ua: 'Майстер' },
+      project: { ru: 'Проект / команда', en: 'Project / team', cz: 'Projekt / tým', ua: 'Проєкт / команда' },
+      contact: { ru: 'контакт', en: 'contact', cz: 'kontakt', ua: 'контакт' }
+    };
+    const type = getProviderType(service);
+    const dictionary = labels[type] || labels.person;
+    const prefix = dictionary[currentLang] || dictionary.en;
+    const contact = service.contact_person && type === 'project'
+      ? ` · ${(labels.contact[currentLang] || labels.contact.en)}: ${service.contact_person}`
+      : '';
+    return `${prefix}: ${providerName}${contact}`;
+  }
+
+  function getServiceSortTitle(service) {
+    return (t(service.title) || service.slug || '').toLowerCase();
+  }
+
+  function sortCards() {
+    if (!GRID || !allCards.length) return;
+    const providerOrder = { project: 0, person: 1 };
+    const sorted = [...allCards].sort((a, b) => {
+      const serviceA = a._serviceData || {};
+      const serviceB = b._serviceData || {};
+      if (state.sort === 'provider') {
+        const typeA = providerOrder[getProviderType(serviceA)] ?? 2;
+        const typeB = providerOrder[getProviderType(serviceB)] ?? 2;
+        if (typeA !== typeB) return typeA - typeB;
+        return getProviderName(serviceA).localeCompare(getProviderName(serviceB)) || a._serviceIndex - b._serviceIndex;
+      }
+      if (state.sort === 'title') return getServiceSortTitle(serviceA).localeCompare(getServiceSortTitle(serviceB));
+      return a._serviceIndex - b._serviceIndex;
+    });
+
+    sorted.forEach((card, i) => {
+      card.style.animationDelay = `${i * 60}ms`;
+      GRID.appendChild(card);
+    });
   }
 
   function getServiceTitle(service) {
@@ -350,7 +413,8 @@
     card.tabIndex = 0;
     card.dataset.category = service.category || 'body';
     card.dataset.format = service.format || 'individual';
-    card.dataset.instructor = service.instructor_name ? service.instructor_name.toLowerCase().replace(/\s+/g, '') : '';
+    card.dataset.providerType = getProviderType(service);
+    card.dataset.providerSlug = getProviderSlug(service);
     card.dataset.url = detailPage;
 
     const catLabel = t(`filter.${service.category}`) || service.category || '';
@@ -366,7 +430,7 @@
         <span class="preview-price">${getDisplayPrice(service)}</span>
         <p class="preview-desc">${t(service.description) || ''}</p>
         <div class="preview-card__footer">
-          <span class="preview-master">${t(service.instructor_name) || ''}</span>
+          <span class="preview-master">${escapeHtml(getProviderLabel(service))}</span>
           <div class="preview-card__actions">
             <button class="preview-favorite" type="button" aria-label="В избранное"></button>
             <button class="preview-card__book" type="button" data-service-book>
@@ -400,13 +464,16 @@
         type: 'service',
         key: service.slug,
         title: t(service.title) || service.slug,
-        subtitle: [getDisplayPrice(service), t(service.instructor_name)].filter(Boolean).join(' · '),
+        subtitle: [getDisplayPrice(service), getProviderLabel(service)].filter(Boolean).join(' · '),
         url: detailPage,
         metadata: {
           slug: service.slug,
           category: service.category,
           format: service.format,
-          instructor_name: service.instructor_name
+          provider_type: getProviderType(service),
+          provider_name: getProviderName(service),
+          provider_slug: getProviderSlug(service),
+          contact_person: service.contact_person || ''
         }
       }));
     }
@@ -440,10 +507,13 @@
     services.forEach((service, i) => {
       const card = createCard(service);
       card._serviceData = service;
+      card._serviceIndex = i;
       card.style.animationDelay = `${i * 60}ms`;
       GRID.appendChild(card);
       allCards.push(card);
     });
+
+    sortCards();
 
     requestAnimationFrame(() => {
       allCards.forEach(card => card.classList.add('visible'));
@@ -455,9 +525,12 @@
     allCards.forEach(card => {
       const matchCategory = state.category === 'all' || card.dataset.category === state.category;
       const matchFormat = state.format === 'all' || card.dataset.format === state.format;
-      const matchInstructor = state.instructor === 'all' || card.dataset.instructor.includes(state.instructor.toLowerCase().replace(/\s+/g, ''));
+      const providerValue = normalizeProvider(state.provider);
+      const matchProvider = state.provider === 'all'
+        || card.dataset.providerType === providerValue
+        || card.dataset.providerSlug === providerValue;
 
-      if (matchCategory && matchFormat && matchInstructor) {
+      if (matchCategory && matchFormat && matchProvider) {
         card.style.display = '';
         setTimeout(() => card.classList.add('visible'), 10);
         visibleCount++;
@@ -487,7 +560,7 @@
       if (titleEl) titleEl.textContent = t(service.title);
       if (priceEl) priceEl.textContent = getDisplayPrice(service);
       if (descEl) descEl.textContent = t(service.description);
-      if (masterEl) masterEl.textContent = t(service.instructor_name);
+      if (masterEl) masterEl.textContent = getProviderLabel(service);
       if (ctaEl) ctaEl.textContent = t('btn.details');
       if (bookEl) bookEl.textContent = serviceBookingLabel('book');
       if (badgeEl) badgeEl.textContent = t(`filter.${service.category}`) || service.category;
@@ -521,6 +594,9 @@
         category: 'body',
         format: 'individual',
         instructor_name: 'Ivan Protinak',
+        provider_type: 'person',
+        provider_name: 'Ivan Protinak',
+        provider_slug: 'ivanprotinak',
         detail_page: 'offer.html'
       },
       {
@@ -532,6 +608,9 @@
         category: 'body',
         format: 'individual',
         instructor_name: 'Katerina',
+        provider_type: 'person',
+        provider_name: 'Katerina',
+        provider_slug: 'katerina',
         detail_page: 'offer-katerina.html'
       },
       {
@@ -543,6 +622,9 @@
         category: 'mind',
         format: 'individual',
         instructor_name: 'Andrij Pýcha',
+        provider_type: 'person',
+        provider_name: 'Andrij Pýcha',
+        provider_slug: 'andrijpycha',
         detail_page: 'profile-andrij.html'
       },
       {
@@ -554,6 +636,10 @@
         category: 'space',
         format: 'group',
         instructor_name: 'Andrij Pýcha',
+        provider_type: 'project',
+        provider_name: 'Conscious Networking Platform',
+        provider_slug: 'andrij-network-platform',
+        contact_person: 'Andrij Pýcha',
         detail_page: 'events.html'
       },
       {
@@ -565,6 +651,10 @@
         category: 'incubator',
         format: 'individual',
         instructor_name: 'Andrij Pýcha',
+        provider_type: 'project',
+        provider_name: 'Santiago Talks & Interviews',
+        provider_slug: 'santiago-interviews',
+        contact_person: 'Andrij Pýcha',
         detail_page: 'openmic.html'
       },
       {
@@ -576,6 +666,10 @@
         category: 'incubator',
         format: 'individual',
         instructor_name: 'Andrij Pýcha',
+        provider_type: 'project',
+        provider_name: 'Ethical Marketing & Automation Agency',
+        provider_slug: 'ethical-automation-agency',
+        contact_person: 'Andrij Pýcha',
         detail_page: 'projects.html'
       },
       {
@@ -587,6 +681,10 @@
         category: 'mind',
         format: 'group',
         instructor_name: 'Andrij Pýcha',
+        provider_type: 'project',
+        provider_name: 'Conscious Relationships Platform',
+        provider_slug: 'conscious-relationships',
+        contact_person: 'Andrij Pýcha',
         detail_page: 'events.html'
       },
       {
@@ -598,6 +696,10 @@
         category: 'mind',
         format: 'group',
         instructor_name: 'Andrij Pýcha',
+        provider_type: 'project',
+        provider_name: 'Alternative Knowledge Lab',
+        provider_slug: 'alternative-knowledge-lab',
+        contact_person: 'Andrij Pýcha',
         detail_page: 'events.html'
       }
     ];
@@ -606,13 +708,15 @@
     setupFilters();
 
     const params = new URLSearchParams(window.location.search);
-    const instructorParam = params.get('instructor');
-    if (instructorParam) {
-      const instSelect = document.getElementById('instructor-filter');
-      const hasOption = instSelect && Array.from(instSelect.options).some(option => option.value === instructorParam);
+    const providerParam = params.get('provider') || params.get('instructor');
+    if (providerParam) {
+      const providerAliases = { andrij: 'andrijpycha', ivan: 'ivanprotinak' };
+      const providerValue = providerAliases[providerParam] || providerParam;
+      const providerSelect = document.getElementById('provider-filter');
+      const hasOption = providerSelect && Array.from(providerSelect.options).some(option => option.value === providerValue);
       if (hasOption) {
-        instSelect.value = instructorParam;
-        state.instructor = instructorParam;
+        providerSelect.value = providerValue;
+        state.provider = providerValue;
         applyFilters();
       }
     }
@@ -638,19 +742,30 @@
       });
     });
 
-    const instSelect = document.getElementById('instructor-filter');
-    if (instSelect) {
-      instSelect.addEventListener('change', () => {
-        state.instructor = instSelect.value;
+    const providerSelect = document.getElementById('provider-filter');
+    if (providerSelect) {
+      providerSelect.addEventListener('change', () => {
+        state.provider = providerSelect.value;
+        applyFilters();
+      });
+    }
+
+    const sortSelect = document.getElementById('services-sort');
+    if (sortSelect) {
+      sortSelect.addEventListener('change', () => {
+        state.sort = sortSelect.value;
+        sortCards();
         applyFilters();
       });
     }
 
     if (RESET_BTN) {
       RESET_BTN.addEventListener('click', () => {
-        state.category = 'all'; state.format = 'all'; state.instructor = 'all';
+        state.category = 'all'; state.format = 'all'; state.provider = 'all'; state.sort = 'default';
         document.querySelectorAll('.filter-tab').forEach(t => t.classList.toggle('active', t.dataset.value === 'all'));
-        if (instSelect) instSelect.value = 'all';
+        if (providerSelect) providerSelect.value = 'all';
+        if (sortSelect) sortSelect.value = 'default';
+        sortCards();
         applyFilters();
       });
     }
@@ -665,6 +780,8 @@
   document.addEventListener('ma3-lang-change', (e) => {
     currentLang = e.detail?.lang || DEFAULT_LANG;
     refreshCardText();
+    sortCards();
+    applyFilters();
   });
 
   document.addEventListener('ma3-auth-changed', (e) => {
@@ -677,6 +794,8 @@
     if (e.target.classList.contains('lang-btn')) {
       currentLang = e.target.getAttribute('data-lang');
       refreshCardText();
+      sortCards();
+      applyFilters();
     }
   });
 

@@ -3144,6 +3144,125 @@ body.grayscale-mode .preview-card {
   color: #6ee7d8;
 }
 
+/* ── Master event popup ── */
+.master-event-popup {
+  max-width: 620px;
+}
+
+.master-event-form {
+  display: grid;
+  gap: 16px;
+}
+
+.master-event-form__header {
+  display: grid;
+  gap: 10px;
+  padding-right: 34px;
+}
+
+.master-event-form__header h2 {
+  font-size: 1.45rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--fg);
+}
+
+.master-event-mode {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 4px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.master-event-mode__button {
+  min-height: 38px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fg-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
+}
+
+.master-event-mode__button.is-active {
+  color: #75f4e1;
+  background: rgba(95, 255, 224, 0.12);
+  border-color: rgba(95, 255, 224, 0.25);
+}
+
+.master-event-field {
+  display: grid;
+  gap: 7px;
+}
+
+.master-event-field span {
+  color: var(--fg-muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.master-event-field input,
+.master-event-field select,
+.master-event-field textarea {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--fg);
+  font: inherit;
+  outline: none;
+}
+
+.master-event-field textarea {
+  min-height: 104px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.master-event-field input:focus,
+.master-event-field select:focus,
+.master-event-field textarea:focus {
+  border-color: rgba(95, 255, 224, 0.46);
+  box-shadow: 0 0 0 3px rgba(95, 255, 224, 0.08);
+}
+
+.master-event-form__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.master-event-form__grid:last-of-type {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.master-event-form__status {
+  min-height: 20px;
+  color: var(--fg-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.master-event-form__status.is-error {
+  color: #fca5a5;
+}
+
+.master-event-form__status.is-success {
+  color: #6ee7b7;
+}
+
+.master-event-form__submit {
+  width: 100%;
+  margin-top: 0;
+}
+
 /* ── Club Gate Popup ── */
 .club-gate-popup {
   max-width: 440px;
@@ -3324,7 +3443,7 @@ body.grayscale-mode .preview-card {
 .popup-overlay {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: 5000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4154,20 +4273,6 @@ body.grayscale-mode .cal-theme-btn .toggle-thumb {
 .menu-controls .tg-login-btn.logged-in {
   width: auto !important;
   align-self: flex-end;
-}
-
-/* ── Calendar Expand/Collapse ── */
-.cal-card {
-  cursor: pointer;
-  transition: all 0.3s var(--ease-out);
-}
-.cal-card.collapsed .cal-weekdays,
-.cal-card.collapsed #cal-grid,
-.cal-card.collapsed .location-filter {
-  display: none !important;
-}
-.cal-card.collapsed {
-  padding: 20px 28px;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -5306,6 +5411,38 @@ body.calendar-page:not(.grayscale-mode) .cal-events-panel .event-card {
   .service-booking-telegram {
     width: 100%;
   }
+
+  .master-event-mode,
+  .master-event-form__grid,
+  .master-event-form__grid:last-of-type {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Calendar stability pass: avoid startup tilt/jump while async data loads. */
+body.calendar-page .cal-header,
+body.calendar-page .cal-layout,
+body.calendar-page .upcoming-strip {
+  animation: none !important;
+}
+
+body.calendar-page .cal-grid {
+  min-height: clamp(260px, 42vw, 560px);
+}
+
+body.calendar-page .upcoming-strip__track {
+  min-height: 112px;
+}
+
+body.calendar-page .cal-card.glass-card,
+body.calendar-page .cal-events-panel.glass-card,
+body.calendar-page .cal-card.glass-card:hover {
+  transform: none !important;
+}
+
+body.calendar-page .cal-day--selected,
+body.calendar-page .cal-day:not(.cal-day--empty):hover {
+  transform: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

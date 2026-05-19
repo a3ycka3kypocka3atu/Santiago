@@ -90,13 +90,31 @@
         </div>
       </div>
       <div class="filter-group filter-group--instructor">
-        <div class="filter-label" data-i18n="filter.instructor">Instructor</div>
+        <div class="filter-label" data-i18n="filter.provider">Provider</div>
         <div class="filter-select-wrap">
-          <select class="filter-select" id="instructor-filter" data-filter="instructor" aria-label="Select instructor">
-            <option value="all" data-i18n="filter.allInstructors">All Instructors</option>
-            <option value="ivan">Иван Протиняк</option>
+          <select class="filter-select" id="provider-filter" data-filter="provider" aria-label="Select provider">
+            <option value="all" data-i18n="filter.allProviders">All Providers</option>
+            <option value="person" data-i18n="filter.people">People</option>
+            <option value="project" data-i18n="filter.projectsTeams">Projects / Teams</option>
+            <option value="ivanprotinak">Иван Протиняк</option>
             <option value="katerina">Катерина</option>
-            <option value="andrij">Andrij Pýcha</option>
+            <option value="andrijpycha">Andrij Pýcha</option>
+            <option value="andrij-network-platform">Conscious Networking Platform</option>
+            <option value="santiago-interviews">Santiago Talks & Interviews</option>
+            <option value="ethical-automation-agency">Ethical Marketing & Automation Agency</option>
+            <option value="conscious-relationships">Conscious Relationships Platform</option>
+            <option value="alternative-knowledge-lab">Alternative Knowledge Lab</option>
+          </select>
+          <svg class="select-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="filter-group filter-group--sort">
+        <div class="filter-label" data-i18n="filter.sort">Sort</div>
+        <div class="filter-select-wrap">
+          <select class="filter-select" id="services-sort" aria-label="Sort services">
+            <option value="default" data-i18n="filter.sortPriority">Default</option>
+            <option value="provider" data-i18n="filter.sortProvider">By provider</option>
+            <option value="title" data-i18n="filter.sortTitle">By title</option>
           </select>
           <svg class="select-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
         </div>
@@ -186,7 +204,7 @@
     <p data-i18n="footer.text">© 2026 Сантьяго – Цифровой Дзен. Все права защищены.</p>
   </footer>
 
-  <script src="translations.js?v=8"></script>
+  <script src="translations.js?v=10"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=10"></script>

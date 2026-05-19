@@ -384,6 +384,10 @@ window.translations = {
     "filter.group": "Групповые",
     "filter.instructor": "Мастер",
     "filter.allInstructors": "Все мастера",
+    "filter.provider": "Поставщик",
+    "filter.allProviders": "Все поставщики",
+    "filter.people": "Люди",
+    "filter.projectsTeams": "Проекты / команды",
     "services.empty.text": "По этим критериям услуг не найдено",
     "services.empty.reset": "Сбросить фильтры",
     "projects.page.title": "Проекты Santiago",
@@ -410,6 +414,7 @@ window.translations = {
     "filter.allCurators": "Все кураторы",
     "filter.sort": "Сортировка",
     "filter.sortPriority": "По приоритету",
+    "filter.sortProvider": "По поставщику",
     "filter.sortTitle": "По названию",
     "filter.sortStatus": "По статусу",
     "filter.sortCurator": "По куратору",
@@ -867,6 +872,10 @@ window.translations = {
     "filter.group": "Group",
     "filter.instructor": "Master",
     "filter.allInstructors": "All Instructors",
+    "filter.provider": "Provider",
+    "filter.allProviders": "All Providers",
+    "filter.people": "People",
+    "filter.projectsTeams": "Projects / Teams",
     "services.empty.text": "No services match your criteria",
     "services.empty.reset": "Reset Filters",
     "projects.page.title": "Santiago Projects",
@@ -893,6 +902,7 @@ window.translations = {
     "filter.allCurators": "All curators",
     "filter.sort": "Sort",
     "filter.sortPriority": "By priority",
+    "filter.sortProvider": "By provider",
     "filter.sortTitle": "By title",
     "filter.sortStatus": "By status",
     "filter.sortCurator": "By curator",
@@ -1349,6 +1359,10 @@ window.translations = {
     "filter.group": "Skupinové",
     "filter.instructor": "Mistr",
     "filter.allInstructors": "Všichni mistři",
+    "filter.provider": "Poskytovatel",
+    "filter.allProviders": "Všichni poskytovatelé",
+    "filter.people": "Lidé",
+    "filter.projectsTeams": "Projekty / týmy",
     "services.empty.text": "Podle těchto kritérií nebyly nalezeny žádné služby",
     "services.empty.reset": "Obnovit filtry",
     "projects.page.title": "Projekty Santiago",
@@ -1375,6 +1389,7 @@ window.translations = {
     "filter.allCurators": "Všichni kurátoři",
     "filter.sort": "Řazení",
     "filter.sortPriority": "Podle priority",
+    "filter.sortProvider": "Podle poskytovatele",
     "filter.sortTitle": "Podle názvu",
     "filter.sortStatus": "Podle statusu",
     "filter.sortCurator": "Podle kurátora",
@@ -1831,6 +1846,10 @@ window.translations = {
     "filter.group": "Групові",
     "filter.instructor": "Майстер",
     "filter.allInstructors": "Усі майстри",
+    "filter.provider": "Постачальник",
+    "filter.allProviders": "Усі постачальники",
+    "filter.people": "Люди",
+    "filter.projectsTeams": "Проєкти / команди",
     "services.empty.text": "За цими критеріями послуг не знайдено",
     "services.empty.reset": "Скинути фільтри",
     "projects.page.title": "Проєкти Santiago",
@@ -1857,6 +1876,7 @@ window.translations = {
     "filter.allCurators": "Усі куратори",
     "filter.sort": "Сортування",
     "filter.sortPriority": "За пріоритетом",
+    "filter.sortProvider": "За постачальником",
     "filter.sortTitle": "За назвою",
     "filter.sortStatus": "За статусом",
     "filter.sortCurator": "За куратором",
@@ -1948,8 +1968,33 @@ window.translations = {
   }
 };
 
+const MA3_LANGUAGE_KEY = 'language';
+const MA3_LEGACY_LANGUAGE_KEY = 'ma3-lang';
+const MA3_SUPPORTED_LANGS = ['en', 'cz', 'ru', 'ua'];
+const MA3_DEFAULT_LANG = 'ru';
+
+function getPreferredLanguage() {
+  const stored = localStorage.getItem(MA3_LANGUAGE_KEY);
+  if (stored && MA3_SUPPORTED_LANGS.includes(stored)) return stored;
+
+  const legacy = localStorage.getItem(MA3_LEGACY_LANGUAGE_KEY);
+  if (legacy && MA3_SUPPORTED_LANGS.includes(legacy)) {
+    localStorage.setItem(MA3_LANGUAGE_KEY, legacy);
+    return legacy;
+  }
+
+  return MA3_DEFAULT_LANG;
+}
+
+function persistLanguage(lang) {
+  if (!MA3_SUPPORTED_LANGS.includes(lang)) return;
+  localStorage.setItem(MA3_LANGUAGE_KEY, lang);
+  localStorage.setItem(MA3_LEGACY_LANGUAGE_KEY, lang);
+}
+
 window.applyTranslations = function(lang) {
-  const t = translations[lang] || translations['ru'];
+  const safeLang = MA3_SUPPORTED_LANGS.includes(lang) ? lang : MA3_DEFAULT_LANG;
+  const t = translations[safeLang] || translations[MA3_DEFAULT_LANG];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (t[key]) {
@@ -1960,7 +2005,8 @@ window.applyTranslations = function(lang) {
 
 // Initialize language
 document.addEventListener('DOMContentLoaded', () => {
-  const currentLang = localStorage.getItem('language') || 'ru';
+  const currentLang = getPreferredLanguage();
+  persistLanguage(currentLang);
   window.applyTranslations(currentLang);
 
   // Highlight active lang button in ALL language switchers
@@ -1973,7 +2019,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('lang-btn')) {
     const lang = e.target.getAttribute('data-lang');
-    localStorage.setItem('language', lang);
+    persistLanguage(lang);
     window.applyTranslations(lang);
 
     // Update active UI in ALL lang switchers
