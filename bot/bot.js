@@ -1123,6 +1123,42 @@ async function finishMentorApplication(ctx) {
 
 async function finishOpenMicApplication(ctx) {
   const adminId = ADMIN_CHAT_ID;
+  const profileId = ctx.dbUser ? ctx.dbUser.id : null;
+  const details = `Ім'я: ${ctx.session.openmicName}\nТема/формат: ${ctx.session.openmicTopic}\nКонтакт/час: ${ctx.session.openmicContact}`;
+  const payloadData = {
+    purpose: 'openmic_submission',
+    source: 'telegram',
+    workflow_status: 'pending',
+    openmic_name: ctx.session.openmicName,
+    openmic_topic: ctx.session.openmicTopic,
+    openmic_contact: ctx.session.openmicContact,
+    telegram: {
+      id: ctx.from.id,
+      username: ctx.from.username || null,
+      name: getFullName(ctx.from)
+    }
+  };
+  let savedSubmission = null;
+
+  try {
+    const { data, error } = await supabase.from('submissions').insert({
+      id: randomUUID(),
+      kind: 'openmic',
+      title: 'Open Mic / Santiago Talks',
+      description: 'Заявка на виступ на Open Mic / Santiago Talks.',
+      details,
+      submitted_by: profileId,
+      telegram_id: ctx.from.id,
+      status: 'pending',
+      payload: payloadData
+    }).select('id, kind, title, description, details, submitted_by, telegram_id, status, payload, created_at, updated_at').single();
+
+    if (error) throw error;
+    savedSubmission = data;
+  } catch (err) {
+    console.error('[Bot] Open Mic save error:', err);
+  }
+
   const summary = `🎤 **Нова заявка на Open Mic / Santiago Talks**\n\n` +
     `👤 **Ім'я:** ${ctx.session.openmicName}\n` +
     `🆔 **User:** @${ctx.from.username || 'n/a'} (ID: ${ctx.from.id})\n` +
@@ -1131,7 +1167,14 @@ async function finishOpenMicApplication(ctx) {
     `\n🔗 [Відкрити чат](tg://user?id=${ctx.from.id})`;
 
   try {
-    await bot.telegram.sendMessage(adminId, summary, { parse_mode: 'Markdown' });
+    await bot.telegram.sendMessage(
+      adminId,
+      summary,
+      {
+        parse_mode: 'Markdown',
+        ...(savedSubmission ? submissionActionKeyboard(savedSubmission.id) : {})
+      }
+    );
     await ctx.reply('Дякуємо! Заявка на Open Mic надіслана команді Santiago. Ми звʼяжемося з вами найближчим часом. ✨');
   } catch (err) {
     console.error('[Bot] Open Mic notification error:', err);

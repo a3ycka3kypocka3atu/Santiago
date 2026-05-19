@@ -162,6 +162,17 @@
     return labels[status] || status || 'Статус';
   }
 
+  function submissionKindLabel(kind) {
+    const labels = {
+      profile: 'Профіль',
+      service: 'Послуга',
+      project: 'Проєкт',
+      event: 'Подія',
+      openmic: 'Open Mic'
+    };
+    return labels[kind] || kind || 'Заявка';
+  }
+
   function emptyState(text) {
     return `<div class="favorites-empty">${escapeHtml(text)}</div>`;
   }
@@ -480,7 +491,7 @@
               <h4 class="cabinet-data-item__title">${escapeHtml(submission.title)}</h4>
               <span class="cabinet-status-pill cabinet-status-pill--${escapeHtml(status)}">${escapeHtml(statusLabel(status))}</span>
             </div>
-            <p class="cabinet-data-item__meta">${escapeHtml(submission.kind)} · ${escapeHtml(formatDate(submission.created_at))}</p>
+            <p class="cabinet-data-item__meta">${escapeHtml(submissionKindLabel(submission.kind))} · ${escapeHtml(formatDate(submission.created_at))}</p>
             ${submission.admin_message ? `<p class="cabinet-data-item__text">${escapeHtml(submission.admin_message)}</p>` : ''}
             ${submission.published_url ? `<a class="cabinet-action" href="${escapeHtml(submission.published_url)}">Відкрити публікацію</a>` : ''}
           </article>
@@ -523,7 +534,7 @@
               <h4 class="cabinet-data-item__title">${escapeHtml(submission.title)}</h4>
               <span class="cabinet-status-pill cabinet-status-pill--${escapeHtml(status)}">${escapeHtml(statusLabel(status))}</span>
             </div>
-            <p class="cabinet-data-item__meta">${escapeHtml(submission.kind)} · ${escapeHtml(author || 'Майстер')} · ${escapeHtml(formatDate(submission.created_at))}</p>
+            <p class="cabinet-data-item__meta">${escapeHtml(submissionKindLabel(submission.kind))} · ${escapeHtml(author || 'Автор')} · ${escapeHtml(formatDate(submission.created_at))}</p>
             ${submission.description ? `<p class="cabinet-data-item__text">${escapeHtml(submission.description)}</p>` : ''}
             ${submission.details && submission.details !== submission.description ? `<p class="cabinet-data-item__text">${escapeHtml(submission.details)}</p>` : ''}
             <div class="cabinet-data-item__actions">

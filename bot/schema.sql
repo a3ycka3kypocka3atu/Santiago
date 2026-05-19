@@ -140,7 +140,7 @@ ALTER TABLE public.subscription_notifications ENABLE ROW LEVEL SECURITY;
 -- 9. SUBMISSIONS TABLE
 CREATE TABLE IF NOT EXISTS public.submissions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    kind TEXT NOT NULL CHECK (kind IN ('profile', 'service', 'project', 'event')),
+    kind TEXT NOT NULL CHECK (kind IN ('profile', 'service', 'project', 'event', 'openmic')),
     title TEXT NOT NULL,
     description TEXT,
     details TEXT,
@@ -616,6 +616,74 @@ AS $$
     ORDER BY s.created_at DESC;
 $$;
 
+CREATE OR REPLACE FUNCTION public.request_openmic_submission(
+    p_user_id UUID,
+    p_message TEXT
+)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_profile public.profiles%ROWTYPE;
+    v_submission_id UUID;
+    v_message TEXT;
+BEGIN
+    IF p_user_id IS NULL THEN
+        RAISE EXCEPTION 'profile_required';
+    END IF;
+
+    SELECT * INTO v_profile
+    FROM public.profiles
+    WHERE id = p_user_id;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'profile_not_found';
+    END IF;
+
+    v_message := nullif(trim(coalesce(p_message, '')), '');
+    IF v_message IS NULL THEN
+        RAISE EXCEPTION 'submission_text_required';
+    END IF;
+
+    INSERT INTO public.submissions (
+        id,
+        kind,
+        title,
+        description,
+        details,
+        submitted_by,
+        telegram_id,
+        status,
+        payload
+    )
+    VALUES (
+        gen_random_uuid(),
+        'openmic',
+        'Open Mic / Santiago Talks',
+        'Заявка на виступ на Open Mic / Santiago Talks.',
+        v_message,
+        v_profile.id,
+        v_profile.telegram_id,
+        'pending',
+        jsonb_build_object(
+            'purpose', 'openmic_submission',
+            'source', 'openmic_page',
+            'workflow_status', 'pending',
+            'telegram', jsonb_build_object(
+                'id', v_profile.telegram_id,
+                'username', v_profile.username,
+                'name', coalesce(nullif(v_profile.full_name, ''), v_profile.username, 'Santiago guest')
+            )
+        )
+    )
+    RETURNING id INTO v_submission_id;
+
+    RETURN v_submission_id;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION public.get_mentor_activity_summary(p_user_id UUID)
 RETURNS TABLE (
     item_type TEXT,
@@ -766,6 +834,7 @@ GRANT EXECUTE ON FUNCTION public.get_event_public_stats(UUID[]) TO anon, authent
 GRANT EXECUTE ON FUNCTION public.get_profile_submissions(UUID) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.request_service_booking(UUID, TEXT, TEXT, TIMESTAMPTZ, TEXT) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.get_profile_service_booking_requests(UUID) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.request_openmic_submission(UUID, TEXT) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.get_mentor_activity_summary(UUID) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.get_admin_platform_overview(UUID) TO anon, authenticated;
 
