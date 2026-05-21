@@ -688,21 +688,6 @@
         provider_slug: 'conscious-relationships',
         contact_person: 'Andrij Pýcha',
         detail_page: 'events.html'
-      },
-      {
-        slug: 'alternative-knowledge-workshop',
-        title: 'services.andrij.knowledge.name',
-        description: 'services.andrij.knowledge.short',
-        price: 'services.andrij.knowledge.price',
-        icon_emoji: '📚',
-        category: 'mind',
-        format: 'group',
-        instructor_name: 'Andrij Pýcha',
-        provider_type: 'project',
-        provider_name: 'Alternative Knowledge Lab',
-        provider_slug: 'alternative-knowledge-lab',
-        contact_person: 'Andrij Pýcha',
-        detail_page: 'events.html'
       }
     ];
 

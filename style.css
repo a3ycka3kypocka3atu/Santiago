@@ -1323,6 +1323,301 @@ body.grayscale-mode .theme-toggle .toggle-thumb {
 }
 
 /* ═══════════════════════════════════════════
+   PROJECT DETAIL PAGES
+   ═══════════════════════════════════════════ */
+
+.project-detail-page .page-wrapper {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.project-detail-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 28px;
+  align-items: stretch;
+  margin: 0 auto 34px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.project-detail-hero .glass-card {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.project-detail-hero__content {
+  padding: clamp(28px, 5vw, 48px);
+}
+
+.project-detail-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.project-detail-chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 36px;
+  padding: 7px 14px;
+  border: 1px solid rgba(0, 212, 170, 0.3);
+  border-radius: 999px;
+  background: rgba(0, 212, 170, 0.08);
+  color: #85f5df;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: normal;
+}
+
+.project-detail-chip--violet {
+  border-color: rgba(167, 139, 250, 0.42);
+  background: rgba(167, 139, 250, 0.12);
+  color: #d4c8ff;
+}
+
+.project-detail-hero h1 {
+  margin: 0 0 18px;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(2.15rem, 5vw, 4.2rem);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.project-detail-lead {
+  max-width: 780px;
+  margin: 0;
+  color: #d7d9f0;
+  font-size: clamp(1.06rem, 2vw, 1.28rem);
+  line-height: 1.75;
+}
+
+.project-detail-hero__panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 22px;
+  padding: clamp(24px, 4vw, 36px);
+}
+
+.project-detail-panel-title {
+  margin: 0 0 10px;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.project-detail-panel-text {
+  margin: 0;
+  color: #c8c9e2;
+  line-height: 1.65;
+}
+
+.project-detail-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 13px 18px;
+  border-radius: 14px;
+  background: rgba(0, 212, 170, 0.16);
+  border: 1px solid rgba(0, 212, 170, 0.42);
+  color: #85f5df;
+  font-weight: 800;
+  text-align: center;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.project-detail-cta:hover {
+  transform: translateY(-2px);
+  background: rgba(0, 212, 170, 0.24);
+  border-color: rgba(0, 212, 170, 0.68);
+}
+
+.project-detail-section {
+  margin: 42px 0;
+}
+
+.project-detail-section h2 {
+  margin: 0 0 18px;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  letter-spacing: 0;
+}
+
+.project-detail-text {
+  max-width: 900px;
+  color: #d0d3ec;
+  font-size: 1.03rem;
+  line-height: 1.8;
+}
+
+.project-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.project-detail-card {
+  padding: 22px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  min-height: 160px;
+  box-sizing: border-box;
+}
+
+.project-detail-card h3 {
+  margin: 0 0 10px;
+  color: #aef6e7;
+  font-size: 1.05rem;
+}
+
+.project-detail-card p {
+  margin: 0;
+  color: #c5c8df;
+  line-height: 1.62;
+  font-size: 0.97rem;
+}
+
+.project-detail-band {
+  padding: clamp(24px, 5vw, 40px);
+  margin: 46px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.12), rgba(167, 139, 250, 0.12));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.project-detail-band h2 {
+  margin-top: 0;
+}
+
+.project-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.project-detail-link-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 13px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(167, 139, 250, 0.4);
+  color: #d6ccff;
+  font-weight: 800;
+  background: rgba(167, 139, 250, 0.1);
+}
+
+.coliving-hero-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.coliving-hero-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(0, 212, 170, 0.14), transparent 42%),
+    linear-gradient(315deg, rgba(167, 139, 250, 0.16), transparent 48%);
+}
+
+.coliving-hero-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.coliving-home-mark {
+  display: grid;
+  place-items: center;
+  width: 118px;
+  height: 118px;
+  border-radius: 28px;
+  color: #85f5df;
+  background: rgba(0, 212, 170, 0.1);
+  border: 1px solid rgba(0, 212, 170, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.coliving-home-mark svg {
+  width: 76px;
+  height: 76px;
+}
+
+.coliving-format-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.coliving-format-list span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: #d6ccff;
+  background: rgba(167, 139, 250, 0.12);
+  border: 1px solid rgba(167, 139, 250, 0.28);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.coliving-principles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 860px) {
+  .project-detail-hero,
+  .project-detail-grid,
+  .coliving-principles {
+    grid-template-columns: 1fr;
+  }
+
+  .project-detail-page .page-wrapper {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .project-detail-hero h1 {
+    font-size: clamp(2rem, 11vw, 3rem);
+    overflow-wrap: anywhere;
+  }
+
+  .project-detail-hero__content,
+  .project-detail-hero__panel {
+    padding: 28px;
+  }
+
+  .coliving-home-mark {
+    width: 96px;
+    height: 96px;
+    border-radius: 22px;
+  }
+
+  .coliving-home-mark svg {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+/* ═══════════════════════════════════════════
    OFFER PAGE STYLES
    ═══════════════════════════════════════════ */
 
@@ -4678,7 +4973,9 @@ body:not(.calendar-page):not(.grayscale-mode) .preview-card,
 body:not(.calendar-page):not(.grayscale-mode) .services-filters,
 body:not(.calendar-page):not(.grayscale-mode) .om-format-card,
 body:not(.calendar-page):not(.grayscale-mode) .om-media-card,
-body:not(.calendar-page):not(.grayscale-mode) .om-cta-card {
+body:not(.calendar-page):not(.grayscale-mode) .om-cta-card,
+body:not(.calendar-page):not(.grayscale-mode) .project-detail-card,
+body:not(.calendar-page):not(.grayscale-mode) .project-detail-band {
   color: var(--text-day);
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.48));
   border-color: var(--surface-line-day);
@@ -4700,6 +4997,11 @@ body:not(.calendar-page):not(.grayscale-mode) section:not(.hero) h2,
 body:not(.calendar-page):not(.grayscale-mode) .om-hero__title,
 body:not(.calendar-page):not(.grayscale-mode) .om-section__title,
 body:not(.calendar-page):not(.grayscale-mode) .preview-card__title,
+body:not(.calendar-page):not(.grayscale-mode) .project-detail-hero h1,
+body:not(.calendar-page):not(.grayscale-mode) .project-detail-section h2,
+body:not(.calendar-page):not(.grayscale-mode) .project-detail-band h2,
+body:not(.calendar-page):not(.grayscale-mode) .project-detail-panel-title,
+body:not(.calendar-page):not(.grayscale-mode) .project-detail-card h3,
 body:not(.calendar-page):not(.grayscale-mode) .spec-card h3,
 body:not(.calendar-page):not(.grayscale-mode) .offer-card h3,
 body:not(.calendar-page):not(.grayscale-mode) .video-card-body h3,
@@ -4723,6 +5025,10 @@ body:not(.calendar-page):not(.grayscale-mode) .offer-card li,
 body:not(.calendar-page):not(.grayscale-mode) .om-hero__subtitle,
 body:not(.calendar-page):not(.grayscale-mode) .om-hero__desc,
 body:not(.calendar-page):not(.grayscale-mode) .om-section__desc,
+body:not(.calendar-page):not(.grayscale-mode) .project-detail-lead,
+body:not(.calendar-page):not(.grayscale-mode) .project-detail-panel-text,
+body:not(.calendar-page):not(.grayscale-mode) .project-detail-text,
+body:not(.calendar-page):not(.grayscale-mode) .project-detail-card p,
 body:not(.calendar-page):not(.grayscale-mode) .om-format-card__body p,
 body:not(.calendar-page):not(.grayscale-mode) .om-media-card p,
 body:not(.calendar-page):not(.grayscale-mode) .om-cta-card__content p {
@@ -4734,7 +5040,11 @@ body:not(.calendar-page):not(.grayscale-mode) .preview-card:hover .preview-card_
 body:not(.calendar-page):not(.grayscale-mode) .preview-card__book,
 body:not(.calendar-page):not(.grayscale-mode) .profile-actions .cta-card--primary,
 body:not(.calendar-page):not(.grayscale-mode) .profile-languages,
-body:not(.calendar-page):not(.grayscale-mode) .om-format-card__duration {
+body:not(.calendar-page):not(.grayscale-mode) .om-format-card__duration,
+body:not(.calendar-page):not(.grayscale-mode) .project-detail-cta,
+body:not(.calendar-page):not(.grayscale-mode) .project-detail-link-secondary,
+body:not(.calendar-page):not(.grayscale-mode) .coliving-home-mark,
+body:not(.calendar-page):not(.grayscale-mode) .coliving-format-list span {
   color: #057c69;
 }
 

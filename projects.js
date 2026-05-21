@@ -90,7 +90,7 @@
       status: 'building',
       format: 'hybrid',
       priority: 3,
-      url: 'openmic.html',
+      url: 'project-incubator.html',
       owner: 'Santiago Incubator',
       title: {
         ru: 'Инкубатор проектов',
@@ -99,10 +99,10 @@
         ua: 'Інкубатор проєктів'
       },
       desc: {
-        ru: 'Среда, где идеи проходят путь от открытого питча до команды, первых тестов, партнёрств и понятной модели реализации.',
-        en: 'A place where ideas move from open pitch to team, first tests, partnerships, and a clear implementation model.',
-        cz: 'Prostředí, kde nápady přecházejí od otevřeného pitche k týmu, testům, partnerstvím a modelu realizace.',
-        ua: 'Середовище, де ідеї проходять шлях від відкритого пітчу до команди, перших тестів, партнерств і моделі реалізації.'
+        ru: 'Встречи, команды, партнёрства и фонд для запуска этичных, природных и полезных проектов.',
+        en: 'Meetups, teams, partnerships, and a fund for launching ethical, natural, and useful projects.',
+        cz: 'Setkání, týmy, partnerství a fond pro spuštění etických, přirozených a užitečných projektů.',
+        ua: 'Зустрічі, команди, партнерства й фонд для запуску етичних, природних і корисних проєктів.'
       }
     },
     {
@@ -134,7 +134,7 @@
       status: 'concept',
       format: 'residential',
       priority: 5,
-      url: 'community.html',
+      url: 'coliving.html',
       owner: 'Santiago Club',
       title: {
         ru: 'Коливинг Santiago',
@@ -143,10 +143,10 @@
         ua: 'Колівінг Santiago'
       },
       desc: {
-        ru: 'Будущий формат совместного проживания для своих: дешевле быт, ближе команда, быстрее запуск общих проектов.',
-        en: 'A future shared-living format for the circle: easier living, closer teams, and faster launch of shared projects.',
-        cz: 'Budoucí formát společného bydlení: jednodušší život, bližší tým a rychlejší start společných projektů.',
-        ua: 'Майбутній формат спільного проживання для своїх: простіший побут, ближча команда, швидший запуск спільних проєктів.'
+        ru: 'Концепт совместного проживания для своих: хорошие условия, поддержка, общие ресурсы и среда для запуска проектов.',
+        en: 'A shared-living concept for the circle: good conditions, support, shared resources, and an environment for launching projects.',
+        cz: 'Koncept společného bydlení pro náš okruh: dobré podmínky, podpora, sdílené zdroje a prostředí pro rozjezd projektů.',
+        ua: 'Концепт спільного проживання для своїх: хороші умови, підтримка, спільні ресурси й середовище для запуску проєктів.'
       }
     },
     {
@@ -156,7 +156,7 @@
       status: 'building',
       format: 'hybrid',
       priority: 7,
-      url: 'profile-andrij.html',
+      url: 'conscious-networking.html',
       owner: 'Andrij Pýcha',
       title: {
         ru: 'Платформа осознанного нетворкинга',
@@ -165,10 +165,10 @@
         ua: 'Платформа усвідомленого нетворкінгу'
       },
       desc: {
-        ru: 'Инструмент для поиска людей, навыков, идей и взаимной помощи: события, профили, связи и понятные следующие шаги после встречи.',
-        en: 'A tool for finding people, skills, ideas, and mutual help: events, profiles, connections, and clear next steps after a meeting.',
-        cz: 'Nástroj pro hledání lidí, dovedností, nápadů a vzájemné pomoci: akce, profily, propojení a jasné další kroky po setkání.',
-        ua: 'Інструмент для пошуку людей, навичок, ідей і взаємодопомоги: події, профілі, зв’язки та зрозумілі наступні кроки після зустрічі.'
+        ru: 'Осознанные связи, встречи и взаимопомощь, чтобы люди сотрудничали и реализовывали полезные идеи.',
+        en: 'Conscious connections, meetups, and mutual help so people can collaborate and realize useful ideas.',
+        cz: 'Vědomá propojení, setkání a vzájemná pomoc, aby lidé spolupracovali a realizovali užitečné nápady.',
+        ua: 'Усвідомлені зв’язки, зустрічі й взаємодопомога, щоб люди співпрацювали та реалізували корисні ідеї.'
       }
     },
     {
@@ -200,7 +200,7 @@
       status: 'building',
       format: 'online',
       priority: 10,
-      url: 'services.html?provider=ethical-automation-agency',
+      url: 'ethical-automation-agency.html',
       owner: 'Andrij Pýcha',
       title: {
         ru: 'Этичная агентура маркетинга и автоматизации',
@@ -209,10 +209,10 @@
         ua: 'Етична агенція маркетингу й автоматизації'
       },
       desc: {
-        ru: 'Маркетинг, AI, автоматизация процессов и SaaS-эксперименты для проектов, людей и бизнесов, которым важна польза, а не только продажа.',
-        en: 'Marketing, AI, process automation, and SaaS experiments for projects, people, and businesses that care about usefulness, not only sales.',
-        cz: 'Marketing, AI, automatizace procesů a SaaS experimenty pro projekty, lidi a firmy, kterým záleží na užitku, ne jen na prodeji.',
-        ua: 'Маркетинг, AI, автоматизація процесів і SaaS-експерименти для проєктів, людей і бізнесів, яким важлива користь, а не лише продаж.'
+        ru: 'Три агентских направления для стартапов, бизнеса и социальных проектов: маркетинг, AI, автоматизация и фонд реализации.',
+        en: 'Three agency directions for startups, business, and social projects: marketing, AI, automation, and a realization fund.',
+        cz: 'Tři agenturní směry pro startupy, byznys a sociální projekty: marketing, AI, automatizace a realizační fond.',
+        ua: 'Три агентські напрями для стартапів, бізнесу й соціальних проєктів: маркетинг, AI, автоматизація та фонд реалізації.'
       }
     }
   ];
