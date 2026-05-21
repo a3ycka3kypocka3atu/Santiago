@@ -150,28 +150,6 @@
       }
     },
     {
-      slug: 'digital-community',
-      icon: '💻',
-      category: 'digital',
-      status: 'building',
-      format: 'online',
-      priority: 6,
-      url: 'cabinet.html',
-      owner: 'Santiago Platform',
-      title: {
-        ru: 'Digital Community Platform',
-        en: 'Digital Community Platform',
-        cz: 'Digital Community Platform',
-        ua: 'Digital Community Platform'
-      },
-      desc: {
-        ru: 'Профили, кабинет, избранное, заявки, события и Telegram-связка — цифровой слой для прозрачного взаимодействия клуба.',
-        en: 'Profiles, cabinet, favorites, requests, events, and Telegram flow: the digital layer for transparent club interaction.',
-        cz: 'Profily, kabinet, oblíbené položky, žádosti, události a Telegram: digitální vrstva pro transparentní interakci klubu.',
-        ua: 'Профілі, кабінет, обране, заявки, події та Telegram-зв’язка: цифровий шар для прозорої взаємодії клубу.'
-      }
-    },
-    {
       slug: 'andrij-network-platform',
       icon: '🧭',
       category: 'community',
@@ -216,28 +194,6 @@
       }
     },
     {
-      slug: 'santiago-interviews',
-      icon: '🎙️',
-      category: 'media',
-      status: 'active',
-      format: 'hybrid',
-      priority: 9,
-      url: 'openmic.html',
-      owner: 'Andrij Pýcha',
-      title: {
-        ru: 'Santiago Talks & Интервью',
-        en: 'Santiago Talks & Interviews',
-        cz: 'Santiago Talks & Rozhovory',
-        ua: 'Santiago Talks & Інтерв’ю'
-      },
-      desc: {
-        ru: 'Медиаформат разговоров с людьми о пути, проектах, внутренней правде, опыте и идеях, которые стоит услышать.',
-        en: 'A media format for conversations with people about their path, projects, inner truth, experience, and ideas worth hearing.',
-        cz: 'Mediální formát rozhovorů s lidmi o jejich cestě, projektech, vnitřní pravdě, zkušenostech a nápadech, které stojí za slyšení.',
-        ua: 'Медіаформат розмов з людьми про шлях, проєкти, внутрішню правду, досвід та ідеї, які варто почути.'
-      }
-    },
-    {
       slug: 'ethical-automation-agency',
       icon: '⚙️',
       category: 'digital',
@@ -257,28 +213,6 @@
         en: 'Marketing, AI, process automation, and SaaS experiments for projects, people, and businesses that care about usefulness, not only sales.',
         cz: 'Marketing, AI, automatizace procesů a SaaS experimenty pro projekty, lidi a firmy, kterým záleží na užitku, ne jen na prodeji.',
         ua: 'Маркетинг, AI, автоматизація процесів і SaaS-експерименти для проєктів, людей і бізнесів, яким важлива користь, а не лише продаж.'
-      }
-    },
-    {
-      slug: 'alternative-knowledge-lab',
-      icon: '📚',
-      category: 'incubator',
-      status: 'concept',
-      format: 'hybrid',
-      priority: 11,
-      url: 'events.html',
-      owner: 'Andrij Pýcha',
-      title: {
-        ru: 'Лаборатория альтернативного знания',
-        en: 'Alternative Knowledge Lab',
-        cz: 'Laboratoř alternativního poznání',
-        ua: 'Лабораторія альтернативного знання'
-      },
-      desc: {
-        ru: 'Лекции и исследования вокруг альтернативной истории, науки, энергии, восприятия и практического понимания скрытых процессов.',
-        en: 'Lectures and research around alternative history, science, energy, perception, and practical understanding of hidden processes.',
-        cz: 'Přednášky a výzkum kolem alternativní historie, vědy, energie, vnímání a praktického porozumění skrytým procesům.',
-        ua: 'Лекції та дослідження навколо альтернативної історії, науки, енергії, сприйняття та практичного розуміння прихованих процесів.'
       }
     }
   ];
