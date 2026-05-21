@@ -13,6 +13,7 @@
       status: { active: 'Активный', building: 'В сборке', concept: 'Концепт' },
       format: { offline: 'Офлайн', online: 'Онлайн', hybrid: 'Гибрид', residential: 'Совместный быт' },
       ownerPrefix: 'Куратор',
+      teamPrefix: 'Команда',
       details: 'Подробнее'
     },
     en: {
@@ -20,6 +21,7 @@
       status: { active: 'Active', building: 'Building', concept: 'Concept' },
       format: { offline: 'Offline', online: 'Online', hybrid: 'Hybrid', residential: 'Shared Living' },
       ownerPrefix: 'Curator',
+      teamPrefix: 'Team',
       details: 'Learn More'
     },
     cz: {
@@ -27,6 +29,7 @@
       status: { active: 'Aktivní', building: 'Ve vývoji', concept: 'Koncept' },
       format: { offline: 'Offline', online: 'Online', hybrid: 'Hybrid', residential: 'Společné bydlení' },
       ownerPrefix: 'Kurátor',
+      teamPrefix: 'Tým',
       details: 'Více informací'
     },
     ua: {
@@ -34,6 +37,7 @@
       status: { active: 'Активний', building: 'У збірці', concept: 'Концепт' },
       format: { offline: 'Офлайн', online: 'Онлайн', hybrid: 'Гібрид', residential: 'Спільний побут' },
       ownerPrefix: 'Куратор',
+      teamPrefix: 'Команда',
       details: 'Детальніше'
     }
   };
@@ -158,6 +162,7 @@
       priority: 7,
       url: 'conscious-networking.html',
       owner: 'Andrij Pýcha',
+      masters: ['Andrij Pýcha'],
       title: {
         ru: 'Платформа осознанного нетворкинга',
         en: 'Conscious Networking Platform',
@@ -180,6 +185,7 @@
       priority: 8,
       url: 'conscious-relationships.html',
       owner: 'Andrij Pýcha',
+      masters: ['Andrij Pýcha'],
       title: {
         ru: 'Платформа осознанных отношений',
         en: 'Conscious Relationships Platform',
@@ -202,6 +208,7 @@
       priority: 10,
       url: 'ethical-automation-agency.html',
       owner: 'Andrij Pýcha',
+      masters: ['Andrij Pýcha'],
       title: {
         ru: 'Этичная агентура маркетинга и автоматизации',
         en: 'Ethical Marketing & Automation Agency',
@@ -265,6 +272,10 @@
     card.tabIndex = 0;
     card.dataset.url = project.url;
 
+    const team = Array.isArray(project.masters) && project.masters.length
+      ? project.masters.join(', ')
+      : project.owner;
+
     card.innerHTML = `
       <div class="preview-card__icon">${project.icon}</div>
       <div class="preview-card__body">
@@ -276,7 +287,7 @@
         <span class="preview-price">${t(`format.${project.format}`)}</span>
         <p class="preview-desc">${localize(project.desc)}</p>
         <div class="preview-card__footer">
-          <span class="preview-master">${t('ownerPrefix')}: ${project.owner}</span>
+          <span class="preview-master">${t('teamPrefix')}: ${team}</span>
           <a class="preview-card__cta" href="${project.url}">
             <span>${t('details')}</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>

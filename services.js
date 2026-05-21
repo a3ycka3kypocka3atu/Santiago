@@ -169,7 +169,7 @@
     const labels = {
       person: { ru: 'Мастер', en: 'Provider', cz: 'Poskytovatel', ua: 'Майстер' },
       project: { ru: 'Проект / команда', en: 'Project / team', cz: 'Projekt / tým', ua: 'Проєкт / команда' },
-      contact: { ru: 'контакт', en: 'contact', cz: 'kontakt', ua: 'контакт' }
+      contact: { ru: 'мастер проекта', en: 'project master', cz: 'mistr projektu', ua: 'майстер проєкту' }
     };
     const type = getProviderType(service);
     const dictionary = labels[type] || labels.person;
@@ -641,10 +641,11 @@
         category: 'mind',
         format: 'individual',
         instructor_name: 'Andrij Pýcha',
-        provider_type: 'person',
-        provider_name: 'Andrij Pýcha',
-        provider_slug: 'andrijpycha',
-        detail_page: 'profile-andrij.html'
+        provider_type: 'project',
+        provider_name: 'Ethical Marketing & Automation Agency',
+        provider_slug: 'ethical-automation-agency',
+        contact_person: 'Andrij Pýcha',
+        detail_page: 'ethical-automation-agency.html'
       },
       {
         slug: 'conscious-networking-facilitation',
@@ -689,7 +690,7 @@
         provider_name: 'Ethical Marketing & Automation Agency',
         provider_slug: 'ethical-automation-agency',
         contact_person: 'Andrij Pýcha',
-        detail_page: 'projects.html'
+        detail_page: 'ethical-automation-agency.html'
       },
       {
         slug: 'conscious-relationship-discovery',

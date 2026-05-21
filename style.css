@@ -1520,6 +1520,56 @@ body.grayscale-mode .theme-toggle .toggle-thumb {
   background: rgba(167, 139, 250, 0.1);
 }
 
+.project-master-grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.project-master-card {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  padding: 22px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.project-master-card__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.2), rgba(167, 139, 250, 0.24));
+  border: 1px solid rgba(0, 212, 170, 0.22);
+  color: #aef6e7;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.project-master-card__body h3 {
+  margin: 0 0 8px;
+  color: #aef6e7;
+  font-size: 1.08rem;
+}
+
+.project-master-card__body p {
+  margin: 0;
+  color: #c5c8df;
+  line-height: 1.62;
+}
+
+.project-master-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
 .relationship-hero-card {
   position: relative;
   overflow: hidden;
@@ -5157,6 +5207,7 @@ body:not(.calendar-page):not(.grayscale-mode) .om-format-card,
 body:not(.calendar-page):not(.grayscale-mode) .om-media-card,
 body:not(.calendar-page):not(.grayscale-mode) .om-cta-card,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-card,
+body:not(.calendar-page):not(.grayscale-mode) .project-master-card,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-band,
 body:not(.calendar-page):not(.grayscale-mode) .relationship-request-dialog {
   color: var(--text-day);
@@ -5185,6 +5236,7 @@ body:not(.calendar-page):not(.grayscale-mode) .project-detail-section h2,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-band h2,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-panel-title,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-card h3,
+body:not(.calendar-page):not(.grayscale-mode) .project-master-card__body h3,
 body:not(.calendar-page):not(.grayscale-mode) .relationship-request-dialog h2,
 body:not(.calendar-page):not(.grayscale-mode) .spec-card h3,
 body:not(.calendar-page):not(.grayscale-mode) .offer-card h3,
@@ -5213,6 +5265,7 @@ body:not(.calendar-page):not(.grayscale-mode) .project-detail-lead,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-panel-text,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-text,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-card p,
+body:not(.calendar-page):not(.grayscale-mode) .project-master-card__body p,
 body:not(.calendar-page):not(.grayscale-mode) .relationship-request-summary,
 body:not(.calendar-page):not(.grayscale-mode) .relationship-request-status,
 body:not(.calendar-page):not(.grayscale-mode) .om-format-card__body p,
