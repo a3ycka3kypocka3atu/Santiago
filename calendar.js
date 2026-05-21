@@ -112,6 +112,11 @@ window.onTelegramAuth = function(user) {
       .replace(/'/g, '&#039;');
   }
 
+  function localized(copy, fallback = '') {
+    if (!copy || typeof copy !== 'object') return fallback;
+    return copy[currentLang] || copy.en || fallback;
+  }
+
   function isMasterUser() {
     return currentUser && currentUser.isLoggedIn && ['instructor', 'admin'].includes(currentUser.role);
   }
@@ -138,18 +143,145 @@ window.onTelegramAuth = function(user) {
       ua: 'Додати подію'
     },
     selected: {
-      en: 'The selected date will be passed into the event request.',
-      cz: 'Vybrané datum se předá do žádosti o událost.',
-      ru: 'Выбранная дата будет передана в заявку на событие.',
-      ua: 'Обрана дата передасться в заявку на подію.'
+      en: 'Selected date:',
+      cz: 'Vybrané datum:',
+      ru: 'Выбранная дата:',
+      ua: 'Обрана дата:'
     },
     empty: {
-      en: 'Select a day in the calendar to pass the date into the request.',
-      cz: 'Vyberte den v kalendáři, aby se datum předalo do žádosti.',
-      ru: 'Выберите день в календаре, чтобы передать дату в заявку.',
-      ua: 'Оберіть день у календарі, щоб передати дату в заявку.'
+      en: 'Link an existing event, send a new event request, or add a quick note.',
+      cz: 'Připojte existující událost, pošlete novou žádost, nebo přidejte rychlý zápis.',
+      ru: 'Свяжите существующее событие, отправьте новую заявку или добавьте быстрый пункт.',
+      ua: 'Привʼяжіть існуючу подію, надішліть нову заявку або додайте швидкий запис.'
     }
   };
+
+  const MASTER_EVENT_COPY = {
+    title: {
+      en: 'Add event to calendar',
+      cz: 'Přidat událost do kalendáře',
+      ru: 'Добавить событие в календарь',
+      ua: 'Додати подію в календар'
+    },
+    intro: {
+      en: 'Choose the path for this calendar item.',
+      cz: 'Vyberte, jak se má položka do kalendáře dostat.',
+      ru: 'Выберите способ добавления в календарь.',
+      ua: 'Оберіть, як додати запис у календар.'
+    },
+    modes: {
+      attach: {
+        badge: { en: 'Link', cz: 'Připojit', ru: 'Связать', ua: 'Привʼязати' },
+        title: { en: 'Link existing event', cz: 'Připojit existující událost', ru: 'Связать существующее событие', ua: 'Привʼязати існуючу подію' },
+        text: { en: 'Use an event that already exists in profile/cabinet.', cz: 'Použijte událost, která už existuje v profilu nebo kabinetu.', ru: 'Используйте событие, которое уже есть в профиле или кабинете.', ua: 'Використайте подію, яка вже є в профілі або кабінеті.' },
+        submit: { en: 'Save to calendar', cz: 'Uložit do kalendáře', ru: 'Сохранить в календарь', ua: 'Зберегти в календар' }
+      },
+      create: {
+        badge: { en: 'Admin request', cz: 'Žádost adminovi', ru: 'Заявка админу', ua: 'Заявка адміну' },
+        title: { en: 'Create new event', cz: 'Vytvořit novou událost', ru: 'Создать новое событие', ua: 'Створити нову подію' },
+        text: { en: 'Send the same New event request as in Cabinet.', cz: 'Odešlete stejnou žádost Nová událost jako v kabinetu.', ru: 'Отправьте такую же заявку “Новое событие”, как в кабинете.', ua: 'Надішліть таку ж заявку “Нова подія”, як у кабінеті.' },
+        submit: { en: 'Send to admin', cz: 'Poslat adminovi', ru: 'Отправить админу', ua: 'Надіслати адміну' }
+      },
+      quick: {
+        badge: { en: 'Quick note', cz: 'Rychlý zápis', ru: 'Быстрый пункт', ua: 'Швидкий запис' },
+        title: { en: 'Quick calendar note', cz: 'Rychlý zápis do kalendáře', ru: 'Быстрая заметка календаря', ua: 'Швидкий запис календаря' },
+        text: { en: 'Add a one-time item directly to the calendar.', cz: 'Přidejte jednorázovou položku přímo do kalendáře.', ru: 'Добавьте разовую запись прямо в календарь.', ua: 'Додайте одноразовий запис прямо в календар.' },
+        submit: { en: 'Save quick note', cz: 'Uložit rychlý zápis', ru: 'Сохранить заметку', ua: 'Зберегти запис' }
+      }
+    },
+    fields: {
+      source: { en: 'Existing event', cz: 'Existující událost', ru: 'Существующее событие', ua: 'Існуюча подія' },
+      noSource: { en: 'No confirmed events available', cz: 'Žádné potvrzené události', ru: 'Нет подтвержденных событий', ua: 'Немає підтверджених подій' },
+      title: { en: 'Title', cz: 'Název', ru: 'Название', ua: 'Назва' },
+      adminTitle: { en: 'Event title', cz: 'Název události', ru: 'Название события', ua: 'Назва події' },
+      details: { en: 'Details for admin', cz: 'Text pro admina', ru: 'Текст для админа', ua: 'Текст для адміна' },
+      date: { en: 'Date', cz: 'Datum', ru: 'Дата', ua: 'Дата' },
+      start: { en: 'Start time', cz: 'Začátek', ru: 'Начало', ua: 'Початок' },
+      end: { en: 'End time', cz: 'Konec', ru: 'Конец', ua: 'Кінець' },
+      visibility: { en: 'Visibility', cz: 'Viditelnost', ru: 'Видимость', ua: 'Видимість' },
+      location: { en: 'Location', cz: 'Místo', ru: 'Место', ua: 'Місце' },
+      duration: { en: 'Duration', cz: 'Délka', ru: 'Длительность', ua: 'Тривалість' }
+    },
+    status: {
+      login: { en: 'Log in via Telegram to continue.', cz: 'Pro pokračování se přihlaste přes Telegram.', ru: 'Войдите через Telegram, чтобы продолжить.', ua: 'Увійдіть через Telegram, щоб продовжити.' },
+      source: { en: 'Choose an existing event first.', cz: 'Nejdřív vyberte existující událost.', ru: 'Сначала выберите существующее событие.', ua: 'Спочатку оберіть існуючу подію.' },
+      required: { en: 'Fill in the required fields.', cz: 'Doplňte povinná pole.', ru: 'Заполните обязательные поля.', ua: 'Заповніть обовʼязкові поля.' },
+      invalidTime: { en: 'End time must be after start time.', cz: 'Konec musí být později než začátek.', ru: 'Время окончания должно быть позже начала.', ua: 'Кінець має бути пізніше початку.' },
+      saving: { en: 'Saving...', cz: 'Ukládám...', ru: 'Сохраняем...', ua: 'Зберігаємо...' },
+      sending: { en: 'Sending...', cz: 'Odesílám...', ru: 'Отправляем...', ua: 'Надсилаємо...' },
+      requestSuccess: { en: 'Request sent to admin. Temporary pending item is visible here.', cz: 'Žádost odešla adminovi. Dočasná položka je vidět v kalendáři.', ru: 'Заявка отправлена админу. Временная запись видна в календаре.', ua: 'Заявку надіслано адміну. Тимчасовий запис видно в календарі.' },
+      calendarSuccess: { en: 'Saved to calendar.', cz: 'Uloženo do kalendáře.', ru: 'Сохранено в календарь.', ua: 'Збережено в календар.' },
+      localFallback: { en: 'Saved temporarily on this device. Database migration is needed for permanent save.', cz: 'Dočasně uloženo v tomto zařízení. Pro trvalé uložení je potřeba databázová migrace.', ru: 'Временно сохранено на этом устройстве. Для постоянного сохранения нужна миграция базы.', ua: 'Тимчасово збережено на цьому пристрої. Для постійного збереження потрібна міграція бази.' },
+      fail: { en: 'Could not save. Check connection or database migration.', cz: 'Nepodařilo se uložit. Zkontrolujte připojení nebo databázovou migraci.', ru: 'Не удалось сохранить. Проверьте подключение или миграцию базы.', ua: 'Не вдалося зберегти. Перевірте підключення або міграцію бази.' }
+    },
+    dayAction: {
+      button: { en: 'Add event to this day', cz: 'Přidat událost na tento den', ru: 'Добавить событие на этот день', ua: 'Додати подію на цей день' },
+      hint: { en: 'Choose link existing, create request, or quick note inside the website.', cz: 'Vyberte připojení, novou žádost nebo rychlý zápis přímo na webu.', ru: 'Выберите связь, новую заявку или быструю запись прямо на сайте.', ua: 'Оберіть привʼязку, нову заявку або швидкий запис прямо на сайті.' }
+    }
+  };
+
+  const MASTER_PROFILE_EVENT_CATALOG = [
+    {
+      id: 'catalog_mutual-help-networking',
+      slug: 'mutual-help-networking',
+      ownerKey: 'andrijpycha',
+      ownerNames: ['andrij', 'andriy', 'pýcha', 'pycha'],
+      title: {
+        en: 'Mutual Help Networking',
+        cz: 'Networking vzájemné pomoci',
+        ru: 'Нетворкинг взаимопомощи',
+        ua: 'Нетворкінг взаємодопомоги'
+      },
+      description: {
+        en: 'Small-format meetups where people share who they are, what they build, who they can help, and who they need next.',
+        cz: 'Komorní setkání, kde lidé sdílí, kdo jsou, co tvoří, komu mohou pomoct a koho hledají pro další krok.',
+        ru: 'Камерные встречи, где участники показывают, кто они, что создают, кому могут помочь и кого ищут для следующего шага.',
+        ua: 'Камерні зустрічі, де учасники показують, хто вони, що створюють, кому можуть допомогти і кого шукають далі.'
+      },
+      type: 'club',
+      location_type: 'offline_studio'
+    },
+    {
+      id: 'catalog_conscious-relationships',
+      slug: 'conscious-relationships',
+      ownerKey: 'andrijpycha',
+      ownerNames: ['andrij', 'andriy', 'pýcha', 'pycha'],
+      title: {
+        en: 'Conscious Relationship Discovery',
+        cz: 'Vědomé seznamování',
+        ru: 'Осознанные знакомства',
+        ua: 'Усвідомлені знайомства'
+      },
+      description: {
+        en: 'A format for meeting through values, intentions, compatibility, and honest contact instead of random swiping.',
+        cz: 'Formát seznamování skrze hodnoty, záměry, kompatibilitu a upřímný kontakt místo náhodného swipování.',
+        ru: 'Формат для знакомства через ценности, намерения, совместимость и честный контакт, а не через случайный свайп.',
+        ua: 'Формат знайомства через цінності, наміри, сумісність і чесний контакт, а не випадковий свайп.'
+      },
+      type: 'public',
+      location_type: 'offline_studio'
+    },
+    {
+      id: 'catalog_alternative-knowledge-lab',
+      slug: 'alternative-knowledge-lab',
+      ownerKey: 'andrijpycha',
+      ownerNames: ['andrij', 'andriy', 'pýcha', 'pycha'],
+      title: {
+        en: 'Alternative History, Science & Energy',
+        cz: 'Alternativní historie, věda a energie',
+        ru: 'Альтернативная история, наука и энергия',
+        ua: 'Альтернативна історія, наука та енергія'
+      },
+      description: {
+        en: 'Lectures and discussions around unusual perspectives on history, science, perception, energy, and hidden processes.',
+        cz: 'Přednášky a diskuse o neobvyklých pohledech na historii, vědu, vnímání, energii a skryté procesy.',
+        ru: 'Лекции и обсуждения о необычных взглядах на историю, науку, восприятие, энергию и скрытые процессы.',
+        ua: 'Лекції та обговорення незвичних поглядів на історію, науку, сприйняття, енергію та приховані процеси.'
+      },
+      type: 'public',
+      location_type: 'offline_studio'
+    }
+  ];
 
   function updateMasterCalendarCta() {
     if (!masterCalendarCta || !masterCreateEventLink || !masterCreateEventLabel || !masterCreateEventHint) return;
@@ -163,7 +295,7 @@ window.onTelegramAuth = function(user) {
     masterCalendarCta.hidden = false;
     masterCreateEventLabel.textContent = MASTER_CTA_LABELS.action[currentLang] || MASTER_CTA_LABELS.action.en;
     masterCreateEventHint.textContent = datePayload
-      ? `${MASTER_CTA_LABELS.selected[currentLang] || MASTER_CTA_LABELS.selected.en} ${datePayload}`
+      ? `${localized(MASTER_CTA_LABELS.selected)} ${datePayload}. ${localized(MASTER_CTA_LABELS.empty)}`
       : (MASTER_CTA_LABELS.empty[currentLang] || MASTER_CTA_LABELS.empty.en);
   }
 
@@ -172,8 +304,8 @@ window.onTelegramAuth = function(user) {
     const selectedDate = formatDatePayload(day);
     return `
       <div class="master-calendar-actions">
-        <button class="master-calendar-actions__button" type="button" data-master-open-event data-master-event-date="${selectedDate}">Přidat událost na tento den</button>
-        <span>Připojte existující událost, pošlete novou adminovi, nebo si zapište krátkou jednorázovou položku.</span>
+        <button class="master-calendar-actions__button" type="button" data-master-open-event data-master-event-date="${selectedDate}">${escapeHtml(localized(MASTER_EVENT_COPY.dayAction.button))}</button>
+        <span>${escapeHtml(localized(MASTER_EVENT_COPY.dayAction.hint))}</span>
       </div>
     `;
   }
@@ -292,17 +424,32 @@ window.onTelegramAuth = function(user) {
   const masterEventPopupClose = document.getElementById('master-event-popup-close');
   const masterEventForm = document.getElementById('master-event-form');
   const masterEventModeBadge = document.getElementById('master-event-mode-badge');
+  const masterEventTitle = document.getElementById('master-event-title');
+  const masterEventIntro = document.getElementById('master-event-intro');
   const masterEventSourceWrap = document.getElementById('master-event-source-wrap');
+  const masterEventNameWrap = document.getElementById('master-event-name-wrap');
+  const masterEventDescriptionWrap = document.getElementById('master-event-description-wrap');
+  const masterEventTimeGrid = document.getElementById('master-event-time-grid');
+  const masterEventMetaGrid = document.getElementById('master-event-meta-grid');
   const masterEventSource = document.getElementById('master-event-source');
   const masterEventName = document.getElementById('master-event-name');
   const masterEventDescription = document.getElementById('master-event-description');
   const masterEventDate = document.getElementById('master-event-date');
   const masterEventTime = document.getElementById('master-event-time');
-  const masterEventDuration = document.getElementById('master-event-duration');
+  const masterEventEndTime = document.getElementById('master-event-end-time');
+  const masterEventDurationHint = document.getElementById('master-event-duration-hint');
   const masterEventType = document.getElementById('master-event-type');
   const masterEventLocation = document.getElementById('master-event-location');
   const masterEventStatus = document.getElementById('master-event-status');
   const masterEventSubmit = document.getElementById('master-event-submit');
+  const masterEventSourceLabel = document.getElementById('master-event-source-label');
+  const masterEventNameLabel = document.getElementById('master-event-name-label');
+  const masterEventDescriptionLabel = document.getElementById('master-event-description-label');
+  const masterEventDateLabel = document.getElementById('master-event-date-label');
+  const masterEventStartLabel = document.getElementById('master-event-start-label');
+  const masterEventEndLabel = document.getElementById('master-event-end-label');
+  const masterEventTypeLabel = document.getElementById('master-event-type-label');
+  const masterEventLocationLabel = document.getElementById('master-event-location-label');
 
   // ═══════════════════════════════════════════════════════════
   //  MASTER EVENT DRAFTS
@@ -358,29 +505,131 @@ window.onTelegramAuth = function(user) {
     masterEventStatus.classList.toggle('is-success', type === 'success');
   }
 
+  function setMasterEventFieldHidden(element, hidden) {
+    if (!element) return;
+    element.hidden = !!hidden;
+  }
+
+  function setMasterEventRequired(element, required) {
+    if (!element) return;
+    element.required = !!required;
+  }
+
+  function setSelectOptionLabels(select, labels) {
+    if (!select) return;
+    [...select.options].forEach(option => {
+      if (labels[option.value]) option.textContent = localized(labels[option.value], option.textContent);
+    });
+  }
+
+  function applyMasterEventCopy() {
+    if (masterEventTitle) masterEventTitle.textContent = localized(MASTER_EVENT_COPY.title);
+    if (masterEventIntro) masterEventIntro.textContent = localized(MASTER_EVENT_COPY.intro);
+
+    Object.entries(MASTER_EVENT_COPY.modes).forEach(([mode, copy]) => {
+      const button = document.querySelector(`[data-master-event-mode="${mode}"]`);
+      if (!button) return;
+      const title = button.querySelector('strong');
+      const text = button.querySelector('span');
+      if (title) title.textContent = localized(copy.title);
+      if (text) text.textContent = localized(copy.text);
+    });
+
+    const currentModeCopy = MASTER_EVENT_COPY.modes[masterEventMode] || MASTER_EVENT_COPY.modes.attach;
+    if (masterEventModeBadge) masterEventModeBadge.textContent = localized(currentModeCopy.badge);
+    if (masterEventSubmit) masterEventSubmit.textContent = localized(currentModeCopy.submit);
+    if (masterEventSourceLabel) masterEventSourceLabel.textContent = localized(MASTER_EVENT_COPY.fields.source);
+    if (masterEventNameLabel) {
+      masterEventNameLabel.textContent = masterEventMode === 'create'
+        ? localized(MASTER_EVENT_COPY.fields.adminTitle)
+        : localized(MASTER_EVENT_COPY.fields.title);
+    }
+    if (masterEventDescriptionLabel) masterEventDescriptionLabel.textContent = localized(MASTER_EVENT_COPY.fields.details);
+    if (masterEventDateLabel) masterEventDateLabel.textContent = localized(MASTER_EVENT_COPY.fields.date);
+    if (masterEventStartLabel) masterEventStartLabel.textContent = localized(MASTER_EVENT_COPY.fields.start);
+    if (masterEventEndLabel) masterEventEndLabel.textContent = localized(MASTER_EVENT_COPY.fields.end);
+    if (masterEventTypeLabel) masterEventTypeLabel.textContent = localized(MASTER_EVENT_COPY.fields.visibility);
+    if (masterEventLocationLabel) masterEventLocationLabel.textContent = localized(MASTER_EVENT_COPY.fields.location);
+
+    setSelectOptionLabels(masterEventType, {
+      public: { en: 'Public', cz: 'Veřejné', ru: 'Публичное', ua: 'Публічне' },
+      club: { en: 'Club', cz: 'Klub', ru: 'Клуб', ua: 'Клуб' },
+      internal: { en: 'Internal', cz: 'Interní', ru: 'Внутреннее', ua: 'Внутрішнє' }
+    });
+    setSelectOptionLabels(masterEventLocation, {
+      offline_studio: { en: 'Studio', cz: 'Studio', ru: 'Студия', ua: 'Студія' },
+      online: { en: 'Online', cz: 'Online', ru: 'Онлайн', ua: 'Онлайн' },
+      offline_external: { en: 'Offsite', cz: 'Výjezdové', ru: 'Выездное', ua: 'Виїзне' }
+    });
+  }
+
+  function timeWithOffset(timeValue, minutes) {
+    const [hours, mins] = String(timeValue || '18:00').split(':').map(Number);
+    const date = new Date(2000, 0, 1, Number.isFinite(hours) ? hours : 18, Number.isFinite(mins) ? mins : 0);
+    date.setMinutes(date.getMinutes() + minutes);
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  }
+
+  function getMasterEventSchedule() {
+    const dateValue = masterEventDate ? masterEventDate.value : '';
+    const startValue = masterEventTime ? masterEventTime.value : '';
+    const endValue = masterEventEndTime ? masterEventEndTime.value : '';
+    if (!dateValue || !startValue || !endValue) {
+      return { dateValue, startValue, endValue, start: null, end: null, duration: null, isValid: false };
+    }
+
+    const start = new Date(`${dateValue}T${startValue}:00`);
+    const end = new Date(`${dateValue}T${endValue}:00`);
+    const duration = Math.round((end - start) / 60000);
+    return {
+      dateValue,
+      startValue,
+      endValue,
+      start,
+      end,
+      duration,
+      isValid: Number.isFinite(duration) && duration > 0
+    };
+  }
+
+  function updateMasterEventDurationHint() {
+    if (!masterEventDurationHint) return;
+    const schedule = getMasterEventSchedule();
+    if (!schedule.dateValue || !schedule.startValue || !schedule.endValue) {
+      masterEventDurationHint.textContent = '';
+      masterEventDurationHint.classList.remove('is-error');
+      return;
+    }
+    if (!schedule.isValid) {
+      masterEventDurationHint.textContent = localized(MASTER_EVENT_COPY.status.invalidTime);
+      masterEventDurationHint.classList.add('is-error');
+      return;
+    }
+    masterEventDurationHint.textContent = `${localized(MASTER_EVENT_COPY.fields.duration)}: ${schedule.duration} min`;
+    masterEventDurationHint.classList.remove('is-error');
+  }
+
   function setMasterEventMode(mode) {
     masterEventMode = ['attach', 'create', 'quick'].includes(mode) ? mode : 'attach';
     document.querySelectorAll('[data-master-event-mode]').forEach(button => {
       button.classList.toggle('is-active', button.dataset.masterEventMode === masterEventMode);
+      button.setAttribute('aria-selected', button.dataset.masterEventMode === masterEventMode ? 'true' : 'false');
     });
 
-    if (masterEventSourceWrap) masterEventSourceWrap.hidden = masterEventMode !== 'attach';
-    if (masterEventModeBadge) {
-      const labels = {
-        attach: 'Připojit',
-        create: 'Žádost adminovi',
-        quick: 'Krátký zápis'
-      };
-      masterEventModeBadge.textContent = labels[masterEventMode] || labels.attach;
-    }
+    setMasterEventFieldHidden(masterEventSourceWrap, masterEventMode !== 'attach');
+    setMasterEventFieldHidden(masterEventNameWrap, masterEventMode === 'attach');
+    setMasterEventFieldHidden(masterEventDescriptionWrap, masterEventMode !== 'create');
+    setMasterEventFieldHidden(masterEventTimeGrid, false);
+    setMasterEventFieldHidden(masterEventDurationHint, false);
+    setMasterEventFieldHidden(masterEventMetaGrid, masterEventMode !== 'quick');
+
+    setMasterEventRequired(masterEventName, masterEventMode !== 'attach');
+    setMasterEventRequired(masterEventDescription, masterEventMode === 'create');
+    applyMasterEventCopy();
     if (masterEventSubmit) {
-      const labels = {
-        attach: 'Přidat do kalendáře',
-        create: 'Poslat adminovi a zobrazit',
-        quick: 'Zapsat do kalendáře'
-      };
-      masterEventSubmit.textContent = labels[masterEventMode] || labels.attach;
+      masterEventSubmit.disabled = masterEventMode === 'attach' && (!masterEventSource || masterEventSource.disabled || !masterEventSource.value);
     }
+    updateMasterEventDurationHint();
   }
 
   function getFallbackMasterProfileEvents() {
@@ -391,12 +640,57 @@ window.onTelegramAuth = function(user) {
       isUuid(getEventBaseId(event))
     ));
     const seen = new Set();
-    return byOwner.filter(event => {
+    return byOwner.concat(getCatalogMasterProfileEvents()).filter(event => {
       const id = getEventBaseId(event);
       if (seen.has(id)) return false;
       seen.add(id);
       return true;
     });
+  }
+
+  function normalizeOwnerText(value) {
+    return String(value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+  }
+
+  function getCurrentMasterOwnerKey() {
+    const identity = normalizeOwnerText([
+      currentUser && currentUser.name,
+      localStorage.getItem('ma3-user-name'),
+      localStorage.getItem('ma3-user-username'),
+      preselectedInstructor
+    ].filter(Boolean).join(' '));
+
+    if (identity.includes('andrij') || identity.includes('andriy') || identity.includes('pycha')) {
+      return 'andrijpycha';
+    }
+
+    return '';
+  }
+
+  function getCatalogMasterProfileEvents() {
+    const ownerKey = getCurrentMasterOwnerKey();
+    if (!ownerKey) return [];
+
+    return MASTER_PROFILE_EVENT_CATALOG
+      .filter(event => event.ownerKey === ownerKey)
+      .map(event => ({
+        id: event.id,
+        original_id: event.id,
+        title: localized(event.title, event.slug),
+        description: localized(event.description, ''),
+        start_time: null,
+        end_time: null,
+        type: event.type || 'public',
+        status: 'confirmed',
+        instructor_id: currentUser.id,
+        location_type: event.location_type || 'offline_studio',
+        service_id: null,
+        capacity: null,
+        is_catalog_master_event: true
+      }));
   }
 
   async function loadMasterProfileEvents() {
@@ -415,7 +709,13 @@ window.onTelegramAuth = function(user) {
         .order('start_time', { ascending: false })
         .limit(60);
       if (error) throw error;
-      masterProfileEventsCache = data || [];
+      const seen = new Set();
+      masterProfileEventsCache = (data || []).concat(getCatalogMasterProfileEvents()).filter(event => {
+        const id = getEventBaseId(event);
+        if (seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      });
     } catch (err) {
       console.warn('[Calendar] Master profile events unavailable:', err.message || err);
       masterProfileEventsCache = getFallbackMasterProfileEvents();
@@ -427,14 +727,17 @@ window.onTelegramAuth = function(user) {
   function renderMasterEventSourceOptions(selectedId) {
     if (!masterEventSource) return;
     if (!masterProfileEventsCache.length) {
-      masterEventSource.innerHTML = '<option value="">Žádné události v profilu mastera</option>';
+      masterEventSource.innerHTML = `<option value="">${escapeHtml(localized(MASTER_EVENT_COPY.fields.noSource))}</option>`;
       masterEventSource.disabled = true;
+      if (masterEventSubmit && masterEventMode === 'attach') masterEventSubmit.disabled = true;
       return;
     }
 
     masterEventSource.disabled = false;
+    if (masterEventSubmit) masterEventSubmit.disabled = false;
     masterEventSource.innerHTML = masterProfileEventsCache.map(event => {
-      const start = event.start_time ? ` · ${new Date(event.start_time).toLocaleDateString()}` : '';
+      const startDate = event.start_time ? new Date(event.start_time) : null;
+      const start = startDate && !Number.isNaN(startDate.getTime()) ? ` · ${startDate.toLocaleDateString()}` : '';
       const id = getEventBaseId(event);
       return `<option value="${escapeHtml(id)}"${String(id) === String(selectedId) ? ' selected' : ''}>${escapeHtml(event.title)}${escapeHtml(start)}</option>`;
     }).join('');
@@ -453,10 +756,10 @@ window.onTelegramAuth = function(user) {
 
     const start = new Date(selected.start_time);
     const end = new Date(selected.end_time);
-    const duration = Math.max(30, Math.round((end - start) / 60000));
-    if (masterEventDuration && Number.isFinite(duration)) {
-      const hasOption = [...masterEventDuration.options].some(option => Number(option.value) === duration);
-      masterEventDuration.value = hasOption ? String(duration) : '60';
+    const duration = Math.round((end - start) / 60000);
+    if (masterEventEndTime && Number.isFinite(duration) && duration > 0 && masterEventTime) {
+      masterEventEndTime.value = timeWithOffset(masterEventTime.value || '18:00', duration);
+      updateMasterEventDurationHint();
     }
   }
 
@@ -472,11 +775,12 @@ window.onTelegramAuth = function(user) {
 
     if (masterEventDate) masterEventDate.value = options.date || getSelectedDateValue();
     if (masterEventTime) masterEventTime.value = '18:00';
-    if (masterEventDuration) masterEventDuration.value = '60';
+    if (masterEventEndTime) masterEventEndTime.value = '19:00';
     if (masterEventName) masterEventName.value = '';
     if (masterEventDescription) masterEventDescription.value = '';
     if (masterEventType) masterEventType.value = 'public';
     if (masterEventLocation) masterEventLocation.value = 'offline_studio';
+    updateMasterEventDurationHint();
 
     if (masterEventPopup) {
       masterEventPopup.classList.add('open');
@@ -494,11 +798,9 @@ window.onTelegramAuth = function(user) {
   }
 
   function buildMasterDraftEvent(submissionId) {
-    const dateValue = masterEventDate ? masterEventDate.value : '';
-    const timeValue = masterEventTime ? masterEventTime.value : '';
-    const duration = Number(masterEventDuration ? masterEventDuration.value : 60) || 60;
-    const start = new Date(`${dateValue}T${timeValue || '18:00'}:00`);
-    const end = new Date(start.getTime() + duration * 60000);
+    const schedule = getMasterEventSchedule();
+    const start = schedule.start || new Date();
+    const end = schedule.end || new Date(start.getTime() + 60 * 60000);
     const sourceEvent = masterEventMode === 'attach'
       ? masterProfileEventsCache.find(event => String(getEventBaseId(event)) === String(masterEventSource && masterEventSource.value))
       : null;
@@ -541,24 +843,42 @@ window.onTelegramAuth = function(user) {
     event.preventDefault();
 
     if (!currentUser || !currentUser.isLoggedIn || !currentUser.id) {
-      setMasterEventStatus('Přihlaste se přes Telegram.', 'error');
+      setMasterEventStatus(localized(MASTER_EVENT_COPY.status.login), 'error');
       return;
     }
 
     if (masterEventMode === 'attach' && (!masterEventSource || !masterEventSource.value)) {
-      setMasterEventStatus('Nejdřív vyberte událost z profilu mastera.', 'error');
+      setMasterEventStatus(localized(MASTER_EVENT_COPY.status.source), 'error');
       return;
     }
 
-    if (!masterEventDate.value || !masterEventTime.value || !masterEventName.value.trim()) {
-      setMasterEventStatus('Doplňte název, datum a čas.', 'error');
+    const schedule = getMasterEventSchedule();
+    if (!schedule.dateValue || !schedule.startValue || !schedule.endValue) {
+      setMasterEventStatus(localized(MASTER_EVENT_COPY.status.required), 'error');
+      return;
+    }
+
+    if (!schedule.isValid) {
+      setMasterEventStatus(localized(MASTER_EVENT_COPY.status.invalidTime), 'error');
+      return;
+    }
+
+    if (masterEventMode !== 'attach' && (!masterEventName || !masterEventName.value.trim())) {
+      setMasterEventStatus(localized(MASTER_EVENT_COPY.status.required), 'error');
+      return;
+    }
+
+    if (masterEventMode === 'create' && (!masterEventDescription || !masterEventDescription.value.trim())) {
+      setMasterEventStatus(localized(MASTER_EVENT_COPY.status.required), 'error');
       return;
     }
 
     const originalText = masterEventSubmit ? masterEventSubmit.textContent : '';
     if (masterEventSubmit) {
       masterEventSubmit.disabled = true;
-      masterEventSubmit.textContent = 'Ukládám...';
+      masterEventSubmit.textContent = masterEventMode === 'create'
+        ? localized(MASTER_EVENT_COPY.status.sending)
+        : localized(MASTER_EVENT_COPY.status.saving);
     }
     setMasterEventStatus('', null);
 
@@ -618,22 +938,25 @@ window.onTelegramAuth = function(user) {
       renderEventsForDay(selectedDay);
       setMasterEventStatus(
         masterEventMode === 'create'
-          ? 'Žádost odešla adminovi. Dočasná událost je vidět v kalendáři.'
+          ? localized(MASTER_EVENT_COPY.status.requestSuccess)
           : persistedToCalendar
-          ? 'Událost je uložená v kalendáři.'
+          ? localized(MASTER_EVENT_COPY.status.calendarSuccess)
           : usedLocalFallback
-          ? 'Událost je dočasně zapsaná v tomto zařízení. Po nasazení databázové migrace se uloží natrvalo.'
-          : 'Událost je zapsaná v kalendáři.',
+          ? localized(MASTER_EVENT_COPY.status.localFallback)
+          : localized(MASTER_EVENT_COPY.status.calendarSuccess),
         'success'
       );
       setTimeout(() => closePopup(masterEventPopup), 700);
     } catch (err) {
       console.warn('[Calendar] Master event submit failed:', err);
-      setMasterEventStatus('Nepodařilo se uložit. Zkontrolujte připojení nebo databázovou migraci.', 'error');
+      setMasterEventStatus(localized(MASTER_EVENT_COPY.status.fail), 'error');
     } finally {
       if (masterEventSubmit) {
         masterEventSubmit.disabled = false;
-        masterEventSubmit.textContent = originalText || 'Uložit do kalendáře';
+        masterEventSubmit.textContent = originalText || localized((MASTER_EVENT_COPY.modes[masterEventMode] || MASTER_EVENT_COPY.modes.attach).submit);
+        if (masterEventMode === 'attach' && (!masterEventSource || masterEventSource.disabled || !masterEventSource.value)) {
+          masterEventSubmit.disabled = true;
+        }
       }
     }
   }
@@ -1437,6 +1760,23 @@ window.onTelegramAuth = function(user) {
     masterEventSource.addEventListener('change', syncMasterEventFromSource);
   }
 
+  if (masterEventTime) {
+    masterEventTime.addEventListener('change', () => {
+      if (masterEventEndTime && (!masterEventEndTime.value || getMasterEventSchedule().duration <= 0)) {
+        masterEventEndTime.value = timeWithOffset(masterEventTime.value, 60);
+      }
+      updateMasterEventDurationHint();
+    });
+  }
+
+  if (masterEventEndTime) {
+    masterEventEndTime.addEventListener('change', updateMasterEventDurationHint);
+  }
+
+  if (masterEventDate) {
+    masterEventDate.addEventListener('change', updateMasterEventDurationHint);
+  }
+
   if (eventsList) {
     eventsList.addEventListener('click', (event) => {
       const openButton = event.target.closest('[data-master-open-event]');
@@ -1485,6 +1825,9 @@ window.onTelegramAuth = function(user) {
       updateMonthLabel();
       updateUserBadge();
       updateMasterCalendarCta();
+      applyMasterEventCopy();
+      renderMasterEventSourceOptions(masterEventSource && masterEventSource.value);
+      updateMasterEventDurationHint();
       renderAlwaysAvailable();
     });
   });

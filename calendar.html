@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=8">
   <link rel="stylesheet" href="favorites.css?v=3">
 </head>
 <body class="calendar-page">
@@ -249,54 +249,58 @@
         <div class="master-event-form__header">
           <span class="event-detail__badge event-card__badge--internal" id="master-event-mode-badge">Master</span>
           <h2 id="master-event-title">Přidat událost do kalendáře</h2>
+          <p id="master-event-intro">Choose how this calendar item should be created.</p>
         </div>
 
-        <div class="master-event-mode" role="tablist" aria-label="Event mode">
-          <button class="master-event-mode__button is-active" type="button" data-master-event-mode="attach">Připojit</button>
-          <button class="master-event-mode__button" type="button" data-master-event-mode="create">Vytvořit novou</button>
-          <button class="master-event-mode__button" type="button" data-master-event-mode="quick">Krátký zápis</button>
+        <div class="master-event-options" role="tablist" aria-label="Event mode">
+          <button class="master-event-option is-active" type="button" data-master-event-mode="attach">
+            <strong id="master-event-option-attach-title">Link existing event</strong>
+            <span id="master-event-option-attach-text">Schedule an event that already exists in the profile.</span>
+          </button>
+          <button class="master-event-option" type="button" data-master-event-mode="create">
+            <strong id="master-event-option-create-title">Create new event</strong>
+            <span id="master-event-option-create-text">Send a new event request to admin.</span>
+          </button>
+          <button class="master-event-option" type="button" data-master-event-mode="quick">
+            <strong id="master-event-option-quick-title">Quick note</strong>
+            <span id="master-event-option-quick-text">Add a simple one-time calendar entry.</span>
+          </button>
         </div>
 
         <label class="master-event-field" id="master-event-source-wrap">
-          <span>Událost z profilu mastera</span>
+          <span id="master-event-source-label">Existing event</span>
           <select id="master-event-source"></select>
         </label>
 
-        <label class="master-event-field">
-          <span>Název</span>
+        <label class="master-event-field" id="master-event-name-wrap">
+          <span id="master-event-name-label">Title</span>
           <input id="master-event-name" name="title" type="text" maxlength="120" autocomplete="off" required>
         </label>
 
-        <label class="master-event-field">
-          <span>Krátký opis</span>
+        <label class="master-event-field" id="master-event-description-wrap">
+          <span id="master-event-description-label">Details for admin</span>
           <textarea id="master-event-description" name="description" rows="4" maxlength="700"></textarea>
         </label>
 
-        <div class="master-event-form__grid">
+        <div class="master-event-form__grid master-event-form__grid--time" id="master-event-time-grid">
           <label class="master-event-field">
-            <span>Datum</span>
+            <span id="master-event-date-label">Date</span>
             <input id="master-event-date" name="date" type="date" required>
           </label>
           <label class="master-event-field">
-            <span>Začátek</span>
+            <span id="master-event-start-label">Start time</span>
             <input id="master-event-time" name="time" type="time" required>
           </label>
           <label class="master-event-field">
-            <span>Trvání</span>
-            <select id="master-event-duration" name="duration">
-              <option value="30">30 min</option>
-              <option value="45">45 min</option>
-              <option value="60" selected>60 min</option>
-              <option value="90">90 min</option>
-              <option value="120">120 min</option>
-              <option value="180">180 min</option>
-            </select>
+            <span id="master-event-end-label">End time</span>
+            <input id="master-event-end-time" name="endTime" type="time" required>
           </label>
         </div>
+        <p class="master-event-duration-hint" id="master-event-duration-hint">Duration: 60 min</p>
 
-        <div class="master-event-form__grid">
+        <div class="master-event-form__grid master-event-form__grid--meta" id="master-event-meta-grid">
           <label class="master-event-field">
-            <span>Viditelnost</span>
+            <span id="master-event-type-label">Visibility</span>
             <select id="master-event-type" name="type">
               <option value="public">Veřejné</option>
               <option value="club">Klub</option>
@@ -304,7 +308,7 @@
             </select>
           </label>
           <label class="master-event-field">
-            <span>Místo</span>
+            <span id="master-event-location-label">Location</span>
             <select id="master-event-location" name="location">
               <option value="offline_studio">Studio</option>
               <option value="online">Online</option>
@@ -381,7 +385,7 @@
   <script src="auth.js"></script>
   <script src="menu.js?v=10"></script>
   <script src="favorites.js?v=2"></script>
-  <script src="calendar.js?v=8"></script>
+  <script src="calendar.js?v=9"></script>
   <script>
     // Theme toggle for calendar page
     const body = document.body;
