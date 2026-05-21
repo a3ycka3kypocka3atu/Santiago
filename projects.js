@@ -178,7 +178,7 @@
       status: 'concept',
       format: 'hybrid',
       priority: 8,
-      url: 'events.html',
+      url: 'conscious-relationships.html',
       owner: 'Andrij Pýcha',
       title: {
         ru: 'Платформа осознанных отношений',

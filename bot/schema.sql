@@ -158,6 +158,26 @@ CREATE TABLE IF NOT EXISTS public.submissions (
 
 ALTER TABLE public.submissions ENABLE ROW LEVEL SECURITY;
 
+CREATE TABLE IF NOT EXISTS public.project_master_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_slug TEXT NOT NULL,
+    project_title TEXT NOT NULL,
+    page_url TEXT,
+    requested_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    requester_telegram_id BIGINT,
+    requester_name TEXT,
+    requester_username TEXT,
+    comment TEXT,
+    target_master_slugs TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'sent', 'failed', 'archived')),
+    notification_error TEXT,
+    notified_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.project_master_requests ENABLE ROW LEVEL SECURITY;
+
 -- 10. RLS POLICIES
 
 -- Profiles: Users can read their own profile, admins can read all
@@ -694,6 +714,71 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION public.request_project_master_contact(
+    p_user_id UUID,
+    p_project_slug TEXT,
+    p_project_title TEXT,
+    p_page_url TEXT DEFAULT NULL,
+    p_comment TEXT DEFAULT NULL,
+    p_target_master_slugs TEXT[] DEFAULT ARRAY['andrijpycha']::TEXT[]
+)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_profile public.profiles%ROWTYPE;
+    v_request_id UUID;
+BEGIN
+    IF p_user_id IS NULL THEN
+        RAISE EXCEPTION 'profile_required';
+    END IF;
+
+    SELECT * INTO v_profile
+    FROM public.profiles
+    WHERE id = p_user_id;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'profile_not_found';
+    END IF;
+
+    IF nullif(trim(p_project_slug), '') IS NULL THEN
+        RAISE EXCEPTION 'project_required';
+    END IF;
+
+    INSERT INTO public.project_master_requests (
+        id,
+        project_slug,
+        project_title,
+        page_url,
+        requested_by,
+        requester_telegram_id,
+        requester_name,
+        requester_username,
+        comment,
+        target_master_slugs,
+        status
+    )
+    VALUES (
+        gen_random_uuid(),
+        trim(p_project_slug),
+        coalesce(nullif(trim(p_project_title), ''), trim(p_project_slug)),
+        nullif(trim(p_page_url), ''),
+        v_profile.id,
+        v_profile.telegram_id,
+        coalesce(nullif(v_profile.full_name, ''), v_profile.username, 'Santiago user'),
+        v_profile.username,
+        nullif(trim(p_comment), ''),
+        coalesce(p_target_master_slugs, ARRAY['andrijpycha']::TEXT[]),
+        'pending'
+    )
+    RETURNING id INTO v_request_id;
+
+    RETURN v_request_id;
+END;
+$$;
+
 CREATE OR REPLACE FUNCTION public.get_mentor_activity_summary(p_user_id UUID)
 RETURNS TABLE (
     item_type TEXT,
@@ -942,6 +1027,7 @@ GRANT EXECUTE ON FUNCTION public.get_profile_submissions(UUID) TO anon, authenti
 GRANT EXECUTE ON FUNCTION public.request_service_booking(UUID, TEXT, TEXT, TIMESTAMPTZ, TEXT) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.get_profile_service_booking_requests(UUID) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.request_openmic_submission(UUID, TEXT) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.request_project_master_contact(UUID, TEXT, TEXT, TEXT, TEXT, TEXT[]) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.get_mentor_activity_summary(UUID) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.get_admin_platform_overview(UUID) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.create_master_calendar_event(UUID, TEXT, TEXT, TIMESTAMPTZ, TIMESTAMPTZ, TEXT, TEXT, UUID, TEXT) TO anon, authenticated;
@@ -1294,6 +1380,8 @@ CREATE INDEX IF NOT EXISTS idx_event_participations_event_status ON public.event
 CREATE INDEX IF NOT EXISTS idx_event_participations_user ON public.event_participations(user_id);
 CREATE INDEX IF NOT EXISTS idx_submissions_kind_status ON public.submissions(kind, status);
 CREATE INDEX IF NOT EXISTS idx_submissions_submitted_by ON public.submissions(submitted_by);
+CREATE INDEX IF NOT EXISTS idx_project_master_requests_status_created ON public.project_master_requests(status, created_at);
+CREATE INDEX IF NOT EXISTS idx_project_master_requests_requested_by ON public.project_master_requests(requested_by);
 CREATE INDEX IF NOT EXISTS idx_favorites_user_type ON public.favorites(user_id, item_type);
 CREATE INDEX IF NOT EXISTS idx_favorites_item ON public.favorites(item_type, item_key);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_user_target ON public.subscriptions(user_id, target_type, target_key);

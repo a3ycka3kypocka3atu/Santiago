@@ -12,6 +12,7 @@ const ADMIN_CHAT_ID = process.env.ADMIN_CHAT_ID || '5756186570';
 const PUBLIC_SITE_URL = process.env.PUBLIC_SITE_URL || 'https://brown-delta-28.vercel.app';
 const NOTIFICATION_POLL_MS = Number(process.env.NOTIFICATION_POLL_MS || 60000);
 const NOTIFICATION_TIME_ZONE = process.env.NOTIFICATION_TIME_ZONE || 'Europe/Prague';
+const PROJECT_REQUEST_POLL_MS = Number(process.env.PROJECT_REQUEST_POLL_MS || NOTIFICATION_POLL_MS || 60000);
 
 const ADMINS = ['andrisav', 'waysantiago24'];
 const INSTRUCTORS = ['kateryna_mihailovna', 'andrisav'];
@@ -26,6 +27,18 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const SITE_VERSION = 'master-event-actions-v4';
 
 bot.use(session());
+
+function splitChatIds(value) {
+  return String(value || '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+const PROJECT_MASTER_CHAT_IDS = {
+  'conscious-relationships': splitChatIds(process.env.CONSCIOUS_RELATIONSHIPS_MASTER_CHAT_IDS || ADMIN_CHAT_ID),
+  andrijpycha: splitChatIds(process.env.ANDRIJ_MASTER_CHAT_IDS || process.env.CONSCIOUS_RELATIONSHIPS_MASTER_CHAT_IDS || ADMIN_CHAT_ID)
+};
 
 function getFullName(from) {
   return [from.first_name, from.last_name].filter(Boolean).join(' ') || from.username || 'Telegram User';
@@ -1307,6 +1320,7 @@ async function finishContentSubmission(ctx) {
 }
 
 let notificationWorkerBusy = false;
+let projectRequestWorkerBusy = false;
 
 async function markNotification(id, patch) {
   const { error } = await supabase
@@ -1415,9 +1429,133 @@ function startNotificationWorker() {
   setInterval(processDueNotifications, NOTIFICATION_POLL_MS);
 }
 
+function resolveProjectMasterChatIds(request) {
+  const chatIds = new Set();
+  const slugs = Array.isArray(request.target_master_slugs) ? request.target_master_slugs : [];
+
+  [...slugs, request.project_slug].forEach((slug) => {
+    (PROJECT_MASTER_CHAT_IDS[slug] || []).forEach((chatId) => chatIds.add(chatId));
+  });
+
+  if (!chatIds.size && PROJECT_MASTER_CHAT_IDS[request.project_slug]) {
+    PROJECT_MASTER_CHAT_IDS[request.project_slug].forEach((chatId) => chatIds.add(chatId));
+  }
+
+  return [...chatIds];
+}
+
+function projectMasterRequestKeyboard(request) {
+  const buttons = [];
+  if (request.requester_telegram_id) {
+    buttons.push([Markup.button.url('Написати людині', `tg://user?id=${request.requester_telegram_id}`)]);
+  }
+  if (request.page_url) {
+    buttons.push([Markup.button.url('Відкрити формат', request.page_url)]);
+  }
+  return buttons.length ? Markup.inlineKeyboard(buttons) : undefined;
+}
+
+function buildProjectMasterRequestText(request) {
+  const authorName = request.requester_name || 'Santiago user';
+  const username = request.requester_username ? `@${request.requester_username}` : '@n/a';
+  const chatLink = request.requester_telegram_id ? `tg://user?id=${request.requester_telegram_id}` : 'немає';
+  const comment = request.comment && String(request.comment).trim()
+    ? compactText(request.comment, 1000)
+    : 'Без коментаря. Людина просто підтвердила заявку.';
+
+  return `💞 Нова заявка на формат\n\n` +
+    `Проєкт: ${request.project_title || request.project_slug}\n` +
+    `Від: ${authorName} (${username}, TG ${request.requester_telegram_id || 'n/a'})\n\n` +
+    `Коментар:\n${comment}\n\n` +
+    `Людина: ${chatLink}\n` +
+    `Формат: ${request.page_url || buildPublicUrl('conscious-relationships.html')}`;
+}
+
+async function markProjectMasterRequest(id, patch) {
+  const { error } = await supabase
+    .from('project_master_requests')
+    .update({
+      ...patch,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', id);
+
+  if (error) console.error('[Bot] Project request status update error:', error);
+}
+
+async function processProjectMasterRequest(request) {
+  const chatIds = resolveProjectMasterChatIds(request);
+  if (!chatIds.length) {
+    await markProjectMasterRequest(request.id, {
+      status: 'failed',
+      notification_error: 'project_master_chat_ids_missing'
+    });
+    return;
+  }
+
+  try {
+    const text = buildProjectMasterRequestText(request);
+    const keyboard = projectMasterRequestKeyboard(request);
+    for (const chatId of chatIds) {
+      await bot.telegram.sendMessage(chatId, text, keyboard);
+    }
+
+    await markProjectMasterRequest(request.id, {
+      status: 'sent',
+      notified_at: new Date().toISOString(),
+      notification_error: null
+    });
+  } catch (err) {
+    console.error('[Bot] Project master request notification error:', err);
+    await markProjectMasterRequest(request.id, {
+      status: 'failed',
+      notification_error: err.message || 'telegram_send_failed'
+    });
+  }
+}
+
+async function processProjectMasterRequests() {
+  if (projectRequestWorkerBusy) return;
+  projectRequestWorkerBusy = true;
+
+  try {
+    const { data: requests, error } = await supabase
+      .from('project_master_requests')
+      .select('id, project_slug, project_title, page_url, requester_telegram_id, requester_name, requester_username, comment, target_master_slugs, status, created_at')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: true })
+      .limit(25);
+
+    if (error) {
+      console.error('[Bot] Project master requests fetch error:', error);
+      return;
+    }
+
+    for (const request of requests || []) {
+      await processProjectMasterRequest(request);
+    }
+  } catch (err) {
+    console.error('[Bot] Project master request worker error:', err);
+  } finally {
+    projectRequestWorkerBusy = false;
+  }
+}
+
+function startProjectRequestWorker() {
+  if (!Number.isFinite(PROJECT_REQUEST_POLL_MS) || PROJECT_REQUEST_POLL_MS <= 0) {
+    console.log('[Bot] Project request worker disabled');
+    return;
+  }
+
+  console.log(`[Bot] Project request worker polling every ${PROJECT_REQUEST_POLL_MS}ms`);
+  setTimeout(processProjectMasterRequests, 7000);
+  setInterval(processProjectMasterRequests, PROJECT_REQUEST_POLL_MS);
+}
+
 bot.launch().then(() => {
   console.log('[Bot] Launch successful');
   startNotificationWorker();
+  startProjectRequestWorker();
 });
 
 process.once('SIGINT', () => bot.stop('SIGINT'));

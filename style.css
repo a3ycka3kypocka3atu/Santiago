@@ -1520,6 +1520,188 @@ body.grayscale-mode .theme-toggle .toggle-thumb {
   background: rgba(167, 139, 250, 0.1);
 }
 
+.relationship-hero-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.relationship-hero-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 84% 18%, rgba(255, 93, 168, 0.16), transparent 30%),
+    linear-gradient(135deg, rgba(0, 212, 170, 0.1), transparent 48%),
+    linear-gradient(315deg, rgba(167, 139, 250, 0.16), transparent 52%);
+}
+
+.relationship-hero-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.relationship-order-band {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 22px;
+}
+
+.relationship-request-trigger {
+  cursor: pointer;
+  font: inherit;
+}
+
+.relationship-request-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.relationship-request-overlay[hidden] {
+  display: none;
+}
+
+.relationship-request-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 8, 20, 0.62);
+  backdrop-filter: blur(10px);
+}
+
+.relationship-request-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(560px, 100%);
+  padding: clamp(24px, 5vw, 34px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  background: rgba(18, 22, 42, 0.92);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+  transform: translateY(12px) scale(0.98);
+  opacity: 0;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.relationship-request-overlay.open .relationship-request-dialog {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.relationship-request-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+  color: #dfe8ff;
+  background: rgba(255, 255, 255, 0.07);
+  cursor: pointer;
+}
+
+.relationship-request-dialog h2 {
+  margin: 0 42px 10px 0;
+  color: #fff;
+  font-size: 1.4rem;
+}
+
+.relationship-request-summary,
+.relationship-request-status {
+  margin: 0;
+  color: #c8cce4;
+  line-height: 1.65;
+}
+
+.relationship-request-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.relationship-request-form label {
+  display: grid;
+  gap: 8px;
+  color: #dfe8ff;
+  font-weight: 700;
+}
+
+.relationship-request-form textarea {
+  width: 100%;
+  min-height: 126px;
+  resize: vertical;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  padding: 14px 15px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.07);
+  font: inherit;
+  line-height: 1.5;
+  outline: none;
+}
+
+.relationship-request-form textarea:focus {
+  border-color: rgba(0, 212, 170, 0.58);
+  box-shadow: 0 0 0 4px rgba(0, 212, 170, 0.12);
+}
+
+.relationship-request-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.relationship-request-submit,
+.relationship-request-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.relationship-request-submit {
+  border: 1px solid rgba(0, 212, 170, 0.46);
+  color: #85f5df;
+  background: rgba(0, 212, 170, 0.16);
+  cursor: pointer;
+}
+
+.relationship-request-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.relationship-request-login {
+  border: 1px solid rgba(167, 139, 250, 0.4);
+  color: #d6ccff;
+  background: rgba(167, 139, 250, 0.12);
+}
+
+.relationship-request-status[data-state="success"] {
+  color: #85f5df;
+}
+
+.relationship-request-status[data-state="error"] {
+  color: #ffb3c4;
+}
+
+.relationship-request-status[data-state="info"] {
+  color: #d6ccff;
+}
+
 .coliving-hero-card {
   position: relative;
   overflow: hidden;
@@ -4975,7 +5157,8 @@ body:not(.calendar-page):not(.grayscale-mode) .om-format-card,
 body:not(.calendar-page):not(.grayscale-mode) .om-media-card,
 body:not(.calendar-page):not(.grayscale-mode) .om-cta-card,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-card,
-body:not(.calendar-page):not(.grayscale-mode) .project-detail-band {
+body:not(.calendar-page):not(.grayscale-mode) .project-detail-band,
+body:not(.calendar-page):not(.grayscale-mode) .relationship-request-dialog {
   color: var(--text-day);
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.48));
   border-color: var(--surface-line-day);
@@ -5002,6 +5185,7 @@ body:not(.calendar-page):not(.grayscale-mode) .project-detail-section h2,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-band h2,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-panel-title,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-card h3,
+body:not(.calendar-page):not(.grayscale-mode) .relationship-request-dialog h2,
 body:not(.calendar-page):not(.grayscale-mode) .spec-card h3,
 body:not(.calendar-page):not(.grayscale-mode) .offer-card h3,
 body:not(.calendar-page):not(.grayscale-mode) .video-card-body h3,
@@ -5029,6 +5213,8 @@ body:not(.calendar-page):not(.grayscale-mode) .project-detail-lead,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-panel-text,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-text,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-card p,
+body:not(.calendar-page):not(.grayscale-mode) .relationship-request-summary,
+body:not(.calendar-page):not(.grayscale-mode) .relationship-request-status,
 body:not(.calendar-page):not(.grayscale-mode) .om-format-card__body p,
 body:not(.calendar-page):not(.grayscale-mode) .om-media-card p,
 body:not(.calendar-page):not(.grayscale-mode) .om-cta-card__content p {
@@ -5056,6 +5242,16 @@ body:not(.calendar-page):not(.grayscale-mode) .service-booking-form label {
 
 body:not(.calendar-page):not(.grayscale-mode) .service-booking-form input,
 body:not(.calendar-page):not(.grayscale-mode) .service-booking-form textarea {
+  color: var(--text-day);
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(39, 58, 105, 0.14);
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .relationship-request-form label {
+  color: var(--text-day);
+}
+
+body:not(.calendar-page):not(.grayscale-mode) .relationship-request-form textarea {
   color: var(--text-day);
   background: rgba(255, 255, 255, 0.72);
   border-color: rgba(39, 58, 105, 0.14);

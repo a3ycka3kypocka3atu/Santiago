@@ -149,7 +149,7 @@
       priority: 2,
       owner: 'Andrij Pýcha',
       ownerKey: 'andrijpycha',
-      url: 'services.html?book=conscious-relationship-discovery',
+      url: 'conscious-relationships.html',
       next: {
         ru: 'первая группа в сборке',
         en: 'first group forming',

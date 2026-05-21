@@ -271,6 +271,19 @@
     updateTelegramBookingLink();
   }
 
+  function getServiceActionLabel(service) {
+    if (service && service.request_page_only) {
+      const labels = {
+        ru: 'Заказать формат',
+        en: 'Request format',
+        cz: 'Objednat formát',
+        ua: 'Замовити формат'
+      };
+      return labels[currentLang] || labels.en;
+    }
+    return serviceBookingLabel('book');
+  }
+
   function openServiceBooking(service) {
     if (!bookingPopup) return;
     activeBookingService = service;
@@ -436,7 +449,7 @@
             <button class="preview-favorite" type="button" aria-label="В избранное"></button>
             <button class="preview-card__book" type="button" data-service-book>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
-              <span>${serviceBookingLabel('book')}</span>
+              <span>${getServiceActionLabel(service)}</span>
             </button>
             <a class="preview-card__cta" href="${detailPage}">
               <span>${t('btn.details')}</span>
@@ -484,6 +497,10 @@
       bookButton.addEventListener('click', (event) => {
         event.preventDefault();
         event.stopPropagation();
+        if (service.request_page_only && detailPage && detailPage !== '#') {
+          window.location.href = detailPage;
+          return;
+        }
         openServiceBooking(service);
       });
     }
@@ -564,7 +581,7 @@
       if (descEl) descEl.textContent = t(service.description);
       if (masterEl) masterEl.textContent = getProviderLabel(service);
       if (ctaEl) ctaEl.textContent = t('btn.details');
-      if (bookEl) bookEl.textContent = serviceBookingLabel('book');
+      if (bookEl) bookEl.textContent = getServiceActionLabel(service);
       if (badgeEl) badgeEl.textContent = t(`filter.${service.category}`) || service.category;
       if (formatEl) formatEl.textContent = fmt(service.format);
     });
@@ -687,7 +704,8 @@
         provider_name: 'Conscious Relationships Platform',
         provider_slug: 'conscious-relationships',
         contact_person: 'Andrij Pýcha',
-        detail_page: 'events.html'
+        detail_page: 'conscious-relationships.html',
+        request_page_only: true
       }
     ];
 
@@ -711,7 +729,11 @@
     const bookingSlug = params.get('book');
     if (bookingSlug) {
       const requestedService = staticServices.find(service => service.slug === bookingSlug);
-      if (requestedService) setTimeout(() => openServiceBooking(requestedService), 80);
+      if (requestedService && requestedService.request_page_only && requestedService.detail_page) {
+        window.location.href = requestedService.detail_page;
+      } else if (requestedService) {
+        setTimeout(() => openServiceBooking(requestedService), 80);
+      }
     }
   }
 
