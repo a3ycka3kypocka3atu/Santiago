@@ -1923,6 +1923,16 @@ body.grayscale-mode .theme-toggle .toggle-thumb {
     width: 64px;
     height: 64px;
   }
+
+  .school-page .project-detail-hero h1 {
+    font-size: clamp(1.9rem, 9.5vw, 2.55rem);
+  }
+
+  .school-page .page-wrapper {
+    max-width: 390px;
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 /* ═══════════════════════════════════════════
