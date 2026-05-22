@@ -222,26 +222,6 @@ window.onTelegramAuth = function(user) {
 
   const MASTER_PROFILE_EVENT_CATALOG = [
     {
-      id: 'catalog_mutual-help-networking',
-      slug: 'mutual-help-networking',
-      ownerKey: 'andrijpycha',
-      ownerNames: ['andrij', 'andriy', 'pýcha', 'pycha'],
-      title: {
-        en: 'Mutual Help Networking',
-        cz: 'Networking vzájemné pomoci',
-        ru: 'Нетворкинг взаимопомощи',
-        ua: 'Нетворкінг взаємодопомоги'
-      },
-      description: {
-        en: 'Small-format meetups where people share who they are, what they build, who they can help, and who they need next.',
-        cz: 'Komorní setkání, kde lidé sdílí, kdo jsou, co tvoří, komu mohou pomoct a koho hledají pro další krok.',
-        ru: 'Камерные встречи, где участники показывают, кто они, что создают, кому могут помочь и кого ищут для следующего шага.',
-        ua: 'Камерні зустрічі, де учасники показують, хто вони, що створюють, кому можуть допомогти і кого шукають далі.'
-      },
-      type: 'club',
-      location_type: 'offline_studio'
-    },
-    {
       id: 'catalog_conscious-relationships',
       slug: 'conscious-relationships',
       ownerKey: 'andrijpycha',
@@ -257,26 +237,6 @@ window.onTelegramAuth = function(user) {
         cz: 'Formát seznamování skrze hodnoty, záměry, kompatibilitu a upřímný kontakt místo náhodného swipování.',
         ru: 'Формат для знакомства через ценности, намерения, совместимость и честный контакт, а не через случайный свайп.',
         ua: 'Формат знайомства через цінності, наміри, сумісність і чесний контакт, а не випадковий свайп.'
-      },
-      type: 'public',
-      location_type: 'offline_studio'
-    },
-    {
-      id: 'catalog_alternative-knowledge-lab',
-      slug: 'alternative-knowledge-lab',
-      ownerKey: 'andrijpycha',
-      ownerNames: ['andrij', 'andriy', 'pýcha', 'pycha'],
-      title: {
-        en: 'Alternative History, Science & Energy',
-        cz: 'Alternativní historie, věda a energie',
-        ru: 'Альтернативная история, наука и энергия',
-        ua: 'Альтернативна історія, наука та енергія'
-      },
-      description: {
-        en: 'Lectures and discussions around unusual perspectives on history, science, perception, energy, and hidden processes.',
-        cz: 'Přednášky a diskuse o neobvyklých pohledech na historii, vědu, vnímání, energii a skryté procesy.',
-        ru: 'Лекции и обсуждения о необычных взглядах на историю, науку, восприятие, энергию и скрытые процессы.',
-        ua: 'Лекції та обговорення незвичних поглядів на історію, науку, сприйняття, енергію та приховані процеси.'
       },
       type: 'public',
       location_type: 'offline_studio'

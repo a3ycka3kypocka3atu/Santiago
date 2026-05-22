@@ -648,21 +648,6 @@
         detail_page: 'ethical-automation-agency.html'
       },
       {
-        slug: 'conscious-networking-facilitation',
-        title: 'services.andrij.networking.name',
-        description: 'services.andrij.networking.short',
-        price: 'services.andrij.networking.price',
-        icon_emoji: '🤝',
-        category: 'space',
-        format: 'group',
-        instructor_name: 'Andrij Pýcha',
-        provider_type: 'project',
-        provider_name: 'Conscious Networking Platform',
-        provider_slug: 'andrij-network-platform',
-        contact_person: 'Andrij Pýcha',
-        detail_page: 'events.html'
-      },
-      {
         slug: 'interview-recording-production',
         title: 'services.andrij.recording.name',
         description: 'services.andrij.recording.short',

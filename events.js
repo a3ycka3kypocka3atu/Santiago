@@ -10,11 +10,9 @@
   const labels = {
     ru: {
       category: {
-        networking: 'Нетворкинг',
         relationship: 'Отношения',
         media: 'Медиа',
-        project: 'Проекты',
-        knowledge: 'Знание'
+        project: 'Проекты'
       },
       status: { regular: 'Регулярно', upcoming: 'Ближайшее', concept: 'Концепт' },
       format: { offline: 'Офлайн', online: 'Онлайн', hybrid: 'Гибрид' },
@@ -35,11 +33,9 @@
     },
     en: {
       category: {
-        networking: 'Networking',
         relationship: 'Relationships',
         media: 'Media',
-        project: 'Projects',
-        knowledge: 'Knowledge'
+        project: 'Projects'
       },
       status: { regular: 'Regular', upcoming: 'Upcoming', concept: 'Concept' },
       format: { offline: 'Offline', online: 'Online', hybrid: 'Hybrid' },
@@ -60,11 +56,9 @@
     },
     cz: {
       category: {
-        networking: 'Networking',
         relationship: 'Vztahy',
         media: 'Média',
-        project: 'Projekty',
-        knowledge: 'Poznání'
+        project: 'Projekty'
       },
       status: { regular: 'Pravidelně', upcoming: 'Nejbližší', concept: 'Koncept' },
       format: { offline: 'Offline', online: 'Online', hybrid: 'Hybrid' },
@@ -85,11 +79,9 @@
     },
     ua: {
       category: {
-        networking: 'Нетворкінг',
         relationship: 'Стосунки',
         media: 'Медіа',
-        project: 'Проєкти',
-        knowledge: 'Знання'
+        project: 'Проєкти'
       },
       status: { regular: 'Регулярно', upcoming: 'Найближче', concept: 'Концепт' },
       format: { offline: 'Офлайн', online: 'Онлайн', hybrid: 'Гібрид' },
@@ -111,35 +103,6 @@
   };
 
   const events = [
-    {
-      slug: 'mutual-help-networking',
-      icon: '🤝',
-      category: 'networking',
-      status: 'regular',
-      format: 'offline',
-      priority: 1,
-      owner: 'Andrij Pýcha',
-      ownerKey: 'andrijpycha',
-      url: 'services.html?book=conscious-networking-facilitation',
-      next: {
-        ru: 'по запросу / клубная серия',
-        en: 'on request / club series',
-        cz: 'na vyžádání / klubová série',
-        ua: 'за запитом / клубна серія'
-      },
-      title: {
-        ru: 'Нетворкинг взаимопомощи',
-        en: 'Mutual Help Networking',
-        cz: 'Networking vzájemné pomoci',
-        ua: 'Нетворкінг взаємодопомоги'
-      },
-      desc: {
-        ru: 'Камерные встречи, где участники показывают, кто они, что создают, кому могут помочь и кого ищут для следующего шага.',
-        en: 'Small-format meetups where people share who they are, what they build, who they can help, and who they need next.',
-        cz: 'Komorní setkání, kde lidé sdílí, kdo jsou, co tvoří, komu mohou pomoct a koho hledají pro další krok.',
-        ua: 'Камерні зустрічі, де учасники показують, хто вони, що створюють, кому можуть допомогти і кого шукають далі.'
-      }
-    },
     {
       slug: 'conscious-relationships',
       icon: '💞',
@@ -225,35 +188,6 @@
         en: 'An evening for ideas, startups, and initiatives: participants pitch, receive feedback, and find collaborators.',
         cz: 'Večer pro nápady, startupy a iniciativy: účastníci prezentují, získávají feedback a hledají tým.',
         ua: 'Вечір для ідей, стартапів та ініціатив: учасники презентують задум, отримують фідбек і знаходять команду.'
-      }
-    },
-    {
-      slug: 'alternative-knowledge-lab',
-      icon: '📚',
-      category: 'knowledge',
-      status: 'concept',
-      format: 'hybrid',
-      priority: 5,
-      owner: 'Andrij Pýcha',
-      ownerKey: 'andrijpycha',
-      url: 'services.html?book=alternative-knowledge-workshop',
-      next: {
-        ru: 'лекции и лаборатории',
-        en: 'lectures and labs',
-        cz: 'přednášky a laboratoře',
-        ua: 'лекції та лабораторії'
-      },
-      title: {
-        ru: 'Альтернативная история, наука и энергия',
-        en: 'Alternative History, Science & Energy',
-        cz: 'Alternativní historie, věda a energie',
-        ua: 'Альтернативна історія, наука та енергія'
-      },
-      desc: {
-        ru: 'Лекции и обсуждения о необычных взглядах на историю, науку, восприятие, энергию и скрытые процессы.',
-        en: 'Lectures and discussions around unusual perspectives on history, science, perception, energy, and hidden processes.',
-        cz: 'Přednášky a diskuse o neobvyklých pohledech na historii, vědu, vnímání, energii a skryté procesy.',
-        ua: 'Лекції та обговорення незвичних поглядів на історію, науку, сприйняття, енергію та приховані процеси.'
       }
     }
   ];
@@ -364,11 +298,9 @@
     setText('#events-filters .filter-label[data-events-label="owner"]', label('ownerLabel'));
     setText('#events-filters .filter-label[data-events-label="sort"]', label('sortLabel'));
     setText('#events-filters [data-filter="category"][data-value="all"]', label('all'));
-    setText('#events-filters [data-filter="category"][data-value="networking"]', label('category.networking'));
     setText('#events-filters [data-filter="category"][data-value="relationship"]', label('category.relationship'));
     setText('#events-filters [data-filter="category"][data-value="media"]', label('category.media'));
     setText('#events-filters [data-filter="category"][data-value="project"]', label('category.project'));
-    setText('#events-filters [data-filter="category"][data-value="knowledge"]', label('category.knowledge'));
     setText('#events-filters [data-filter="status"][data-value="all"]', label('all'));
     setText('#events-filters [data-filter="status"][data-value="regular"]', label('status.regular'));
     setText('#events-filters [data-filter="status"][data-value="upcoming"]', label('status.upcoming'));
