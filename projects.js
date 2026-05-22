@@ -9,7 +9,7 @@
 
   const labels = {
     ru: {
-      category: { space: 'Пространство', community: 'Комьюнити', incubator: 'Инкубатор', media: 'Медиа', living: 'Коливинг', digital: 'Digital' },
+      category: { space: 'Пространство', community: 'Комьюнити', incubator: 'Инкубатор', media: 'Медиа', education: 'Школа', living: 'Коливинг', digital: 'Digital' },
       status: { active: 'Активный', building: 'В сборке', concept: 'Концепт' },
       format: { offline: 'Офлайн', online: 'Онлайн', hybrid: 'Гибрид', residential: 'Совместный быт' },
       ownerPrefix: 'Куратор',
@@ -17,7 +17,7 @@
       details: 'Подробнее'
     },
     en: {
-      category: { space: 'Space', community: 'Community', incubator: 'Incubator', media: 'Media', living: 'Coliving', digital: 'Digital' },
+      category: { space: 'Space', community: 'Community', incubator: 'Incubator', media: 'Media', education: 'School', living: 'Coliving', digital: 'Digital' },
       status: { active: 'Active', building: 'Building', concept: 'Concept' },
       format: { offline: 'Offline', online: 'Online', hybrid: 'Hybrid', residential: 'Shared Living' },
       ownerPrefix: 'Curator',
@@ -25,7 +25,7 @@
       details: 'Learn More'
     },
     cz: {
-      category: { space: 'Prostor', community: 'Komunita', incubator: 'Inkubátor', media: 'Média', living: 'Coliving', digital: 'Digital' },
+      category: { space: 'Prostor', community: 'Komunita', incubator: 'Inkubátor', media: 'Média', education: 'Škola', living: 'Coliving', digital: 'Digital' },
       status: { active: 'Aktivní', building: 'Ve vývoji', concept: 'Koncept' },
       format: { offline: 'Offline', online: 'Online', hybrid: 'Hybrid', residential: 'Společné bydlení' },
       ownerPrefix: 'Kurátor',
@@ -33,7 +33,7 @@
       details: 'Více informací'
     },
     ua: {
-      category: { space: 'Простір', community: 'Спільнота', incubator: 'Інкубатор', media: 'Медіа', living: 'Колівінг', digital: 'Digital' },
+      category: { space: 'Простір', community: 'Спільнота', incubator: 'Інкубатор', media: 'Медіа', education: 'Школа', living: 'Колівінг', digital: 'Digital' },
       status: { active: 'Активний', building: 'У збірці', concept: 'Концепт' },
       format: { offline: 'Офлайн', online: 'Онлайн', hybrid: 'Гібрид', residential: 'Спільний побут' },
       ownerPrefix: 'Куратор',
@@ -151,6 +151,28 @@
         en: 'A shared-living concept for the circle: good conditions, support, shared resources, and an environment for launching projects.',
         cz: 'Koncept společného bydlení pro náš okruh: dobré podmínky, podpora, sdílené zdroje a prostředí pro rozjezd projektů.',
         ua: 'Концепт спільного проживання для своїх: хороші умови, підтримка, спільні ресурси й середовище для запуску проєктів.'
+      }
+    },
+    {
+      slug: 'santiago-school',
+      icon: '📚',
+      category: 'education',
+      status: 'building',
+      format: 'hybrid',
+      priority: 6,
+      url: 'school.html',
+      owner: 'Santiago School',
+      title: {
+        ru: 'Школа лекций Santiago',
+        en: 'Santiago Lecture School',
+        cz: 'Škola přednášek Santiago',
+        ua: 'Школа лекцій Santiago'
+      },
+      desc: {
+        ru: 'Образовательные события и платформа, где люди пробуют себя как лекторы, записывают выступления и публикуют лекции.',
+        en: 'Educational events and a platform where people can try lecturing, record talks, and publish lectures.',
+        cz: 'Vzdělávací akce a platforma, kde si lidé mohou zkusit přednášet, nahrávat vystoupení a publikovat lekce.',
+        ua: 'Освітні події та платформа, де люди пробують себе як лектори, записують виступи й публікують лекції.'
       }
     },
     {

@@ -1815,10 +1815,75 @@ body.grayscale-mode .theme-toggle .toggle-thumb {
   gap: 16px;
 }
 
+.school-hero-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.school-hero-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 82% 18%, rgba(255, 204, 0, 0.16), transparent 30%),
+    linear-gradient(135deg, rgba(0, 212, 170, 0.12), transparent 44%),
+    linear-gradient(315deg, rgba(167, 139, 250, 0.14), transparent 50%);
+}
+
+.school-hero-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.school-mark {
+  display: grid;
+  place-items: center;
+  width: 118px;
+  height: 118px;
+  border-radius: 28px;
+  color: #ffd76a;
+  background: rgba(255, 204, 0, 0.1);
+  border: 1px solid rgba(255, 204, 0, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.school-mark svg {
+  width: 78px;
+  height: 78px;
+}
+
+.school-format-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.school-format-list span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: #ffe6a3;
+  background: rgba(255, 204, 0, 0.1);
+  border: 1px solid rgba(255, 204, 0, 0.26);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.school-principles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
 @media (max-width: 860px) {
   .project-detail-hero,
   .project-detail-grid,
-  .coliving-principles {
+  .coliving-principles,
+  .school-principles {
     grid-template-columns: 1fr;
   }
 
@@ -1844,6 +1909,17 @@ body.grayscale-mode .theme-toggle .toggle-thumb {
   }
 
   .coliving-home-mark svg {
+    width: 64px;
+    height: 64px;
+  }
+
+  .school-mark {
+    width: 96px;
+    height: 96px;
+    border-radius: 22px;
+  }
+
+  .school-mark svg {
     width: 64px;
     height: 64px;
   }
@@ -5283,7 +5359,9 @@ body:not(.calendar-page):not(.grayscale-mode) .om-format-card__duration,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-cta,
 body:not(.calendar-page):not(.grayscale-mode) .project-detail-link-secondary,
 body:not(.calendar-page):not(.grayscale-mode) .coliving-home-mark,
-body:not(.calendar-page):not(.grayscale-mode) .coliving-format-list span {
+body:not(.calendar-page):not(.grayscale-mode) .coliving-format-list span,
+body:not(.calendar-page):not(.grayscale-mode) .school-mark,
+body:not(.calendar-page):not(.grayscale-mode) .school-format-list span {
   color: #057c69;
 }
 
