@@ -2628,6 +2628,41 @@ body.grayscale-mode .preview-card {
   flex: 0 0 auto;
 }
 
+.preview-card__edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 204, 0, 0.34);
+  background: rgba(255, 204, 0, 0.12);
+  color: var(--glow-yellow);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.preview-card__edit[hidden] {
+  display: none !important;
+}
+
+.preview-card__edit:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 204, 0, 0.58);
+  background: rgba(255, 204, 0, 0.18);
+}
+
+.preview-card__edit svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+}
+
 .service-booking-overlay {
   position: fixed;
   inset: 0;
@@ -2795,6 +2830,181 @@ body.grayscale-mode .preview-card {
 }
 
 .service-booking-status[data-state="error"] {
+  color: #fca5a5;
+}
+
+.submission-request-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2300;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+.submission-request-overlay[hidden] {
+  display: none;
+}
+
+.submission-request-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.submission-request-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 8, 18, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.submission-request-dialog {
+  position: relative;
+  width: min(720px, 100%);
+  max-height: min(780px, 90vh);
+  overflow: auto;
+  padding: 24px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(13, 16, 34, 0.96);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+  color: var(--fg);
+  transform: translateY(8px);
+  transition: transform 0.18s ease;
+}
+
+.submission-request-overlay.open .submission-request-dialog {
+  transform: translateY(0);
+}
+
+.submission-request-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+  cursor: pointer;
+}
+
+.submission-request-dialog h2 {
+  margin: 0 40px 10px 0;
+  color: var(--glow-yellow);
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.submission-request-intro,
+.submission-request-status {
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.submission-request-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.submission-request-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--fg-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.submission-request-form label[hidden] {
+  display: none !important;
+}
+
+.submission-request-form input,
+.submission-request-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--fg);
+  font: inherit;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  padding: 11px 12px;
+  outline: none;
+}
+
+.submission-request-form textarea {
+  resize: vertical;
+  min-height: 180px;
+}
+
+.submission-request-form input:focus,
+.submission-request-form textarea:focus {
+  border-color: rgba(95, 255, 224, 0.58);
+  box-shadow: 0 0 0 3px rgba(95, 255, 224, 0.12);
+}
+
+.submission-request-form input:focus::placeholder,
+.submission-request-form textarea:focus::placeholder {
+  color: transparent;
+}
+
+.submission-request-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.submission-request-submit,
+.submission-request-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(95, 255, 224, 0.32);
+  background: rgba(95, 255, 224, 0.14);
+  color: #75f4e1;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.submission-request-login[hidden] {
+  display: none;
+}
+
+.submission-request-submit:disabled {
+  opacity: 0.62;
+  cursor: default;
+}
+
+.submission-request-status {
+  min-height: 1.4em;
+  margin: 0;
+}
+
+.submission-request-status[data-state="success"] {
+  color: #75f4a8;
+}
+
+.submission-request-status[data-state="error"] {
   color: #fca5a5;
 }
 

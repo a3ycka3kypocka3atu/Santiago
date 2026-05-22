@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=9" />
+  <link rel="stylesheet" href="style.css?v=10" />
   <style>
     :root {
       --comm-accent: #00ffcc;
@@ -249,7 +249,7 @@
       <div class="audience-card instructor">
         <h2 data-i18n="comm.target.inst.title">Для Мастеров</h2>
         <p data-i18n="comm.target.inst.desc" style="color: rgba(255,255,255,0.6);">Возможность делиться опытом с подготовленной аудиторией, реализовывать идеи при поддержке экосистемы и находить команду для новых проектов.</p>
-        <a href="https://t.me/santioago_bot?start=apply" target="_blank" class="cta btn-primary" style="margin-top: auto; width: 100%; text-align: center; background: rgba(0, 255, 204, 0.2); border-color: rgba(0, 255, 204, 0.4);" data-i18n="comm.target.inst.cta">Стать частью команды</a>
+        <button type="button" class="cta btn-primary" style="margin-top: auto; width: 100%; text-align: center; background: rgba(0, 255, 204, 0.2); border-color: rgba(0, 255, 204, 0.4);" data-i18n="comm.target.inst.cta" data-submission-request="role_application" data-submission-mode="apply_role" data-submission-modal-title="Стати майстром" data-submission-title="Заявка стати майстром">Стать частью команды</button>
       </div>
 
       <div class="audience-card visitor">
@@ -310,6 +310,7 @@
   <script src="translations.js?v=10"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="auth.js?v=9"></script>
+  <script src="submission-requests.js?v=2"></script>
   <script src="menu.js?v=10"></script>
   <script>
     function forceTranslate() {

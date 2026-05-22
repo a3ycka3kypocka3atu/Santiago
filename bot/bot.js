@@ -13,6 +13,7 @@ const PUBLIC_SITE_URL = process.env.PUBLIC_SITE_URL || 'https://brown-delta-28.v
 const NOTIFICATION_POLL_MS = Number(process.env.NOTIFICATION_POLL_MS || 60000);
 const NOTIFICATION_TIME_ZONE = process.env.NOTIFICATION_TIME_ZONE || 'Europe/Prague';
 const PROJECT_REQUEST_POLL_MS = Number(process.env.PROJECT_REQUEST_POLL_MS || NOTIFICATION_POLL_MS || 60000);
+const PLATFORM_SUBMISSION_POLL_MS = Number(process.env.PLATFORM_SUBMISSION_POLL_MS || NOTIFICATION_POLL_MS || 60000);
 
 const ADMINS = ['andrisav', 'waysantiago24'];
 const INSTRUCTORS = ['kateryna_mihailovna', 'andrisav'];
@@ -214,6 +215,12 @@ const SUBMISSION_TYPES = {
     titlePrompt: 'Назва події або програми?',
     descriptionPrompt: 'Опишіть подію: тема, для кого, що буде відбуватись, хто веде.',
     detailsPrompt: 'Напишіть бажані дати/час, тривалість, чи треба студія, public/club/internal, ціну і ліміти учасників. Якщо потрібні файли або фото, надішліть їх тут з підписом.'
+  },
+  role_application: {
+    label: 'стати майстром',
+    titlePrompt: 'Заявка стати майстром',
+    descriptionPrompt: 'Опишіть ваш досвід і формат.',
+    detailsPrompt: 'Додайте посилання, контакти і що хочете вести у Santiago.'
   }
 };
 
@@ -279,6 +286,9 @@ function getMessageAttachments(message = {}) {
 function submissionActionKeyboard(submissionId) {
   return Markup.inlineKeyboard([
     [
+      Markup.button.url('Відкрити admin cabinet', buildPortalUrl(ADMIN_CHAT_ID, 'cabinet.html'))
+    ],
+    [
       Markup.button.callback('✅ Так / в роботу', `submission_approve_${submissionId}`),
       Markup.button.callback('↩️ Треба інфо', `submission_needs_info_${submissionId}`)
     ],
@@ -305,12 +315,24 @@ function getSubmissionDisplayStatus(submission) {
   return (submission.payload && submission.payload.workflow_status) || submission.status || 'pending';
 }
 
+function submissionModeLabel(mode) {
+  const labels = {
+    create_new: 'Створення нової сутності',
+    profile_edit: 'Зміна профілю',
+    edit_existing: 'Зміна існуючої сутності',
+    create_event_from_calendar: 'Створення події з календаря',
+    apply_role: 'Заявка стати майстром'
+  };
+  return labels[mode] || mode || 'Заявка';
+}
+
 function buildSubmissionAdminText(submission) {
   const payload = submission.payload || {};
   const author = payload.telegram || {};
   const attachments = payload.attachments || [];
   const status = getSubmissionDisplayStatus(submission);
   const config = SUBMISSION_TYPES[submission.kind] || SUBMISSION_TYPES.event;
+  const entity = payload.entity || {};
   const eventLinkLine = payload.attach_event_id
     ? `Привʼязка події: ${payload.attach_event_title || payload.attach_event_id} (${payload.attach_event_id})\n`
     : '';
@@ -319,14 +341,22 @@ function buildSubmissionAdminText(submission) {
   const providerLine = submission.kind === 'service' && (provider.type || provider.name || provider.contact_person)
     ? `Постачальник: ${provider.type || 'person'}${provider.name ? ` · ${provider.name}` : ''}${provider.contact_person ? ` · контакт: ${provider.contact_person}` : ''}\n`
     : '';
+  const entityLine = entity.url || entity.title || entity.key
+    ? `Сутність: ${entity.title || entity.key || 'без назви'}${entity.url ? `\nЛінк: ${buildPublicUrl(entity.url)}` : ''}\n`
+    : '';
+  const sourceLine = payload.source ? `Джерело: ${payload.source}\n` : '';
 
   return `🧩 Заявка: ${config.label.toUpperCase()}\n\n` +
+    `Тип: ${submissionModeLabel(payload.mode)}\n` +
     `Статус: ${submissionStatusLabel(status)}\n` +
     `ID: ${submission.id}\n` +
     `Автор: ${author.name || 'n/a'} (@${author.username || 'n/a'}, TG ${submission.telegram_id || author.id || 'n/a'})\n` +
+    `Профіль/чат автора: tg://user?id=${submission.telegram_id || author.id || ''}\n` +
+    sourceLine +
     eventLinkLine +
     selectedDateLine +
     providerLine +
+    entityLine +
     `Назва: ${submission.title}\n\n` +
     `Опис:\n${compactText(submission.description, 1000)}\n\n` +
     `Деталі / час / ціна / лінки:\n${compactText(submission.details, 1000)}\n\n` +
@@ -1321,6 +1351,7 @@ async function finishContentSubmission(ctx) {
 
 let notificationWorkerBusy = false;
 let projectRequestWorkerBusy = false;
+let platformSubmissionWorkerBusy = false;
 
 async function markNotification(id, patch) {
   const { error } = await supabase
@@ -1427,6 +1458,91 @@ function startNotificationWorker() {
   console.log(`[Bot] Notification worker polling every ${NOTIFICATION_POLL_MS}ms`);
   setTimeout(processDueNotifications, 5000);
   setInterval(processDueNotifications, NOTIFICATION_POLL_MS);
+}
+
+function shouldNotifyAdminAboutSubmission(submission) {
+  const payload = submission.payload || {};
+  const source = payload.source || '';
+
+  if (payload.admin_notified_at) return false;
+  return ['cabinet', 'platform_entity', 'community', 'openmic_page'].includes(source);
+}
+
+async function markSubmissionAdminNotification(submission, patch) {
+  const payload = {
+    ...(submission.payload || {}),
+    ...patch
+  };
+
+  const { error } = await supabase
+    .from('submissions')
+    .update({
+      payload,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', submission.id);
+
+  if (error) console.error('[Bot] Submission notification mark error:', error);
+}
+
+async function processPlatformSubmissionNotification(submission) {
+  try {
+    await bot.telegram.sendMessage(
+      ADMIN_CHAT_ID,
+      buildSubmissionAdminText(submission),
+      submissionActionKeyboard(submission.id)
+    );
+
+    await markSubmissionAdminNotification(submission, {
+      admin_notified_at: new Date().toISOString(),
+      admin_notify_error: null
+    });
+  } catch (err) {
+    console.error('[Bot] Platform submission admin notification error:', err);
+    await markSubmissionAdminNotification(submission, {
+      admin_notify_attempted_at: new Date().toISOString(),
+      admin_notify_error: err.message || 'telegram_send_failed'
+    });
+  }
+}
+
+async function processPlatformSubmissionNotifications() {
+  if (platformSubmissionWorkerBusy) return;
+  platformSubmissionWorkerBusy = true;
+
+  try {
+    const { data: submissions, error } = await supabase
+      .from('submissions')
+      .select('id, kind, title, description, details, submitted_by, telegram_id, status, payload, created_at, updated_at')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: true })
+      .limit(40);
+
+    if (error) {
+      console.error('[Bot] Platform submission notification fetch error:', error);
+      return;
+    }
+
+    const visible = (submissions || []).filter(shouldNotifyAdminAboutSubmission);
+    for (const submission of visible) {
+      await processPlatformSubmissionNotification(submission);
+    }
+  } catch (err) {
+    console.error('[Bot] Platform submission notification worker error:', err);
+  } finally {
+    platformSubmissionWorkerBusy = false;
+  }
+}
+
+function startPlatformSubmissionWorker() {
+  if (!Number.isFinite(PLATFORM_SUBMISSION_POLL_MS) || PLATFORM_SUBMISSION_POLL_MS <= 0) {
+    console.log('[Bot] Platform submission worker disabled');
+    return;
+  }
+
+  console.log(`[Bot] Platform submission worker polling every ${PLATFORM_SUBMISSION_POLL_MS}ms`);
+  setTimeout(processPlatformSubmissionNotifications, 9000);
+  setInterval(processPlatformSubmissionNotifications, PLATFORM_SUBMISSION_POLL_MS);
 }
 
 function resolveProjectMasterChatIds(request) {
@@ -1555,6 +1671,7 @@ function startProjectRequestWorker() {
 bot.launch().then(() => {
   console.log('[Bot] Launch successful');
   startNotificationWorker();
+  startPlatformSubmissionWorker();
   startProjectRequestWorker();
 });
 

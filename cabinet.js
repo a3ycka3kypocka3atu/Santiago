@@ -12,25 +12,25 @@
     profile: {
       title: 'Редагування профілю',
       defaultTitle: 'Редагування профілю майстра',
-      hint: 'Напишіть, що треба змінити або додати у вашому профілі: біографія, практики, посилання, фото, формулювання.',
+      hint: 'Напишіть, що треба змінити або додати у вашому профілі. Текст піде адміну, заявка зʼявиться в admin cabinet, бот повідомить адміна, а статус прийде вам у Telegram.',
       placeholder: 'Наприклад: додати новий опис практики, замінити біографію, оновити посилання...'
     },
     service: {
       title: 'Нова послуга',
       defaultTitle: '',
-      hint: 'Опишіть нову послугу так, щоб адмін міг оформити її на платформі. Вкажіть, хто її надає: людина чи проєкт/команда.',
+      hint: 'Опишіть нову послугу так, щоб адмін міг оформити її на платформі. Текст піде адміну, бот повідомить адміна, а після публікації статус прийде вам у Telegram.',
       placeholder: 'Формат, тривалість, ціна, для кого, що людина отримує, public/club/internal...\nprovider_type: person або project\nprovider_name: назва людини або проєкту\nprovider_slug: короткий ключ\ncontact_person: якщо provider_type project'
     },
     event: {
       title: 'Нова подія',
       defaultTitle: '',
-      hint: 'Опишіть подію або формат. Адмін перевірить текст і створить її у календарі.',
+      hint: 'Опишіть подію або формат. Адмін отримає заявку, створить/опублікує її у календарі, а статус прийде вам у Telegram.',
       placeholder: 'Тема, дата/час, тривалість, місце, ціна, ліміт, хто веде, опис для сторінки...'
     },
     project: {
       title: 'Новий проєкт',
       defaultTitle: '',
-      hint: 'Опишіть проєкт, серію або колаборацію. Адмін оформить її на платформі вручну.',
+      hint: 'Опишіть проєкт, серію або колаборацію. Заявка піде адміну в кабінет і в бот, а після рішення статус прийде вам у Telegram.',
       placeholder: 'Ідея, ціль, формат, команда, матеріали, посилання, що має зʼявитися на платформі...'
     }
   };
@@ -168,9 +168,21 @@
       service: 'Послуга',
       project: 'Проєкт',
       event: 'Подія',
-      openmic: 'Open Mic'
+      openmic: 'Open Mic',
+      role_application: 'Стати майстром'
     };
     return labels[kind] || kind || 'Заявка';
+  }
+
+  function submissionModeLabel(mode) {
+    const labels = {
+      create_new: 'створення',
+      profile_edit: 'зміна профілю',
+      edit_existing: 'зміна існуючого',
+      create_event_from_calendar: 'подія з календаря',
+      apply_role: 'стати майстром'
+    };
+    return labels[mode] || mode || '';
   }
 
   function emptyState(text) {
@@ -282,7 +294,7 @@
       });
       if (error) throw error;
 
-      setRequestStatus('Заявку надіслано адміну.', 'success');
+      setRequestStatus('Заявку надіслано адміну. Вона зʼявиться в admin cabinet, бот повідомить адміна, а статус прийде вам у Telegram.', 'success');
       renderSubmissions(user);
       setTimeout(closeMasterRequest, 650);
     } catch (err) {
@@ -296,8 +308,16 @@
     }
   }
 
-  function renderCabinetFavorites() {
+  function canShowCabinetFavorites(user) {
+    return ['visitor', 'resident', 'instructor'].includes(getEffectiveRole(user));
+  }
+
+  function renderCabinetFavorites(user = getAuthUser()) {
+    const section = document.querySelector('.cabinet-favorites');
     const container = document.getElementById('cabinet-favorites-list');
+    const shouldShow = canShowCabinetFavorites(user);
+    if (section) section.hidden = !shouldShow;
+    if (!shouldShow) return;
     if (window.MA3Favorites && container && !container.closest('[hidden]')) {
       window.MA3Favorites.renderCabinet(container);
     }
@@ -527,6 +547,10 @@
         const author = [submission.author_name, submission.author_username ? `@${submission.author_username}` : '']
           .filter(Boolean)
           .join(' · ');
+        const mode = submissionModeLabel(submission.mode);
+        const entity = [submission.entity_title, submission.entity_url]
+          .filter(Boolean)
+          .join(' · ');
         const canAct = ['pending', 'needs_info'].includes(status);
         return `
           <article class="cabinet-data-item" data-admin-submission="${escapeHtml(submission.id)}">
@@ -534,7 +558,9 @@
               <h4 class="cabinet-data-item__title">${escapeHtml(submission.title)}</h4>
               <span class="cabinet-status-pill cabinet-status-pill--${escapeHtml(status)}">${escapeHtml(statusLabel(status))}</span>
             </div>
-            <p class="cabinet-data-item__meta">${escapeHtml(submissionKindLabel(submission.kind))} · ${escapeHtml(author || 'Автор')} · ${escapeHtml(formatDate(submission.created_at))}</p>
+            <p class="cabinet-data-item__meta">${escapeHtml([submissionKindLabel(submission.kind), mode, author || 'Автор', formatDate(submission.created_at)].filter(Boolean).join(' · '))}</p>
+            ${entity ? `<p class="cabinet-data-item__meta">${escapeHtml(entity)}</p>` : ''}
+            ${submission.telegram_id ? `<a class="cabinet-action" href="tg://user?id=${escapeHtml(submission.telegram_id)}">Відкрити автора в Telegram</a>` : ''}
             ${submission.description ? `<p class="cabinet-data-item__text">${escapeHtml(submission.description)}</p>` : ''}
             ${submission.details && submission.details !== submission.description ? `<p class="cabinet-data-item__text">${escapeHtml(submission.details)}</p>` : ''}
             <div class="cabinet-data-item__actions">
@@ -599,7 +625,7 @@
   function initCabinet() {
     const user = getAuthUser();
     updateRoleSections(user);
-    renderCabinetFavorites();
+    renderCabinetFavorites(user);
     renderOperationalData(user);
 
     document.querySelectorAll('[data-cabinet-view]').forEach((button) => {
@@ -620,7 +646,7 @@
           masterViewRole = requestedRole;
         }
         updateRoleSections(current);
-        renderCabinetFavorites();
+        renderCabinetFavorites(current);
         renderOperationalData(current);
       });
     });
@@ -683,7 +709,7 @@
 
   document.addEventListener('ma3-auth-changed', (event) => {
     updateRoleSections(event.detail);
-    renderCabinetFavorites();
+    renderCabinetFavorites(event.detail);
     renderOperationalData(event.detail);
   });
 

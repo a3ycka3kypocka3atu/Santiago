@@ -151,6 +151,10 @@
       .replace(/[^a-z0-9-]/g, '');
   }
 
+  function normalizeOwnerKey(value) {
+    return normalizeProvider(value).replace(/-/g, '');
+  }
+
   function getProviderType(service) {
     return service.provider_type === 'project' ? 'project' : 'person';
   }
@@ -447,6 +451,18 @@
           <span class="preview-master">${escapeHtml(getProviderLabel(service))}</span>
           <div class="preview-card__actions">
             <button class="preview-favorite" type="button" aria-label="В избранное"></button>
+            <button class="preview-card__edit" type="button" hidden
+              data-submission-request="service"
+              data-submission-mode="edit_existing"
+              data-submission-modal-title="Змінити послугу"
+              data-submission-title="Зміна послуги: ${escapeHtml(getServiceTitle(service))}"
+              data-submission-entity-title="${escapeHtml(getServiceTitle(service))}"
+              data-submission-entity-url="${escapeHtml(detailPage)}"
+              data-submission-entity-key="${escapeHtml(service.slug)}"
+              data-entity-owner-key="${escapeHtml(normalizeOwnerKey(getProviderSlug(service)))}"
+              data-entity-contact-key="${escapeHtml(normalizeOwnerKey(service.contact_person || service.instructor_name || ''))}">
+              <span>Змінити</span>
+            </button>
             <button class="preview-card__book" type="button" data-service-book>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
               <span>${getServiceActionLabel(service)}</span>
@@ -535,6 +551,7 @@
 
     requestAnimationFrame(() => {
       allCards.forEach(card => card.classList.add('visible'));
+      if (window.MA3SubmissionRequests) window.MA3SubmissionRequests.refreshEditButtons();
     });
   }
 
@@ -783,6 +800,7 @@
     currentUser = e.detail || currentUser;
     refreshCardText();
     updateBookingLoginState();
+    if (window.MA3SubmissionRequests) window.MA3SubmissionRequests.refreshEditButtons();
   });
 
   document.addEventListener('click', (e) => {

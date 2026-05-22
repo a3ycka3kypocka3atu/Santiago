@@ -205,6 +205,15 @@
     return value[currentLang] || value[DEFAULT_LANG] || Object.values(value)[0] || '';
   }
 
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   function label(path) {
     const dictionary = labels[currentLang] || labels[DEFAULT_LANG];
     return path.split('.').reduce((acc, part) => acc && acc[part], dictionary) || path;
@@ -244,6 +253,18 @@
         <p class="preview-desc">${localize(event.desc)}</p>
         <div class="preview-card__footer">
           <span class="preview-master">${label('ownerPrefix')}: ${event.owner}</span>
+          <button class="preview-card__edit" type="button" hidden
+            data-submission-request="event"
+            data-submission-mode="edit_existing"
+            data-submission-modal-title="Змінити подію"
+            data-submission-title="Зміна події: ${escapeHtml(localize(event.title))}"
+            data-submission-entity-title="${escapeHtml(localize(event.title))}"
+            data-submission-entity-url="${escapeHtml(event.url)}"
+            data-submission-entity-key="${escapeHtml(event.slug)}"
+            data-entity-owner-key="${escapeHtml(event.ownerKey)}"
+            data-entity-contact-key="${escapeHtml(event.ownerKey)}">
+            <span>Змінити</span>
+          </button>
           <a class="preview-card__cta" href="${event.url}">
             <span>${label('details')}</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
@@ -285,6 +306,7 @@
     grid.style.display = 'grid';
     if (empty) empty.style.display = 'none';
     visible.forEach(event => grid.appendChild(createCard(event)));
+    if (window.MA3SubmissionRequests) window.MA3SubmissionRequests.refreshEditButtons();
   }
 
   function setText(selector, value) {
@@ -403,6 +425,10 @@
   document.addEventListener('ma3-lang-change', event => {
     currentLang = event.detail?.lang || detectLanguage();
     render();
+  });
+
+  document.addEventListener('ma3-auth-changed', () => {
+    if (window.MA3SubmissionRequests) window.MA3SubmissionRequests.refreshEditButtons();
   });
 
   document.addEventListener('click', event => {

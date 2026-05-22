@@ -184,6 +184,10 @@
   margin-top: 42px;
 }
 
+.cabinet-favorites[hidden] {
+  display: none !important;
+}
+
 .cabinet-favorites__header {
   display: grid;
   gap: 8px;

@@ -7,8 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=5" />
-  <link rel="stylesheet" href="favorites.css?v=3" />
+  <link rel="stylesheet" href="style.css?v=10" />
+  <link rel="stylesheet" href="favorites.css?v=4" />
   <style>
     .cabinet-page {
       padding: 100px 20px 60px;
@@ -633,6 +633,10 @@
       border-color: rgba(95, 255, 224, 0.5);
       box-shadow: 0 0 0 3px rgba(95, 255, 224, 0.1);
     }
+    .cabinet-request-form input:focus::placeholder,
+    .cabinet-request-form textarea:focus::placeholder {
+      color: transparent;
+    }
     .cabinet-request-form__hint,
     .cabinet-request-form__status {
       margin: 0;
@@ -1164,7 +1168,7 @@
   <script src="auth.js?v=6"></script>
   <script src="menu.js?v=10"></script>
   <script src="favorites.js?v=2"></script>
-  <script src="cabinet.js?v=11"></script>
+  <script src="cabinet.js?v=12"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const body = document.body;

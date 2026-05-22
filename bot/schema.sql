@@ -144,7 +144,7 @@ ALTER TABLE public.subscription_notifications ENABLE ROW LEVEL SECURITY;
 -- 9. SUBMISSIONS TABLE
 CREATE TABLE IF NOT EXISTS public.submissions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    kind TEXT NOT NULL CHECK (kind IN ('profile', 'service', 'project', 'event', 'openmic')),
+    kind TEXT NOT NULL CHECK (kind IN ('profile', 'service', 'project', 'event', 'openmic', 'role_application')),
     title TEXT NOT NULL,
     description TEXT,
     details TEXT,
