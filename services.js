@@ -172,16 +172,12 @@
     if (!providerName) return '';
     const labels = {
       person: { ru: 'Мастер', en: 'Provider', cz: 'Poskytovatel', ua: 'Майстер' },
-      project: { ru: 'Проект / команда', en: 'Project / team', cz: 'Projekt / tým', ua: 'Проєкт / команда' },
-      contact: { ru: 'мастер проекта', en: 'project master', cz: 'mistr projektu', ua: 'майстер проєкту' }
+      project: { ru: 'Услуга от проекта', en: 'Service from project', cz: 'Služba od projektu', ua: 'Послуга від проєкту' }
     };
     const type = getProviderType(service);
     const dictionary = labels[type] || labels.person;
     const prefix = dictionary[currentLang] || dictionary.en;
-    const contact = service.contact_person && type === 'project'
-      ? ` · ${(labels.contact[currentLang] || labels.contact.en)}: ${service.contact_person}`
-      : '';
-    return `${prefix}: ${providerName}${contact}`;
+    return `${prefix}: ${providerName}`;
   }
 
   function getServiceSortTitle(service) {
