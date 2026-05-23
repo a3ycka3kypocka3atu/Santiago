@@ -336,8 +336,7 @@ function submissionActionKeyboard(submissionOrId) {
 
   rows.push(
     [
-      Markup.button.callback(approveLabel, `submission_approve_${submissionId}`),
-      Markup.button.callback('↩️ Треба інфо', `submission_needs_info_${submissionId}`)
+      Markup.button.callback(approveLabel, `submission_approve_${submissionId}`)
     ],
     rejectRow
   );
@@ -348,7 +347,6 @@ function submissionActionKeyboard(submissionOrId) {
 function submissionStatusLabel(status) {
   const labels = {
     pending: 'Очікує',
-    needs_info: 'Треба інфо',
     approved: 'В роботі',
     rejected: 'Відхилено',
     published: 'Опубліковано',
@@ -416,12 +414,8 @@ function buildSubmissionUserMessage(workflowStatus, adminMessage, publishedUrl, 
       return '✨ Вашу заявку майстра схвалено. Тепер ви — Майстер Santiago. Відкрийте кабінет, щоб платформа оновила ваш доступ.';
     }
 
-    if (workflowStatus === 'needs_info') {
-      return `↩️ По заявці майстра потрібно трохи більше інформації.${adminMessage ? `\n\nКоментар адміна:\n${adminMessage}` : ''}`;
-    }
-
     if (workflowStatus === 'rejected') {
-      return `❌ Зараз заявку майстра не схвалено.${adminMessage ? `\n\nКоментар адміна:\n${adminMessage}` : ''}`;
+      return adminMessage || '❌ Зараз заявку майстра не схвалено.';
     }
   }
 
@@ -429,16 +423,12 @@ function buildSubmissionUserMessage(workflowStatus, adminMessage, publishedUrl, 
     return '✅ Вашу заявку прийнято в роботу. Адмін оформить матеріали на сайті і напише, коли буде готово.';
   }
 
-  if (workflowStatus === 'needs_info') {
-    return `↩️ По вашій заявці потрібно трохи більше інформації.${adminMessage ? `\n\nКоментар адміна:\n${adminMessage}` : ''}`;
-  }
-
   if (workflowStatus === 'rejected') {
-    return `❌ Зараз заявку не беремо в публікацію.${adminMessage ? `\n\nКоментар адміна:\n${adminMessage}` : ''}`;
+    return adminMessage || '❌ Зараз заявку не беремо в публікацію.';
   }
 
   if (workflowStatus === 'published') {
-    return `🔗 Готово, матеріал опубліковано.${publishedUrl ? `\n\nПосилання: ${publishedUrl}` : ''}${adminMessage ? `\n\nКоментар адміна:\n${adminMessage}` : ''}`;
+    return adminMessage || publishedUrl || '🔗 Готово, матеріал опубліковано.';
   }
 
   return adminMessage || 'Статус заявки оновлено.';
@@ -448,6 +438,12 @@ function statusToDbStatus(workflowStatus) {
   if (workflowStatus === 'rejected') return 'rejected';
   if (workflowStatus === 'approved' || workflowStatus === 'published') return 'approved';
   return 'pending';
+}
+
+function isReplyToBotMessage(ctx) {
+  const reply = ctx.message && ctx.message.reply_to_message;
+  const botId = ctx.botInfo && ctx.botInfo.id;
+  return Boolean(reply && reply.from && reply.from.is_bot && (!botId || reply.from.id === botId));
 }
 
 function extractFirstUrl(text) {
@@ -702,7 +698,7 @@ async function listPendingSubmissions(ctx) {
 
   const visible = (data || []).filter((submission) => {
     const status = getSubmissionDisplayStatus(submission);
-    return ['pending', 'needs_info', 'approved'].includes(status);
+    return ['pending', 'approved'].includes(status);
   });
 
   if (!visible.length) {
@@ -727,6 +723,7 @@ async function updateSubmissionWorkflow(submissionId, workflowStatus, options = 
   if (options.adminMessage) payload.admin_message = options.adminMessage;
   if (options.publishedUrl) payload.published_url = options.publishedUrl;
   if (options.roleGranted) payload.role_granted = options.roleGranted;
+  if (options.awaitingCommentReply !== undefined) payload.awaiting_comment_reply = options.awaitingCommentReply;
 
   const { data, error } = await supabase
     .from('submissions')
@@ -747,14 +744,60 @@ async function notifySubmissionOwner(submission, workflowStatus, adminMessage, p
   if (!submission.telegram_id) return;
 
   try {
+    const replyMarkup = adminMessage ? Markup.forceReply() : portalLoginKeyboard(submission.telegram_id, 'Відкрити кабінет');
     await bot.telegram.sendMessage(
       submission.telegram_id,
       buildSubmissionUserMessage(workflowStatus, adminMessage, publishedUrl, submission),
-      portalLoginKeyboard(submission.telegram_id, 'Відкрити кабінет')
+      replyMarkup
     );
   } catch (err) {
     console.warn('[Bot] Could not notify submission owner:', err.message);
   }
+}
+
+async function fetchAwaitingCommentReplySubmission(telegramId) {
+  const { data, error } = await supabase
+    .from('submissions')
+    .select('id, payload, telegram_id')
+    .eq('telegram_id', telegramId)
+    .contains('payload', { awaiting_comment_reply: true })
+    .order('updated_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error('[Bot] Comment reply lookup error:', error);
+    return null;
+  }
+
+  return data || null;
+}
+
+async function finishUserCommentReply(ctx) {
+  const replyText = (ctx.message.text || ctx.message.caption || '').trim();
+  if (!replyText || !isReplyToBotMessage(ctx) || isAdminContext(ctx)) return false;
+
+  const submission = await fetchAwaitingCommentReplySubmission(ctx.from.id);
+  if (!submission) return false;
+
+  const payload = {
+    ...(submission.payload || {}),
+    awaiting_comment_reply: false,
+    user_comment_reply: replyText,
+    user_comment_reply_at: new Date().toISOString()
+  };
+
+  const { error } = await supabase
+    .from('submissions')
+    .update({ payload, updated_at: new Date().toISOString() })
+    .eq('id', submission.id);
+
+  if (error) {
+    console.error('[Bot] Comment reply save error:', error);
+  }
+
+  await bot.telegram.sendMessage(ADMIN_CHAT_ID, replyText);
+  return true;
 }
 
 async function approveRoleApplicationSubmission(ctx, submission) {
@@ -781,7 +824,8 @@ async function approveRoleApplicationSubmission(ctx, submission) {
   const updated = await updateSubmissionWorkflow(submission.id, 'approved', {
     adminId: ctx.from.id,
     adminMessage: 'Роль майстра підтверджено.',
-    roleGranted: 'instructor'
+    roleGranted: 'instructor',
+    awaitingCommentReply: false
   });
 
   await notifySubmissionOwner(updated, 'approved');
@@ -796,7 +840,8 @@ async function approveSubmission(ctx, submissionId) {
   }
 
   const updated = await updateSubmissionWorkflow(submissionId, 'approved', {
-    adminId: ctx.from.id
+    adminId: ctx.from.id,
+    awaitingCommentReply: false
   });
 
   await notifySubmissionOwner(updated, 'approved');
@@ -805,7 +850,6 @@ async function approveSubmission(ctx, submissionId) {
 
 async function startSubmissionResponse(ctx, submissionId, workflowStatus) {
   const prompts = {
-    needs_info: 'Напишіть повідомлення для автора: що саме потрібно додати?',
     rejected: 'Напишіть коротку причину відмови для автора.',
     published: 'Надішліть фінальний лінк на сторінку. Можна додати коментар у цьому ж повідомленні.'
   };
@@ -835,7 +879,8 @@ async function finishAdminSubmissionResponse(ctx, text) {
   const updated = await updateSubmissionWorkflow(submissionId, workflowStatus, {
     adminId: ctx.from.id,
     adminMessage,
-    publishedUrl
+    publishedUrl,
+    awaitingCommentReply: Boolean(adminMessage)
   });
 
   await notifySubmissionOwner(updated, workflowStatus, adminMessage, publishedUrl);
@@ -1069,7 +1114,7 @@ bot.action(/reject_role_(\d+)/, async (ctx) => {
   ctx.answerCbQuery();
 });
 
-bot.action(/submission_(approve|reject|needs_info|published)_([0-9a-f-]+)/, async (ctx) => {
+bot.action(/submission_(approve|reject|published)_([0-9a-f-]+)/, async (ctx) => {
   if (!isAdminContext(ctx)) {
     return ctx.answerCbQuery('Тільки для адміна/master.', { show_alert: true });
   }
@@ -1120,6 +1165,11 @@ bot.action(/event_type_(public|club|internal)/, async (ctx) => {
 
 // Mentor application can be text, a file, a photo, or any Telegram message with a caption.
 bot.on('message', async (ctx, next) => {
+  if (!ctx.session || !ctx.session.state) {
+    const handledCommentReply = await finishUserCommentReply(ctx);
+    if (handledCommentReply) return;
+  }
+
   if (ctx.session && ctx.session.state === 'admin_submission_response' && !ctx.message.text) {
     await ctx.reply('Для відповіді автору потрібен текст або лінк. Надішліть, будь ласка, текстовим повідомленням.');
     return;
