@@ -10,6 +10,8 @@
   let titleEl;
   let introEl;
   let titleWrap;
+  let titleLabelEl;
+  let textLabelEl;
   let titleInput;
   let textInput;
   let submitButton;
@@ -25,6 +27,26 @@
     event: 'події',
     role_application: 'заявки на майстра'
   };
+
+  const SUPPORTED_LANGS = ['en', 'cz', 'ru', 'ua'];
+  const DEFAULT_LANG = 'ru';
+
+  function getCurrentLanguage() {
+    const stored = localStorage.getItem('language') || localStorage.getItem('ma3-lang');
+    return SUPPORTED_LANGS.includes(stored) ? stored : DEFAULT_LANG;
+  }
+
+  function t(key) {
+    const translations = window.translations || {};
+    const lang = getCurrentLanguage();
+    return (translations[lang] && translations[lang][key]) ||
+      (translations[DEFAULT_LANG] && translations[DEFAULT_LANG][key]) ||
+      key;
+  }
+
+  function isClubApplication(kind, mode) {
+    return kind === 'role_application' && mode === 'apply_club';
+  }
 
   const OWNER_ALIASES = {
     andrisav: 'andrijpycha',
@@ -122,21 +144,21 @@
     wrapper.innerHTML = `
       <div class="submission-request-backdrop" data-submission-close></div>
       <div class="submission-request-dialog">
-        <button class="submission-request-close" type="button" data-submission-close aria-label="Close">x</button>
+        <button class="submission-request-close" type="button" data-submission-close aria-label="${escapeHtml(t('submission.close'))}">x</button>
         <h2 id="submission-request-title"></h2>
         <p class="submission-request-intro" id="submission-request-intro"></p>
         <form class="submission-request-form" id="submission-request-form">
           <label class="submission-request-title-wrap" id="submission-request-title-wrap">
-            <span>Назва</span>
+            <span id="submission-request-title-label">${escapeHtml(t('submission.label.title'))}</span>
             <input id="submission-request-title-input" type="text" />
           </label>
           <label>
-            <span>Текст для адміна</span>
+            <span id="submission-request-text-label">${escapeHtml(t('submission.label.details'))}</span>
             <textarea id="submission-request-text" rows="7" required></textarea>
           </label>
           <div class="submission-request-actions">
-            <button class="submission-request-submit" id="submission-request-submit" type="submit">Надіслати адміну</button>
-            <a class="submission-request-login" id="submission-request-login" href="${LOGIN_URL}" target="_blank" rel="noopener" hidden>Увійти через Telegram</a>
+            <button class="submission-request-submit" id="submission-request-submit" type="submit">${escapeHtml(t('submission.submit.default'))}</button>
+            <a class="submission-request-login" id="submission-request-login" href="${LOGIN_URL}" target="_blank" rel="noopener" hidden>${escapeHtml(t('submission.login'))}</a>
           </div>
           <p class="submission-request-status" id="submission-request-status" role="status" aria-live="polite"></p>
         </form>
@@ -150,6 +172,8 @@
     titleEl = document.getElementById('submission-request-title');
     introEl = document.getElementById('submission-request-intro');
     titleWrap = document.getElementById('submission-request-title-wrap');
+    titleLabelEl = document.getElementById('submission-request-title-label');
+    textLabelEl = document.getElementById('submission-request-text-label');
     titleInput = document.getElementById('submission-request-title-input');
     textInput = document.getElementById('submission-request-text');
     submitButton = document.getElementById('submission-request-submit');
@@ -183,14 +207,16 @@
   }
 
   function getDefaultTitle(kind, mode, entityTitle) {
-    if (kind === 'role_application') return 'Заявка стати майстром';
+    if (isClubApplication(kind, mode)) return t('submission.club.defaultTitle');
+    if (kind === 'role_application') return t('submission.master.defaultTitle');
     if (mode === 'edit_existing') return `Зміна ${KIND_LABELS[kind] || 'сутності'}: ${entityTitle || ''}`.trim();
     return `Нова ${KIND_LABELS[kind] || 'заявка'}`;
   }
 
   function getDefaultIntro(kind, mode, entityTitle) {
+    if (isClubApplication(kind, mode)) return t('submission.club.intro');
     if (kind === 'role_application') {
-      return 'Напишіть, чому ви хочете стати майстром Santiago і що можете давати людям. Адмін отримає заявку в Telegram-боті.';
+      return t('submission.master.intro');
     }
     if (mode === 'edit_existing') {
       return `Опишіть, що треба змінити${entityTitle ? ` у "${entityTitle}"` : ''}. Адмін отримає автора, текст і посилання на сутність у Telegram-боті. Якщо треба файл, надішліть його через бота.`;
@@ -199,8 +225,9 @@
   }
 
   function getDefaultPlaceholder(kind, mode) {
+    if (isClubApplication(kind, mode)) return t('submission.club.placeholder');
     if (kind === 'role_application') {
-      return 'Хто ви, який досвід маєте, які формати хочете вести, посилання на портфоліо/соцмережі, чим можете бути корисні Santiago...';
+      return t('submission.master.placeholder');
     }
     if (mode === 'edit_existing') {
       return 'Що саме змінити: текст, ціну, дату, формат, опис, посилання, статус, видимість public/club/internal...';
@@ -223,14 +250,17 @@
       entityKey: options.entityKey || ''
     };
 
-    const modalTitle = options.modalTitle || (kind === 'role_application' ? 'Стати майстром' : (mode === 'edit_existing' ? 'Змінити сутність' : 'Нова заявка'));
+    const modalTitle = options.modalTitle || (isClubApplication(kind, mode) ? t('submission.club.modalTitle') : (kind === 'role_application' ? t('submission.master.modalTitle') : (mode === 'edit_existing' ? 'Змінити сутність' : 'Нова заявка')));
     const defaultTitle = options.defaultTitle || getDefaultTitle(kind, mode, entityTitle);
     const intro = options.intro || getDefaultIntro(kind, mode, entityTitle);
     const placeholder = options.placeholder || getDefaultPlaceholder(kind, mode);
+    const isClub = isClubApplication(kind, mode);
 
     if (titleEl) titleEl.textContent = modalTitle;
     if (introEl) introEl.textContent = intro;
     if (titleInput) titleInput.value = defaultTitle;
+    if (titleLabelEl) titleLabelEl.textContent = t('submission.label.title');
+    if (textLabelEl) textLabelEl.textContent = isClub ? t('submission.label.clubDetails') : t('submission.label.details');
     if (titleWrap) titleWrap.hidden = kind === 'role_application';
     if (textInput) {
       textInput.value = '';
@@ -238,7 +268,11 @@
       savedPlaceholder = placeholder;
     }
     if (loginLink) loginLink.hidden = true;
-    if (submitButton) submitButton.disabled = false;
+    if (loginLink) loginLink.textContent = t('submission.login');
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = isClub ? t('submission.submit.club') : t('submission.submit.default');
+    }
     setStatus('', '');
 
     popup.hidden = false;
@@ -266,18 +300,18 @@
     const details = textInput ? textInput.value.trim() : '';
 
     if (!details) {
-      setStatus('Напишіть текст для адміна.', 'error');
+      setStatus(t('submission.status.empty'), 'error');
       return;
     }
 
     if (!user || !user.isLoggedIn || !user.id) {
-      setStatus('Спочатку увійдіть через Telegram, щоб адмін бачив автора заявки.', 'error');
+      setStatus(t('submission.status.loginRequired'), 'error');
       if (loginLink) loginLink.hidden = false;
       return;
     }
 
     if (!window.supabaseClient) {
-      setStatus('Сервіс заявок поки недоступний. Спробуйте через Telegram.', 'error');
+      setStatus(t('submission.status.serviceUnavailable'), 'error');
       if (loginLink) loginLink.hidden = false;
       return;
     }
@@ -285,7 +319,7 @@
     const originalText = submitButton ? submitButton.textContent : '';
     if (submitButton) {
       submitButton.disabled = true;
-      submitButton.textContent = 'Надсилаємо...';
+      submitButton.textContent = t('submission.status.sending');
     }
 
     try {
@@ -302,14 +336,14 @@
       });
       if (error) throw error;
 
-      setStatus('Заявку надіслано адміну в Telegram-бот.', 'success');
+      setStatus(t('submission.status.sent'), 'success');
       setTimeout(closePopup, 1100);
     } catch (err) {
       console.warn('[SubmissionRequests] Request failed:', err);
-      setStatus('Не вдалося надіслати заявку. Перевірте вхід через Telegram або оновлення бази.', 'error');
+      setStatus(t('submission.status.failed'), 'error');
       if (submitButton) submitButton.disabled = false;
     } finally {
-      if (submitButton) submitButton.textContent = originalText || 'Надіслати адміну';
+      if (submitButton) submitButton.textContent = originalText || t('submission.submit.default');
     }
   }
 

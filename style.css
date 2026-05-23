@@ -2912,6 +2912,10 @@ body.grayscale-mode .preview-card {
   line-height: 1.55;
 }
 
+.submission-request-intro {
+  white-space: pre-line;
+}
+
 .submission-request-form {
   display: grid;
   gap: 14px;
