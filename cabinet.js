@@ -12,25 +12,25 @@
     profile: {
       title: 'Редагування профілю',
       defaultTitle: 'Редагування профілю майстра',
-      hint: 'Напишіть, що треба змінити або додати у вашому профілі. Текст піде адміну, заявка зʼявиться в admin cabinet, бот повідомить адміна, а статус прийде вам у Telegram.',
+      hint: 'Напишіть, що треба змінити або додати у вашому профілі. Текст піде адміну в Telegram-бот.',
       placeholder: 'Наприклад: додати новий опис практики, замінити біографію, оновити посилання...'
     },
     service: {
       title: 'Нова послуга',
       defaultTitle: '',
-      hint: 'Опишіть нову послугу так, щоб адмін міг оформити її на платформі. Текст піде адміну, бот повідомить адміна, а після публікації статус прийде вам у Telegram.',
+      hint: 'Опишіть нову послугу так, щоб адмін міг оформити її на платформі. Текст піде адміну в Telegram-бот.',
       placeholder: 'Формат, тривалість, ціна, для кого, що людина отримує, public/club/internal...\nprovider_type: person або project\nprovider_name: назва людини або проєкту\nprovider_slug: короткий ключ\ncontact_person: якщо provider_type project'
     },
     event: {
       title: 'Нова подія',
       defaultTitle: '',
-      hint: 'Опишіть подію або формат. Адмін отримає заявку, створить/опублікує її у календарі, а статус прийде вам у Telegram.',
+      hint: 'Опишіть подію або формат. Адмін отримає заявку в Telegram-боті.',
       placeholder: 'Тема, дата/час, тривалість, місце, ціна, ліміт, хто веде, опис для сторінки...'
     },
     project: {
       title: 'Новий проєкт',
       defaultTitle: '',
-      hint: 'Опишіть проєкт, серію або колаборацію. Заявка піде адміну в кабінет і в бот, а після рішення статус прийде вам у Telegram.',
+      hint: 'Опишіть проєкт, серію або колаборацію. Заявка піде адміну в Telegram-бот.',
       placeholder: 'Ідея, ціль, формат, команда, матеріали, посилання, що має зʼявитися на платформі...'
     }
   };
@@ -54,12 +54,12 @@
     instructor: {
       label: 'Master',
       title: 'Кабінет майстра',
-      text: 'Доступні заявки майстра на профіль, послуги, події, проєкти та майбутній робочий простір.'
+      text: 'Доступні інструменти майстра для профілю, послуг, подій і проєктів.'
     },
     admin: {
       label: 'Admin',
       title: 'Адмін-центр Santiago',
-      text: 'Доступні всі рольові блоки та підготовлений простір для заявок, користувачів і контенту.'
+      text: 'Доступні всі рольові блоки, користувачі і контент. Заявки адмініструються в Telegram-боті.'
     }
   };
 
@@ -85,9 +85,9 @@
   const MASTER_VIEW_COPY = {
     instructor: {
       title: 'Кабінет майстра — ваші інструменти',
-      text: 'Тут зібрані заявки, профіль, послуги, події та проєкти, які майстер передає адміну в роботу.',
+      text: 'Тут зібрані профіль, послуги, події та проєкти. Нові запити надсилаються адміну в Telegram.',
       header: 'Кабінет майстра',
-      headerText: 'Робоча зона для профілю, послуг, подій, проєктів і заявок. Майстер може почати дію з кабінету або календаря.'
+      headerText: 'Робоча зона для профілю, послуг, подій і проєктів. Майстер може почати дію з кабінету або календаря.'
     },
     resident: {
       title: 'Кабінет майстра — простір учасника клубу',
@@ -172,17 +172,6 @@
       role_application: 'Стати майстром'
     };
     return labels[kind] || kind || 'Заявка';
-  }
-
-  function submissionModeLabel(mode) {
-    const labels = {
-      create_new: 'створення',
-      profile_edit: 'зміна профілю',
-      edit_existing: 'зміна існуючого',
-      create_event_from_calendar: 'подія з календаря',
-      apply_role: 'стати майстром'
-    };
-    return labels[mode] || mode || '';
   }
 
   function emptyState(text) {
@@ -294,8 +283,7 @@
       });
       if (error) throw error;
 
-      setRequestStatus('Заявку надіслано адміну. Вона зʼявиться в admin cabinet, бот повідомить адміна, а статус прийде вам у Telegram.', 'success');
-      renderSubmissions(user);
+      setRequestStatus('Заявку надіслано адміну в Telegram-бот.', 'success');
       setTimeout(closeMasterRequest, 650);
     } catch (err) {
       console.warn('[Cabinet] Master request failed:', err);
@@ -523,103 +511,13 @@
     }
   }
 
-  async function renderAdminSubmissions(user) {
-    const container = document.getElementById('cabinet-admin-submissions-list');
-    if (!container) return;
-    if (!user || !user.isLoggedIn || !user.id || !window.supabaseClient) {
-      container.innerHTML = emptyState('Увійдіть як адмін, щоб побачити заявки.');
-      return;
-    }
-
-    try {
-      const { data, error } = await window.supabaseClient.rpc('get_admin_submissions', {
-        p_user_id: user.id
-      });
-      if (error) throw error;
-
-      if (!data || !data.length) {
-        container.innerHTML = emptyState('Нових заявок немає.');
-        return;
-      }
-
-      container.innerHTML = data.map((submission) => {
-        const status = submission.display_status || submission.status;
-        const author = [submission.author_name, submission.author_username ? `@${submission.author_username}` : '']
-          .filter(Boolean)
-          .join(' · ');
-        const mode = submissionModeLabel(submission.mode);
-        const entity = [submission.entity_title, submission.entity_url]
-          .filter(Boolean)
-          .join(' · ');
-        const canAct = ['pending', 'needs_info'].includes(status);
-        return `
-          <article class="cabinet-data-item" data-admin-submission="${escapeHtml(submission.id)}">
-            <div class="cabinet-data-item__top">
-              <h4 class="cabinet-data-item__title">${escapeHtml(submission.title)}</h4>
-              <span class="cabinet-status-pill cabinet-status-pill--${escapeHtml(status)}">${escapeHtml(statusLabel(status))}</span>
-            </div>
-            <p class="cabinet-data-item__meta">${escapeHtml([submissionKindLabel(submission.kind), mode, author || 'Автор', formatDate(submission.created_at)].filter(Boolean).join(' · '))}</p>
-            ${entity ? `<p class="cabinet-data-item__meta">${escapeHtml(entity)}</p>` : ''}
-            ${submission.telegram_id ? `<a class="cabinet-action" href="tg://user?id=${escapeHtml(submission.telegram_id)}">Відкрити автора в Telegram</a>` : ''}
-            ${submission.description ? `<p class="cabinet-data-item__text">${escapeHtml(submission.description)}</p>` : ''}
-            ${submission.details && submission.details !== submission.description ? `<p class="cabinet-data-item__text">${escapeHtml(submission.details)}</p>` : ''}
-            <div class="cabinet-data-item__actions">
-              ${canAct ? `<button class="cabinet-action" type="button" data-admin-submission-action="approved" data-submission-id="${escapeHtml(submission.id)}">Approve</button>` : ''}
-              ${canAct ? `<button class="cabinet-action" type="button" data-admin-submission-action="needs_info" data-submission-id="${escapeHtml(submission.id)}">Треба інфо</button>` : ''}
-              ${canAct ? `<button class="cabinet-action" type="button" data-admin-submission-action="rejected" data-submission-id="${escapeHtml(submission.id)}">Reject</button>` : ''}
-            </div>
-          </article>
-        `;
-      }).join('');
-    } catch (err) {
-      console.warn('[Cabinet] Admin submissions unavailable:', err);
-      container.innerHTML = emptyState('Заявки адміна зʼявляться після оновлення бази.');
-    }
-  }
-
-  async function updateAdminSubmission(event) {
-    const button = event.target.closest('[data-admin-submission-action]');
-    if (!button) return;
-
-    const user = getAuthUser();
-    const submissionId = button.dataset.submissionId;
-    const workflowStatus = button.dataset.adminSubmissionAction;
-    const originalText = button.textContent;
-
-    if (!submissionId || !workflowStatus || !window.supabaseClient) return;
-    button.disabled = true;
-    button.textContent = '...';
-
-    try {
-      const { error } = await window.supabaseClient.rpc('update_admin_submission_status', {
-        p_user_id: user.id,
-        p_submission_id: submissionId,
-        p_workflow_status: workflowStatus,
-        p_admin_message: null,
-        p_published_url: null
-      });
-      if (error) throw error;
-      renderAdminSubmissions(user);
-    } catch (err) {
-      console.warn('[Cabinet] Admin submission update failed:', err);
-      button.disabled = false;
-      button.textContent = originalText;
-    }
-  }
-
   function renderOperationalData(user) {
-    const actualRole = normalizeRole(user);
     const role = getEffectiveRole(user);
     renderBookings(user);
 
     if (role === 'instructor') {
       renderSubmissions(user);
     }
-
-    if (role === 'admin') {
-      renderAdminSubmissions(user);
-    }
-
   }
 
   function initCabinet() {
@@ -696,11 +594,6 @@
       requestForm.addEventListener('submit', submitMasterRequest);
     }
 
-    const adminList = document.getElementById('cabinet-admin-submissions-list');
-    if (adminList && !adminList.__ma3AdminSubmissionBound) {
-      adminList.__ma3AdminSubmissionBound = true;
-      adminList.addEventListener('click', updateAdminSubmission);
-    }
   }
 
   document.addEventListener('DOMContentLoaded', () => {

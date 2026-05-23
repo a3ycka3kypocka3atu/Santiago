@@ -190,12 +190,12 @@
 
   function getDefaultIntro(kind, mode, entityTitle) {
     if (kind === 'role_application') {
-      return 'Напишіть, чому ви хочете стати майстром Santiago і що можете давати людям. Адмін побачить заявку в кабінеті, а бот надішле йому повідомлення.';
+      return 'Напишіть, чому ви хочете стати майстром Santiago і що можете давати людям. Адмін отримає заявку в Telegram-боті.';
     }
     if (mode === 'edit_existing') {
-      return `Опишіть, що треба змінити${entityTitle ? ` у "${entityTitle}"` : ''}. Адмін побачить автора, текст і посилання на сутність, а після рішення статус прийде вам у Telegram. Якщо треба файл, надішліть його через бота.`;
+      return `Опишіть, що треба змінити${entityTitle ? ` у "${entityTitle}"` : ''}. Адмін отримає автора, текст і посилання на сутність у Telegram-боті. Якщо треба файл, надішліть його через бота.`;
     }
-    return 'Опишіть, що треба створити. Текст піде адміну в кабінет, бот надішле адміну повідомлення, а після публікації статус прийде вам у Telegram. Якщо треба файл, надішліть його через бота.';
+    return 'Опишіть, що треба створити. Текст піде адміну в Telegram-бот. Якщо треба файл, надішліть його через бота.';
   }
 
   function getDefaultPlaceholder(kind, mode) {
@@ -302,7 +302,7 @@
       });
       if (error) throw error;
 
-      setStatus('Заявку надіслано адміну. Вона зʼявиться в admin cabinet, бот повідомить адміна, а статус прийде вам у Telegram.', 'success');
+      setStatus('Заявку надіслано адміну в Telegram-бот.', 'success');
       setTimeout(closePopup, 1100);
     } catch (err) {
       console.warn('[SubmissionRequests] Request failed:', err);

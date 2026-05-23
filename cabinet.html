@@ -924,13 +924,13 @@
           <div class="cabinet-section__header-text">
             <span class="cabinet-section__eyebrow">Master</span>
             <h2 id="cabinet-master-title">Кабінет майстра</h2>
-            <p id="cabinet-master-text">Робоча зона для профілю, послуг, подій, проєктів і заявок. Майстер може почати дію з кабінету або календаря.</p>
+            <p id="cabinet-master-text">Робоча зона для профілю, послуг, подій і проєктів. Майстер може почати дію з кабінету або календаря.</p>
           </div>
         </div>
         <div class="cabinet-view-switch cabinet-view-switch--master" data-cabinet-view-switch="master" hidden aria-label="Master cabinet view switch">
           <div class="cabinet-view-switch__copy">
             <strong id="cabinet-master-switch-title">Кабінет майстра — ваші інструменти</strong>
-            <span id="cabinet-master-switch-text">Тут зібрані заявки, профіль, послуги, події та проєкти, які майстер передає адміну в роботу.</span>
+            <span id="cabinet-master-switch-text">Тут зібрані профіль, послуги, події та проєкти. Нові запити надсилаються адміну в Telegram.</span>
           </div>
           <div class="cabinet-view-switch__buttons">
             <button class="cabinet-view-switch__button is-active" type="button" data-cabinet-view="instructor">Master tools</button>
@@ -1025,27 +1025,10 @@
           <div class="cabinet-section__header-text">
             <span class="cabinet-section__eyebrow">Admin</span>
             <h2 id="cabinet-admin-title">Адмін-центр</h2>
-            <p>Підготовлений простір для заявок, користувачів, подій, контенту і approve/reject. Повну логіку підключаємо наступним етапом.</p>
+            <p>Адмін бачить рольові блоки, користувачів і контент. Заявки з платформи та бота приходять адміну в Telegram.</p>
           </div>
         </div>
         <div class="cabinet-role-grid">
-          <article class="cabinet-role-card cabinet-role-card--admin">
-            <div class="cabinet-role-card__top">
-              <span class="cabinet-role-card__icon">
-                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M9 11 12 14 22 4"></path>
-                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                </svg>
-              </span>
-              <span class="cabinet-role-card__state cabinet-role-card__state--next">Далі</span>
-            </div>
-            <h3>Заявки</h3>
-            <p>Список заявок з `submissions`, перегляд деталей, approve/reject і повідомлення в Telegram.</p>
-            <div class="cabinet-role-card__actions">
-              <a class="cabinet-action" href="#cabinet-admin-submissions-list">Відкрити заявки</a>
-            </div>
-          </article>
-
           <article class="cabinet-role-card cabinet-role-card--admin">
             <div class="cabinet-role-card__top">
               <span class="cabinet-role-card__icon">
@@ -1085,12 +1068,6 @@
             </div>
           </article>
         </div>
-        <div class="cabinet-data-panel">
-          <h3 class="cabinet-data-panel__title">Заявки платформи</h3>
-          <div id="cabinet-admin-submissions-list" class="cabinet-data-list">
-            <div class="favorites-empty">Завантажуємо заявки...</div>
-          </div>
-        </div>
       </section>
     </div>
 
@@ -1113,7 +1090,7 @@
       </div>
       <form class="cabinet-request-form" id="cabinet-request-form">
         <input type="hidden" id="cabinet-request-kind" />
-        <p class="cabinet-request-form__hint" id="cabinet-request-hint">Опишіть, що треба створити або змінити. Адмін отримає текст у заявках.</p>
+        <p class="cabinet-request-form__hint" id="cabinet-request-hint">Опишіть, що треба створити або змінити. Адмін отримає текст у Telegram-боті.</p>
         <label id="cabinet-request-title-wrap">
           Назва
           <input id="cabinet-request-title-input" name="title" autocomplete="off" />
