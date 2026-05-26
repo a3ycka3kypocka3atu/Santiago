@@ -6141,9 +6141,11 @@ body.calendar-page:not(.grayscale-mode) .filter-tab.active {
 
 body.calendar-page:not(.grayscale-mode) .comm-hero h1,
 body.calendar-page:not(.grayscale-mode) .comm-section .gallery-header h2,
-body.calendar-page:not(.grayscale-mode) .audience-card h2 {
+body.calendar-page:not(.grayscale-mode) .audience-card h2,
+body.calendar-page:not(.grayscale-mode) .ecosystem-box h3 {
   color: var(--text-day) !important;
   text-shadow: none !important;
+  -webkit-text-fill-color: currentColor !important;
 }
 
 body.calendar-page:not(.grayscale-mode) .comm-hero p,
@@ -6162,6 +6164,14 @@ body.calendar-page:not(.grayscale-mode) .ecosystem-box {
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.48)) !important;
   border-color: rgba(39, 58, 105, 0.14) !important;
   box-shadow: 0 18px 48px rgba(39, 58, 105, 0.11);
+}
+
+body.calendar-page:not(.grayscale-mode) .roles-header {
+  width: min(100%, 920px);
+}
+
+body.calendar-page:not(.grayscale-mode) .ecosystem-mark {
+  color: #057c69;
 }
 
 body.calendar-page:not(.grayscale-mode) .comm-card h3 {
