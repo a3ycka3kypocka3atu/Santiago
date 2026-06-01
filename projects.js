@@ -222,6 +222,29 @@
       }
     },
     {
+      slug: 'violetta-womens-circles',
+      icon: '🌙',
+      category: 'community',
+      status: 'active',
+      format: 'offline',
+      priority: 9,
+      url: 'profile-violetta.html',
+      owner: 'Violetta Blago',
+      masters: ['Violetta Blago'],
+      title: {
+        ru: 'Женский клуб и круги в Праге',
+        en: "Women's Club and Circles in Prague",
+        cz: 'Ženský klub a kruhy v Praze',
+        ua: 'Жіночий клуб і кола в Празі'
+      },
+      desc: {
+        ru: 'Еженедельные женские круги и чайные церемонии для расслабления, наполнения энергией, поддержки и честного разговора в безопасном женском пространстве.',
+        en: 'Weekly women’s circles and tea ceremonies for relaxation, replenishment, support, and honest conversation in a safe women’s space.',
+        cz: 'Týdenní ženské kruhy a čajové ceremonie pro uvolnění, doplnění energie, podporu a upřímný rozhovor v bezpečném ženském prostoru.',
+        ua: 'Щотижневі жіночі кола та чайні церемонії для розслаблення, наповнення енергією, підтримки й чесної розмови в безпечному жіночому просторі.'
+      }
+    },
+    {
       slug: 'ethical-automation-agency',
       icon: '⚙️',
       category: 'digital',

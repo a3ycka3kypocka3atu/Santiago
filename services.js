@@ -646,6 +646,34 @@
         detail_page: 'offer-katerina.html'
       },
       {
+        slug: 'lila-violetta',
+        title: 'services.violetta.lila.name',
+        description: 'services.violetta.lila.short',
+        price: 'services.violetta.lila.price',
+        icon_emoji: '🎲',
+        category: 'mind',
+        format: 'individual',
+        instructor_name: 'Violetta Blago',
+        provider_type: 'person',
+        provider_name: 'Violetta Blago',
+        provider_slug: 'violettablago',
+        detail_page: 'profile-violetta.html'
+      },
+      {
+        slug: 'constellations-violetta',
+        title: 'services.violetta.constellations.name',
+        description: 'services.violetta.constellations.short',
+        price: 'services.violetta.constellations.price',
+        icon_emoji: '🌀',
+        category: 'mind',
+        format: 'individual',
+        instructor_name: 'Violetta Blago',
+        provider_type: 'person',
+        provider_name: 'Violetta Blago',
+        provider_slug: 'violettablago',
+        detail_page: 'profile-violetta.html'
+      },
+      {
         slug: 'purpose-brand-discovery',
         title: 'services.andrij.purpose.name',
         description: 'services.andrij.purpose.short',
@@ -714,7 +742,7 @@
     const params = new URLSearchParams(window.location.search);
     const providerParam = params.get('provider') || params.get('instructor');
     if (providerParam) {
-      const providerAliases = { andrij: 'andrijpycha', ivan: 'ivanprotinak' };
+      const providerAliases = { andrij: 'andrijpycha', ivan: 'ivanprotinak', violetta: 'violettablago' };
       const providerValue = providerAliases[providerParam] || providerParam;
       const providerSelect = document.getElementById('provider-filter');
       const hasOption = providerSelect && Array.from(providerSelect.options).some(option => option.value === providerValue);
