@@ -3,19 +3,174 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Пространство Santiago</title>
-  <link rel="stylesheet" href="style.css?v=9" />
+  <meta name="description" content="Пространства Santiago Way: студия, залы, партнёрские заведения, коливинг и цифровая среда сообщества." />
+  <title>Пространства | Сантьяго</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=10" />
 </head>
 <body>
+  <div class="bg-clouds">
+    <div class="cloud-global c1"></div>
+    <div class="cloud-global c2"></div>
+    <div class="cloud-global c3"></div>
+  </div>
+
+  <a href="index.html" class="top-logo-container" aria-label="На главную" title="На главную">
+    <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" class="top-logo-svg">
+      <g stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="100" cy="90" r="50"/><line x1="100" y1="15" x2="100" y2="30"/><line x1="135" y1="25" x2="125" y2="40"/><line x1="165" y1="50" x2="150" y2="60"/><line x1="180" y1="90" x2="165" y2="90"/><line x1="65" y1="25" x2="75" y2="40"/><line x1="35" y1="50" x2="50" y2="60"/><line x1="20" y1="90" x2="35" y2="90"/>
+        <circle cx="100" cy="80" r="14"/><path d="M100 70 Q105 76 100 87 Q94 80 100 70" fill="currentColor" stroke="none"/>
+        <line x1="100" y1="65" x2="100" y2="40"/><line x1="115" y1="80" x2="140" y2="80"/><line x1="85" y1="80" x2="60" y2="80"/>
+        <line x1="52" y1="105" x2="148" y2="105"/>
+        <path d="M98 105 Q115 115 90 125 T95 140 L105 140 Q85 125 110 115 T103 105 Z" fill="currentColor" stroke="none"/>
+      </g>
+      <text x="100" y="180" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="28" fill="currentColor" letter-spacing="2">SANTIAGO</text>
+      <text x="100" y="205" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="14" fill="currentColor" letter-spacing="6">WAY</text>
+    </svg>
+  </a>
+
+  <a href="shop.html" class="home-icon" aria-label="Магазин" title="Магазин">
+    <svg viewBox="0 0 24 24" width="34" height="34" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="svg-home">
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path>
+    </svg>
+  </a>
+
+  <div class="desktop-controls">
+    <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" title="Login via Telegram">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
+      <span class="tg-text">Login via Telegram</span>
+    </a>
+
+    <div class="lang-switcher">
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="cz">CZ</button>
+      <button class="lang-btn" data-lang="ru">RU</button>
+      <button class="lang-btn" data-lang="ua">UA</button>
+    </div>
+
+    <button class="theme-toggle theme-toggle-btn" title="Toggle theme">
+      <span class="icon-sun">☀️</span>
+      <span class="icon-moon">🌙</span>
+      <span class="toggle-thumb"></span>
+    </button>
+
+    <button class="menu-trigger" aria-label="Open menu">☰</button>
+  </div>
+
   <main class="page-wrapper">
     <div class="gallery-header">
-      <h1>Пространство Santiago</h1>
-      <p>Страница пространства готовится. Здесь позже появятся фотографии, атмосфера, условия аренды и форматы встреч.</p>
-      <div class="cta-group" style="margin-top: 28px;">
-        <a href="community.html#community-roles" class="cta btn-primary">Стать мастером / членом клуба / гостем</a>
-        <a href="index.html" class="cta btn-primary">На главную</a>
+      <h1 data-i18n="spaces.page.title">Пространства Santiago</h1>
+      <p data-i18n="spaces.page.desc">Каталог мест экосистемы: студия, залы, партнёрские заведения, коливинг и цифровые пространства для встреч, практик и проектов.</p>
+    </div>
+
+    <div class="services-filters" id="spaces-filters">
+      <div class="filter-group">
+        <div class="filter-label" data-i18n="filter.type">Тип</div>
+        <div class="filter-tabs" role="tablist" aria-label="Space type">
+          <button class="filter-tab active" data-filter="type" data-value="all" role="tab" aria-selected="true" data-i18n="filter.all">Все</button>
+          <button class="filter-tab" data-filter="type" data-value="studio" role="tab" aria-selected="false" data-i18n="filter.studio">Студии</button>
+          <button class="filter-tab" data-filter="type" data-value="venue" role="tab" aria-selected="false" data-i18n="filter.venue">Заведения</button>
+          <button class="filter-tab" data-filter="type" data-value="living" role="tab" aria-selected="false" data-i18n="filter.living">Коливинг</button>
+          <button class="filter-tab" data-filter="type" data-value="digital" role="tab" aria-selected="false" data-i18n="filter.digital">Цифровое</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label" data-i18n="filter.format">Формат</div>
+        <div class="filter-tabs" role="tablist" aria-label="Space format">
+          <button class="filter-tab active" data-filter="format" data-value="all" role="tab" aria-selected="true" data-i18n="filter.all">Все</button>
+          <button class="filter-tab" data-filter="format" data-value="practice" role="tab" aria-selected="false" data-i18n="filter.practice">Практики</button>
+          <button class="filter-tab" data-filter="format" data-value="events" role="tab" aria-selected="false" data-i18n="filter.events">События</button>
+          <button class="filter-tab" data-filter="format" data-value="rent" role="tab" aria-selected="false" data-i18n="filter.rent">Аренда</button>
+          <button class="filter-tab" data-filter="format" data-value="residential" role="tab" aria-selected="false" data-i18n="filter.residential">Жизнь</button>
+        </div>
+      </div>
+      <div class="filter-group filter-group--instructor">
+        <div class="filter-label" data-i18n="filter.city">Город</div>
+        <div class="filter-select-wrap">
+          <select class="filter-select" id="spaces-city-filter" aria-label="Select space city">
+            <option value="all" data-i18n="filter.allCities">Все города</option>
+            <option value="praha">Praha</option>
+            <option value="online" data-i18n="filter.online">Онлайн</option>
+          </select>
+          <svg class="select-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="filter-group filter-group--instructor">
+        <div class="filter-label" data-i18n="filter.sort">Сортировка</div>
+        <div class="filter-select-wrap">
+          <select class="filter-select" id="spaces-sort" aria-label="Sort spaces">
+            <option value="priority" data-i18n="filter.sortPriority">По приоритету</option>
+            <option value="title" data-i18n="filter.sortTitle">По названию</option>
+            <option value="status" data-i18n="filter.sortStatus">По статусу</option>
+          </select>
+          <svg class="select-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
       </div>
     </div>
+
+    <div class="services-empty" id="spaces-empty" hidden>
+      <div class="services-empty__icon">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6"/></svg>
+      </div>
+      <p class="services-empty__text" data-i18n="spaces.empty.text">По этим критериям пространств не найдено</p>
+      <button class="services-empty__reset" id="spaces-reset-filters" data-i18n="services.empty.reset">Сбросить фильтры</button>
+    </div>
+
+    <div class="gallery-grid" id="spaces-grid"></div>
   </main>
+
+  <nav class="quick-menu" aria-label="Navigation">
+    <ul>
+      <li><a href="index.html" data-i18n="nav.home">Главная</a></li>
+      <li><a href="services.html" data-i18n="nav.offers">Продукты и услуги</a></li>
+      <li><a href="events.html" data-i18n="nav.events">События</a></li>
+      <li><a href="masters.html" data-i18n="nav.partners">Партнёры</a></li>
+      <li><a href="projects.html" data-i18n="nav.projects">Проекты</a></li>
+      <li><a href="space.html" data-i18n="nav.spaces">Пространства</a></li>
+      <li><a href="community.html" data-i18n="nav.club">Клуб</a></li>
+      <li><a href="openmic.html" data-i18n="nav.openmic">Open Mic</a></li>
+      <li><a href="shop.html" data-i18n="nav.shop">Shop</a></li>
+    </ul>
+
+    <div class="menu-controls">
+      <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" style="width: 100%; justify-content: center; margin-bottom: 1rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
+        <span class="tg-text">Login via Telegram</span>
+      </a>
+
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="cz">CZ</button>
+        <button class="lang-btn" data-lang="ru">RU</button>
+        <button class="lang-btn" data-lang="ua">UA</button>
+      </div>
+
+      <button class="theme-toggle theme-toggle-btn" title="Toggle theme">
+        <span class="icon-sun">☀️</span>
+        <span class="icon-moon">🌙</span>
+        <span class="toggle-thumb"></span>
+      </button>
+    </div>
+  </nav>
+
+  <footer class="footer">
+    <p data-i18n="footer.text">© 2026 Сантьяго – Цифровой Дзен. Все права защищены.</p>
+  </footer>
+
+  <script src="translations.js?v=11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="auth.js?v=6"></script>
+  <script src="menu.js?v=10"></script>
+  <script src="spaces.js?v=1"></script>
+  <script>
+    const themeToggles = document.querySelectorAll('.theme-toggle-btn');
+    if (localStorage.getItem('grayscale') === 'enabled') document.body.classList.add('grayscale-mode');
+    themeToggles.forEach(t => t.addEventListener('click', () => {
+      document.body.classList.toggle('grayscale-mode');
+      localStorage.setItem('grayscale', document.body.classList.contains('grayscale-mode') ? 'enabled' : 'disabled');
+    }));
+  </script>
 </body>
 </html>

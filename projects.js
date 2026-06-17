@@ -9,7 +9,7 @@
 
   const labels = {
     ru: {
-      category: { space: 'Пространство', community: 'Комьюнити', incubator: 'Инкубатор', media: 'Медиа', education: 'Школа', living: 'Коливинг', digital: 'Digital' },
+      category: { space: 'Пространства', community: 'Комьюнити', incubator: 'Инкубатор', media: 'Медиа', education: 'Школа', living: 'Коливинг', digital: 'Digital' },
       status: { active: 'Активный', building: 'В сборке', concept: 'Концепт' },
       format: { offline: 'Офлайн', online: 'Онлайн', hybrid: 'Гибрид', residential: 'Совместный быт' },
       ownerPrefix: 'Куратор',
@@ -17,7 +17,7 @@
       details: 'Подробнее'
     },
     en: {
-      category: { space: 'Space', community: 'Community', incubator: 'Incubator', media: 'Media', education: 'School', living: 'Coliving', digital: 'Digital' },
+      category: { space: 'Spaces', community: 'Community', incubator: 'Incubator', media: 'Media', education: 'School', living: 'Coliving', digital: 'Digital' },
       status: { active: 'Active', building: 'Building', concept: 'Concept' },
       format: { offline: 'Offline', online: 'Online', hybrid: 'Hybrid', residential: 'Shared Living' },
       ownerPrefix: 'Curator',
@@ -25,7 +25,7 @@
       details: 'Learn More'
     },
     cz: {
-      category: { space: 'Prostor', community: 'Komunita', incubator: 'Inkubátor', media: 'Média', education: 'Škola', living: 'Coliving', digital: 'Digital' },
+      category: { space: 'Prostory', community: 'Komunita', incubator: 'Inkubátor', media: 'Média', education: 'Škola', living: 'Coliving', digital: 'Digital' },
       status: { active: 'Aktivní', building: 'Ve vývoji', concept: 'Koncept' },
       format: { offline: 'Offline', online: 'Online', hybrid: 'Hybrid', residential: 'Společné bydlení' },
       ownerPrefix: 'Kurátor',
@@ -33,7 +33,7 @@
       details: 'Více informací'
     },
     ua: {
-      category: { space: 'Простір', community: 'Спільнота', incubator: 'Інкубатор', media: 'Медіа', education: 'Школа', living: 'Колівінг', digital: 'Digital' },
+      category: { space: 'Простори', community: 'Спільнота', incubator: 'Інкубатор', media: 'Медіа', education: 'Школа', living: 'Колівінг', digital: 'Digital' },
       status: { active: 'Активний', building: 'У збірці', concept: 'Концепт' },
       format: { offline: 'Офлайн', online: 'Онлайн', hybrid: 'Гібрид', residential: 'Спільний побут' },
       ownerPrefix: 'Куратор',
@@ -50,7 +50,7 @@
       status: 'active',
       format: 'offline',
       priority: 1,
-      url: 'community.html',
+      url: 'space.html',
       owner: 'Santiago Way',
       title: {
         ru: 'Пространство Santiago',
