@@ -2255,29 +2255,19 @@ window.translations = {
 const MA3_LANGUAGE_KEY = 'language';
 const MA3_LEGACY_LANGUAGE_KEY = 'ma3-lang';
 const MA3_SUPPORTED_LANGS = ['en', 'cz', 'ru', 'ua'];
-const MA3_DEFAULT_LANG = 'ru';
+const MA3_DEFAULT_LANG = 'en';
 
 function getPreferredLanguage() {
-  const stored = localStorage.getItem(MA3_LANGUAGE_KEY);
-  if (stored && MA3_SUPPORTED_LANGS.includes(stored)) return stored;
-
-  const legacy = localStorage.getItem(MA3_LEGACY_LANGUAGE_KEY);
-  if (legacy && MA3_SUPPORTED_LANGS.includes(legacy)) {
-    localStorage.setItem(MA3_LANGUAGE_KEY, legacy);
-    return legacy;
-  }
-
   return MA3_DEFAULT_LANG;
 }
 
-function persistLanguage(lang) {
-  if (!MA3_SUPPORTED_LANGS.includes(lang)) return;
-  localStorage.setItem(MA3_LANGUAGE_KEY, lang);
-  localStorage.setItem(MA3_LEGACY_LANGUAGE_KEY, lang);
+function persistLanguage() {
+  localStorage.setItem(MA3_LANGUAGE_KEY, MA3_DEFAULT_LANG);
+  localStorage.setItem(MA3_LEGACY_LANGUAGE_KEY, MA3_DEFAULT_LANG);
 }
 
 window.applyTranslations = function(lang) {
-  const safeLang = MA3_SUPPORTED_LANGS.includes(lang) ? lang : MA3_DEFAULT_LANG;
+  const safeLang = MA3_DEFAULT_LANG;
   const t = translations[safeLang] || translations[MA3_DEFAULT_LANG];
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
@@ -2291,6 +2281,7 @@ window.applyTranslations = function(lang) {
 document.addEventListener('DOMContentLoaded', () => {
   const currentLang = getPreferredLanguage();
   persistLanguage(currentLang);
+  document.documentElement.lang = MA3_DEFAULT_LANG;
   window.applyTranslations(currentLang);
 
   // Highlight active lang button in ALL language switchers
@@ -2302,13 +2293,12 @@ document.addEventListener('DOMContentLoaded', () => {
 // Setup lang switchers globally
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('lang-btn')) {
-    const lang = e.target.getAttribute('data-lang');
-    persistLanguage(lang);
-    window.applyTranslations(lang);
+    persistLanguage(MA3_DEFAULT_LANG);
+    window.applyTranslations(MA3_DEFAULT_LANG);
 
     // Update active UI in ALL lang switchers
     document.querySelectorAll('.lang-btn').forEach(b => {
-      b.classList.toggle('active', b.dataset.lang === lang);
+      b.classList.toggle('active', b.dataset.lang === MA3_DEFAULT_LANG);
     });
   }
 });

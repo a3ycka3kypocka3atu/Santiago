@@ -5,7 +5,7 @@
 
   const TELEGRAM_BOT_URL = 'https://t.me/santioago_bot';
   const STORAGE_KEY = 'language';
-  const DEFAULT_LANG = 'ru';
+  const DEFAULT_LANG = 'en';
   const SUPPORTED = ['en', 'cz', 'ru', 'ua'];
 
   let popup;
@@ -102,10 +102,6 @@
   };
 
   function detectLanguage() {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored && SUPPORTED.includes(stored)) return stored;
-    } catch (err) {}
     return DEFAULT_LANG;
   }
 

@@ -1,14 +1,14 @@
 {
   "name": "ma3-studio-bot",
   "version": "1.0.0",
-  "description": "Telegram bot for Santiago management",
+  "description": "Telegram request delivery for the Lumeya public MVP",
   "main": "bot.js",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node bot.js",
+    "test:public-mvp": "node tests/live-public-mvp.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
-    "axios": "^1.16.0",
     "dotenv": "^16.3.1",
     "telegraf": "^4.15.3"
   }

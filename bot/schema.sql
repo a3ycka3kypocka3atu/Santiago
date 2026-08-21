@@ -1400,3 +1400,7 @@ CREATE INDEX IF NOT EXISTS idx_services_category ON public.services(category);
 CREATE INDEX IF NOT EXISTS idx_services_format ON public.services(format);
 CREATE INDEX IF NOT EXISTS idx_services_provider_type ON public.services(provider_type);
 CREATE INDEX IF NOT EXISTS idx_services_provider_slug ON public.services(provider_slug);
+-- Lumeya database baseline (migration 0001).
+-- This file is not a deployable final state by itself. Apply every numbered
+-- migration through 0016_public_discovery_security.sql before exposing a Data
+-- API. The final migration revokes the legacy browser identity/private RPCs.

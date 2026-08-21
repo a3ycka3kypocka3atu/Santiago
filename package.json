@@ -1,0 +1,23 @@
+{
+  "name": "santiago-way",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Santiago Way — developer verification tooling only. The production frontend remains static HTML/CSS/JS with no build step.",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "verify": "node verify/run.js",
+    "verify:pages": "node verify/run.js --pages",
+    "verify:links": "node verify/run.js --links",
+    "verify:assets": "node verify/run.js --assets",
+    "verify:js": "node verify/run.js --js",
+    "verify:static": "node verify/run.js --static",
+    "verify:mvp": "node verify/run.js --mvp",
+    "verify:journey": "node verify/run.js --journey",
+    "verify:security": "node verify/run.js --security",
+    "verify:secrets": "node verify/run.js --secrets",
+    "verify:smoke": "node verify/run.js --smoke",
+    "verify:static-only": "node verify/run.js --pages --links --assets --js --static --mvp --journey --security --secrets"
+  }
+}

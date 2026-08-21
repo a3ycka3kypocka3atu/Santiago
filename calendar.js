@@ -3,11 +3,9 @@
    Supabase Integration · Role-based Views · Event Management
    ═══════════════════════════════════════════════════════════ */
 
-// ── TELEGRAM AUTH CALLBACK (Must be global) ──
-window.onTelegramAuth = function(user) {
-  // Dispatch event to be handled inside our module
-  const event = new CustomEvent('ma3-telegram-auth', { detail: user });
-  document.dispatchEvent(event);
+// Browser authentication is deliberately dormant for the public MVP.
+window.onTelegramAuth = function() {
+  if (window.MA3Auth) window.MA3Auth.logout();
 };
 
 (function () {
@@ -25,6 +23,7 @@ window.onTelegramAuth = function(user) {
   let currentMonth = currentDate.getMonth();
   let selectedDay = null;
   let eventsCache = []; // All events for the current month
+  let eventsLoadState = 'loading'; // 'loading' | 'ready' | 'unavailable'
   let servicesCache = []; // Evergreen services for Always Available section
   let eventStatsCache = new Map(); // Public participation counts/names by event id
   let bookingStatusCache = new Map(); // Logged-in user's private booking state by event id
@@ -33,6 +32,7 @@ window.onTelegramAuth = function(user) {
   let preselectedInstructor = null; // Pre-filter from URL param ?instructor=NAME
   let showOnlyMyEvents = false;     // Pre-filter from URL param ?mine=1
   const TELEGRAM_BOT_URL = 'https://t.me/santioago_bot';
+  const EVENTS_UNAVAILABLE_TEXT = 'Events temporarily unavailable';
   const MASTER_DRAFT_EVENTS_KEY = 'ma3-master-calendar-drafts';
   const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   let masterEventMode = 'attach';
@@ -306,49 +306,10 @@ window.onTelegramAuth = function(user) {
   }
 
   async function refreshEventState() {
-    if (!sb || !eventsCache.length) {
-      eventStatsCache = new Map();
-      bookingStatusCache = new Map();
-      return;
-    }
-
-    const eventIds = [...new Set(eventsCache.map(event => getEventBaseId(event)).filter(isUuid))];
-    if (!eventIds.length) return;
-
-    try {
-      const { data, error } = await sb.rpc('get_event_public_stats', { p_event_ids: eventIds });
-      if (error) throw error;
-
-      eventStatsCache = new Map((data || []).map(row => [
-        row.event_id,
-        {
-          ...row,
-          participant_count: Number(row.participant_count || 0),
-          participants: Array.isArray(row.participants) ? row.participants : []
-        }
-      ]));
-    } catch (err) {
-      console.warn('[Calendar] Public event stats unavailable:', err.message || err);
-      eventStatsCache = new Map();
-    }
-
-    if (!currentUser.isLoggedIn || !currentUser.id) {
-      bookingStatusCache = new Map();
-      return;
-    }
-
-    try {
-      const { data, error } = await sb.rpc('get_profile_booking_status', {
-        p_user_id: currentUser.id,
-        p_event_ids: eventIds
-      });
-      if (error) throw error;
-
-      bookingStatusCache = new Map((data || []).map(row => [row.event_id, row.status]));
-    } catch (err) {
-      console.warn('[Calendar] Booking status unavailable:', err.message || err);
-      bookingStatusCache = new Map();
-    }
+    // Participation and booking state belong to the dormant authenticated
+    // platform. The public calendar intentionally does not query those RPCs.
+    eventStatsCache = new Map();
+    bookingStatusCache = new Map();
   }
 
   // ── MONTH NAMES (localized) ──
@@ -618,8 +579,6 @@ window.onTelegramAuth = function(user) {
   function getCurrentMasterOwnerKey() {
     const identity = normalizeOwnerText([
       currentUser && currentUser.name,
-      localStorage.getItem('ma3-user-name'),
-      localStorage.getItem('ma3-user-username'),
       preselectedInstructor
     ].filter(Boolean).join(' '));
 
@@ -1002,6 +961,16 @@ window.onTelegramAuth = function(user) {
   }
 
   function resetEventsPanel() {
+    if (eventsLoadState === 'unavailable') {
+      eventsPanelTitle.textContent = EVENTS_UNAVAILABLE_TEXT;
+      eventsList.innerHTML = `
+        <div class="events-empty" role="status">
+          <p>${EVENTS_UNAVAILABLE_TEXT}</p>
+        </div>
+      `;
+      return;
+    }
+
     const selectDayText = (typeof translations !== 'undefined' && translations[currentLang] && translations[currentLang].calSelectDay)
       ? translations[currentLang].calSelectDay
       : 'Select a day';
@@ -1023,8 +992,11 @@ window.onTelegramAuth = function(user) {
   // ═══════════════════════════════════════════════════════════
 
   async function fetchEventsForMonth() {
+    eventsLoadState = 'loading';
+
     if (!sb) {
       eventsCache = [];
+      eventsLoadState = 'unavailable';
     } else {
 
     const startOfMonth = new Date(currentYear, currentMonth, 1).toISOString();
@@ -1035,6 +1007,7 @@ window.onTelegramAuth = function(user) {
       let query = sb
         .from('events')
         .select('*')
+        .eq('type', 'public')
         .gte('start_time', startOfMonth)
         .lte('start_time', endOfMonth)
         .eq('status', 'confirmed')
@@ -1043,14 +1016,17 @@ window.onTelegramAuth = function(user) {
       const { data, error } = await query;
 
       if (error) {
-        console.warn('Supabase fetch error, showing empty calendar:', error.message);
+        console.warn('Supabase fetch error:', error.message);
         eventsCache = [];
+        eventsLoadState = 'unavailable';
       } else {
         eventsCache = data || [];
+        eventsLoadState = 'ready';
       }
     } catch (err) {
-      console.warn('Network error, showing empty calendar:', err);
+      console.warn('Calendar network error:', err);
       eventsCache = [];
+      eventsLoadState = 'unavailable';
     }
     } // end of else (sb exists)
 
@@ -1065,15 +1041,24 @@ window.onTelegramAuth = function(user) {
       eventsCache = eventsCache.filter(e => String(e.instructor_id || '') === String(currentUser.id));
     }
 
-    const localDrafts = getMasterDraftEventsForMonth();
-    if (localDrafts.length) {
-      const existingIds = new Set(eventsCache.map(event => String(event.id)));
-      eventsCache = eventsCache.concat(localDrafts.filter(event => !existingIds.has(String(event.id))));
+    if (eventsLoadState === 'ready') {
+      const localDrafts = getMasterDraftEventsForMonth();
+      if (localDrafts.length) {
+        const existingIds = new Set(eventsCache.map(event => String(event.id)));
+        eventsCache = eventsCache.concat(localDrafts.filter(event => !existingIds.has(String(event.id))));
+      }
+
+      await refreshEventState();
+    } else {
+      eventStatsCache.clear();
+      bookingStatusCache.clear();
     }
 
-    await refreshEventState();
     renderCalendar();
     renderUpcomingStrip();
+    if (selectedDay !== null || eventsLoadState === 'unavailable') {
+      renderEventsForDay(selectedDay);
+    }
   }
 
   async function fetchEvergreenServices() {
@@ -1166,6 +1151,11 @@ window.onTelegramAuth = function(user) {
   function renderUpcomingStrip() {
     if (!upcomingTrack) return;
     upcomingTrack.innerHTML = '';
+
+    if (eventsLoadState === 'unavailable') {
+      upcomingTrack.innerHTML = `<div class="upcoming-empty" role="status"><p>${EVENTS_UNAVAILABLE_TEXT}</p></div>`;
+      return;
+    }
 
     const now = new Date();
     const startOfMonth = new Date(currentYear, currentMonth, 1);
@@ -1263,6 +1253,16 @@ window.onTelegramAuth = function(user) {
   }
 
   function renderEventsForDay(day) {
+    if (eventsLoadState === 'unavailable') {
+      eventsPanelTitle.textContent = EVENTS_UNAVAILABLE_TEXT;
+      eventsList.innerHTML = `
+        <div class="events-empty" role="status">
+          <p>${EVENTS_UNAVAILABLE_TEXT}</p>
+        </div>
+      `;
+      return;
+    }
+
     const events = getEventsForDay(day);
     const monthNames = MONTH_NAMES[currentLang] || MONTH_NAMES.en;
 
@@ -1603,60 +1603,6 @@ window.onTelegramAuth = function(user) {
       guestCta.style.display = (currentUser.role === 'guest' || !currentUser.isLoggedIn) ? 'flex' : 'none';
     }
   }
-
-  // ═══════════════════════════════════════════════════════════
-  //  TELEGRAM AUTH HANDLER
-  // ═══════════════════════════════════════════════════════════
-
-  document.addEventListener('ma3-telegram-auth', async (e) => {
-    const user = e.detail;
-    if (!user || !sb) return;
-
-    try {
-      // 1. Try to fetch existing profile
-      let { data: profile, error: fetchError } = await sb
-        .from('profiles')
-        .select('*')
-        .eq('telegram_id', user.id)
-        .single();
-
-      if (fetchError && fetchError.code === 'PGRST116') {
-        // Profile doesn't exist, create guest
-        const fullName = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-        const { data: newProfile, error: insertError } = await sb
-          .from('profiles')
-          .insert({
-            telegram_id: user.id,
-            username: user.username,
-            full_name: fullName,
-            role: 'guest'
-          })
-          .select()
-          .single();
-
-        if (!insertError && newProfile) {
-          profile = newProfile;
-        }
-      }
-
-      if (profile) {
-        // Update local state
-        currentUser.id = profile.id;
-        currentUser.role = profile.role;
-        currentUser.name = profile.full_name;
-        currentUser.isLoggedIn = true;
-
-        localStorage.setItem('ma3-user-id', profile.id);
-        localStorage.setItem('ma3-user-role', profile.role);
-        localStorage.setItem('ma3-user-name', profile.full_name);
-
-        updateUserBadge();
-        fetchEventsForMonth(); // Refetch with new permissions
-      }
-    } catch (err) {
-      console.error('Auth sync error:', err);
-    }
-  });
 
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {

@@ -1,6 +1,6 @@
-# Santiago Telegram Bot
+# Lumeya Telegram Bot
 
-This is the backend controller for the Santiago scheduling and club management system.
+This bot currently provides Lumeya's public request notification path while legacy scheduling and club workflows remain dormant on the public website.
 
 ## Setup Instructions
 
@@ -32,6 +32,12 @@ ADMIN_CHAT_ID=your_telegram_id_here
 
 # Public URL for website login links sent by the bot.
 PUBLIC_SITE_URL=https://your-public-site.example
+
+# Optional worker interval; defaults to NOTIFICATION_POLL_MS or 60000
+PUBLIC_REQUEST_POLL_MS=60000
+
+# Required only for the disposable live public-MVP database test
+SUPABASE_PUBLISHABLE_KEY=your_publishable_key_here
 ```
 
 **⚠️ IMPORTANT:** For `SUPABASE_SERVICE_ROLE_KEY`, you must use the `service_role` secret key, NOT the public `anon` key. This allows the bot to bypass Row Level Security and approve users. Never expose this key on the frontend!
@@ -43,6 +49,20 @@ To start the bot locally:
 ```bash
 npm start
 ```
+
+The bot fails closed when any required production variable is missing. The
+`public_request` deep-link flow intentionally skips platform profile creation,
+stores the request when possible, and directly notifies `ADMIN_CHAT_ID` even if
+database persistence fails.
+
+After migration 0016 is applied to the confirmed dedicated Lumeya project, run:
+
+```sh
+npm run test:public-mvp
+```
+
+The test creates and removes one disposable request while checking the browser
+RLS/RPC boundary. Do not run it against another project.
 
 ## Deployment
 

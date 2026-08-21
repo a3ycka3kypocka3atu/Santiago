@@ -1,259 +1,83 @@
-<!DOCTYPE html>
-<html lang="ru">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Сантьяго – Цифровой Дзен</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Discover holistic services, practitioners, places, events and conscious-living approaches through one connected public platform.">
+  <title>Lumeya — Holistic discovery, connected</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=13">
 </head>
-<body class="home-page">
-  <!-- Global Background Clouds for all sections -->
-  <div class="bg-clouds">
-    <div class="cloud-global c1"></div>
-    <div class="cloud-global c2"></div>
-    <div class="cloud-global c3"></div>
-  </div>
-  <!-- Fixed Top Logo -->
-  <a href="index.html" class="top-logo-container" aria-label="На главную" title="На главную" style="pointer-events: auto;">
-    <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" class="top-logo-svg">
-      <g stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="100" cy="90" r="50" />
-        <line x1="100" y1="15" x2="100" y2="30" />
-        <line x1="135" y1="25" x2="125" y2="40" />
-        <line x1="165" y1="50" x2="150" y2="60" />
-        <line x1="180" y1="90" x2="165" y2="90" />
-        <line x1="65" y1="25" x2="75" y2="40" />
-        <line x1="35" y1="50" x2="50" y2="60" />
-        <line x1="20" y1="90" x2="35" y2="90" />
-        <circle cx="118" cy="30" r="1.5" fill="currentColor" stroke="none"/>
-        <circle cx="145" cy="45" r="1.5" fill="currentColor" stroke="none"/>
-        <circle cx="165" cy="70" r="1.5" fill="currentColor" stroke="none"/>
-        <circle cx="82" cy="30" r="1.5" fill="currentColor" stroke="none"/>
-        <circle cx="55" cy="45" r="1.5" fill="currentColor" stroke="none"/>
-        <circle cx="35" cy="70" r="1.5" fill="currentColor" stroke="none"/>
-        <circle cx="100" cy="80" r="14" />
-        <path d="M100 70 Q105 76 100 87 Q94 80 100 70" fill="currentColor" stroke="none"/>
-        <line x1="100" y1="65" x2="100" y2="40" />
-        <line x1="115" y1="80" x2="140" y2="80" />
-        <line x1="85" y1="80" x2="60" y2="80" />
-        <line x1="110" y1="70" x2="130" y2="55" />
-        <line x1="90" y1="70" x2="70" y2="55" />
-        <line x1="112" y1="90" x2="135" y2="95" />
-        <line x1="88" y1="90" x2="65" y2="95" />
-        <line x1="52" y1="105" x2="148" y2="105" />
-        <path d="M98 105 Q115 115 90 125 T95 140 L105 140 Q85 125 110 115 T103 105 Z" fill="currentColor" stroke="none" />
-        <line x1="55" y1="115" x2="90" y2="115" />
-        <line x1="115" y1="115" x2="145" y2="115" />
-        <line x1="65" y1="125" x2="80" y2="125" />
-        <line x1="125" y1="125" x2="140" y2="125" />
-      </g>
-      <text x="100" y="180" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="28" fill="currentColor" letter-spacing="2">SANTIAGO</text>
-      <text x="100" y="205" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="14" fill="currentColor" letter-spacing="6">WAY</text>
-    </svg>
-  </a>
+<body class="lumeya-public home-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="bg-clouds" aria-hidden="true"><div class="cloud-global c1"></div><div class="cloud-global c2"></div><div class="cloud-global c3"></div></div>
 
-  <!-- Shop Link -->
-  <a href="shop.html" class="home-icon" aria-label="Магазин" title="Магазин">
-    <svg viewBox="0 0 24 24" width="34" height="34" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="svg-home">
-      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <path d="M16 10a4 4 0 0 1-8 0"></path>
-    </svg>
-  </a>
+  <header class="site-header">
+    <a class="site-brand" href="index.html" aria-label="Lumeya home">Lumeya <small>Holistic discovery</small></a>
+    <nav class="site-nav" aria-label="Primary navigation"><ul>
+      <li><a href="index.html" aria-current="page" class="active">Discover</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="masters.html">Practitioners</a></li>
+      <li><a href="map.html">Map</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul></nav>
+    <button class="menu-trigger site-menu-button" type="button" aria-label="Open menu"><span aria-hidden="true">☰</span><span>Menu</span></button>
+  </header>
 
-    <div class="desktop-controls">
-    <a href="cabinet.html" class="cabinet-btn" title="Cabinet" style="display: none;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-    </a>
-    <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" title="Login via Telegram">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
-      <span class="tg-text">Login via Telegram</span>
-    </a>
-
-    <div class="lang-switcher">
-      <button class="lang-btn" data-lang="en">EN</button>
-      <button class="lang-btn" data-lang="cz">CZ</button>
-      <button class="lang-btn" data-lang="ru">RU</button>
-      <button class="lang-btn" data-lang="ua">UA</button>
-    </div>
-
-    <button class="theme-toggle theme-toggle-btn" title="Toggle theme">
-      <span class="icon-sun">☀️</span>
-      <span class="icon-moon">🌙</span>
-      <span class="toggle-thumb"></span>
-    </button>
-    
-    <button class="menu-trigger" aria-label="Open menu">☰</button>
-  </div>
-
-
-
-
-  <!-- Hero / Manifest -->
-  <section class="hero" id="hero">
-    <div class="night-overlay"></div>
-    <!-- Clouds -->
-    <div class="cloud-top"></div>
-    <div class="cloud-top-2"></div>
-    <div class="cloud-bottom"></div>
-    <div class="cloud-bottom-2"></div>
-    <div class="cloud-top-3"></div>
-    <div class="cloud-bottom-3"></div>
-    <div class="stars"></div>
-    <div class="moon"></div>
-    <div class="glass-card hero-content">
-      <h1 class="title" data-i18n="hero.title">Сантьяго – Цифровой Дзен</h1>
-      <p class="manifest" data-i18n="hero.manifest">Больше, чем студия. Клуб, инкубатор, пространство для совместного роста.</p>
-      <div class="cta-group">
-        <a href="projects.html" class="cta btn-primary" data-i18n="hero.cta.projects">Проекты</a>
-        <a href="services.html" class="cta btn-primary" data-i18n="hero.cta.services">Услуги</a>
-        <a href="masters.html" class="cta btn-primary" data-i18n="hero.cta.masters">Мастера</a>
-        <a href="calendar.html#full-calendar" class="cta btn-primary" data-i18n="hero.cta.calendar">Календарь</a>
-        <a href="events.html" class="cta btn-primary" data-i18n="hero.cta.events">События</a>
-        <a href="space.html" class="cta btn-primary" data-i18n="hero.cta.space">Пространства</a>
-        <a href="community.html#community-roles" class="cta btn-primary cta-wide" data-i18n="hero.cta.cabinet">Стать мастером / членом клуба / гостем — свой кабинет</a>
+  <main class="public-main" id="main">
+    <section class="public-hero" aria-labelledby="discover-title">
+      <div class="public-hero__copy">
+        <p class="eyebrow">A public wellbeing discovery network</p>
+        <h1 id="discover-title">Discover holistic events, services, products, places, practitioners, communities, and projects in one connected platform</h1>
+        <p class="public-hero__lead">Find an approach that fits, understand who offers it, see where it is available, and choose a direct way to make contact.</p>
+        <div class="hero-actions">
+          <a class="button button--primary" href="services.html">Explore services</a>
+          <a class="button" href="map.html">Open the map</a>
+        </div>
       </div>
-    </div>
-  </section>
+      <aside class="public-hero__aside" aria-label="How discovery works">
+        <div class="aside-path"><span class="aside-path__number">01</span><div><strong>Discover</strong><span>Browse needs, topics and formats.</span></div></div>
+        <div class="aside-path"><span class="aside-path__number">02</span><div><strong>Understand</strong><span>Compare clear scope, availability and context.</span></div></div>
+        <div class="aside-path"><span class="aside-path__number">03</span><div><strong>Contact</strong><span>Connect directly—without an account.</span></div></div>
+      </aside>
+    </section>
 
-  <!-- Upcoming Events Carousel -->
-  <section class="events" id="events">
-    <h2 data-i18n="events.title">Ближайшие события</h2>
-    <div class="carousel" id="home-events-track" aria-live="polite">
-      <div class="event-card glass-card home-events-status">
-        <h3 data-i18n="calNoUpcoming">No upcoming events this month</h3>
-        <p>...</p>
+    <section class="public-section" id="studio" aria-labelledby="start-heading">
+      <div class="section-heading"><div><p class="eyebrow">Start where you are</p><h2 id="start-heading">Three practical ways in</h2><p>Lumeya connects services to the people and places behind them, so discovery never ends at a disconnected listing.</p></div></div>
+      <div class="path-grid">
+        <article class="section-card"><h3>Start with a service</h3><p>Explore what is offered, how long it takes, where it happens and whether it is available now.</p><a href="services.html">Browse services →</a></article>
+        <article class="section-card"><h3>Meet practitioners</h3><p>Understand each person’s approach, fields, languages, availability and connected work.</p><a href="masters.html">View practitioners →</a></article>
+        <article class="section-card"><h3>Explore by place</h3><p>Use the map and list together. Locations without precise public addresses are clearly marked.</p><a href="map.html">Explore locations →</a></article>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Studio Block -->
-  <section class="studio" id="studio">
-    <h2 data-i18n="studio.title">Студия Сантьяго</h2>
-    <div class="grid">
-      <a href="calendar.html#full-calendar" class="glass-card" style="text-decoration:none;color:inherit;">
-        <h3 data-i18n="studio.1.title">Расписание</h3>
-        <p data-i18n="studio.1.desc">Календарь занятий и запись.</p>
-      </a>
-      <a href="masters.html" class="glass-card" style="text-decoration:none;color:inherit;">
-        <h3 data-i18n="studio.2.title">Мастера</h3>
-        <p data-i18n="studio.2.desc">Галерея и профили инструкторов.</p>
-      </a>
-      <div class="glass-card">
-        <h3 data-i18n="studio.3.title">Наше пространство</h3>
-        <p data-i18n="studio.3.desc">Фото зала, описание оборудования и атмосферы.</p>
+    <section class="public-section" aria-labelledby="events-heading">
+      <div class="section-heading"><div><p class="eyebrow">Live calendar</p><h2 id="events-heading">Scheduled events</h2><p>Only events with a verified date, time and place appear here. Concepts and recurring ideas are kept separately as formats.</p></div><a class="button" href="events.html">Events and formats</a></div>
+      <div id="home-events-track" aria-live="polite" aria-busy="true">
+        <div class="state-card"><strong>Loading events…</strong><span>Checking the live calendar.</span></div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Instructors & Partners -->
-  <section class="instructors" id="instructors">
-    <h2 data-i18n="inst.title">Инструкторам и партнёрам</h2>
-    <div class="grid">
-      <div class="glass-card">
-        <h3 data-i18n="inst.1.title">Аренда пространства</h3>
-        <p data-i18n="inst.1.desc">Цены и условия аренды зала.</p>
+    <section class="public-section" aria-labelledby="connect-heading">
+      <div class="section-heading"><div><p class="eyebrow">Help the network grow</p><h2 id="connect-heading">Know something useful—or need help finding it?</h2></div></div>
+      <div class="path-grid">
+        <article class="section-card"><h3>Suggest a listing</h3><p>Recommend a practitioner, service or place for curation. No account required.</p><a href="suggest.html#suggest-listing">Make a suggestion →</a></article>
+        <article class="section-card"><h3>Tell us what you need</h3><p>Describe what you are looking for and how you would like to be contacted.</p><a href="suggest.html#looking-for">Share your request →</a></article>
+        <article class="section-card"><h3>Understand Lumeya</h3><p>Read how listings are connected, what curation means, and what the MVP deliberately does not claim.</p><a href="about.html">How Lumeya works →</a></article>
       </div>
-      <div class="glass-card">
-        <h3 data-i18n="inst.2.title">Сотрудничество</h3>
-        <p data-i18n="inst.2.desc">Предложения по партнерству, кросс-промо, совместным мероприятиям и B2B.</p>
-      </div>
-      <a href="openmic.html" class="glass-card" style="text-decoration:none;color:inherit;">
-        <h3 data-i18n="inst.3.title">Open Mic</h3>
-        <p data-i18n="inst.3.desc">Заявка на проведение и тестирование своего авторского формата/практики.</p>
-      </a>
-    </div>
-  </section>
+    </section>
+  </main>
 
-  <!-- Club & Community -->
-  <section class="club" id="club">
-    <h2 data-i18n="club.title">Клуб и Инкубатор Сантьяго</h2>
-    <div class="grid">
-      <div class="glass-card">
-        <h3 data-i18n="club.1.title">О клубе</h3>
-        <p data-i18n="club.1.desc">Описание нашей философии — как мы сотрудничаем, помогаем друг другу по жизни и в запуске проектов (включая коливинг).</p>
-      </div>
-      <a href="projects.html" class="glass-card" style="text-decoration:none;color:inherit;">
-        <h3 data-i18n="club.2.title">Наши проекты</h3>
-        <p data-i18n="club.2.desc">То, над чем мы уже работаем, и идеи, которые ищут реализации.</p>
-      </a>
-      <div class="glass-card">
-        <h3 data-i18n="club.3.title">Как присоединиться</h3>
-        <p data-i18n="club.3.desc">Условия вступления в коллектив и механика того, как мы работаем вместе.</p>
-      </div>
-    </div>
-  </section>
+  <nav class="quick-menu" aria-label="Mobile navigation" hidden></nav>
+  <footer class="public-footer"><div class="public-footer__row"><span>© 2026 Lumeya. Public holistic discovery.</span><nav aria-label="Footer"><a href="space.html">Places</a><a href="calendar.html">Calendar</a><a href="suggest.html">Suggest</a></nav></div></footer>
 
-  <!-- Quick-menu panel -->
-
-  <nav class="quick-menu" aria-label="Navigation">
-    <ul>
-      <li><a href="index.html" data-i18n="nav.home">Главная</a></li>
-      <li><a href="services.html" data-i18n="nav.offers">Продукты и услуги</a></li>
-      <li><a href="events.html" data-i18n="nav.events">События</a></li>
-      <li><a href="masters.html" data-i18n="nav.partners">Партнёры</a></li>
-      <li><a href="projects.html" data-i18n="nav.projects">Проекты</a></li>
-      <li><a href="space.html" data-i18n="nav.spaces">Пространства</a></li>
-      <li><a href="community.html" data-i18n="nav.club">Клуб</a></li>
-      <li><a href="openmic.html" data-i18n="nav.openmic">Open Mic</a></li>
-      <li><a href="shop.html" data-i18n="nav.shop">Shop</a></li>
-    </ul>
-
-    <div class="menu-controls">
-      <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" style="width: 100%; justify-content: center; margin-bottom: 1rem;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
-        <span class="tg-text">Login via Telegram</span>
-      </a>
-
-      <div class="lang-switcher">
-        <button class="lang-btn" data-lang="en">EN</button>
-        <button class="lang-btn" data-lang="cz">CZ</button>
-        <button class="lang-btn" data-lang="ru">RU</button>
-        <button class="lang-btn" data-lang="ua">UA</button>
-      </div>
-
-      <button class="theme-toggle theme-toggle-btn" title="Toggle theme">
-        <span class="icon-sun">☀️</span>
-        <span class="icon-moon">🌙</span>
-        <span class="toggle-thumb"></span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- rrule library for recurrence expansion -->
-  <script src="https://cdn.jsdelivr.net/npm/rrule@2.7.2/dist/es5/rrule.min.js"></script>
-  <script src="translations.js?v=10"></script>
-  <script src="auth.js?v=6"></script>
-  <script src="menu.js?v=10"></script>
-  <script src="home-events.js?v=2"></script>
-  <script>
-    const themeToggles = document.querySelectorAll('.theme-toggle-btn');
-    const body = document.body;
-
-    // Check for saved preference
-    if (localStorage.getItem('grayscale') === 'enabled') {
-      body.classList.add('grayscale-mode');
-    }
-
-    themeToggles.forEach(toggle => {
-      toggle.addEventListener('click', () => {
-        body.classList.toggle('grayscale-mode');
-        if (body.classList.contains('grayscale-mode')) {
-          localStorage.setItem('grayscale', 'enabled');
-        } else {
-          localStorage.setItem('grayscale', 'disabled');
-        }
-      });
-    });
-  </script>
-
-  <footer class="footer">
-    <p data-i18n="footer.text">© 2026 Сантьяго – Цифровой Дзен. Все права защищены.</p>
-  </footer>
+  <script src="public-config.js?v=1"></script>
+  <script src="auth.js?v=7"></script>
+  <script src="menu.js?v=11"></script>
+  <script src="home-events.js?v=4"></script>
 </body>
 </html>

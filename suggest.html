@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Suggest a Lumeya practitioner, service or place, or tell the network what you are looking for—without creating an account.">
+  <title>Suggest or ask — Lumeya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=13">
+</head>
+<body class="lumeya-public">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="bg-clouds" aria-hidden="true"><div class="cloud-global c1"></div><div class="cloud-global c2"></div><div class="cloud-global c3"></div></div>
+  <header class="site-header">
+    <a class="site-brand" href="index.html" aria-label="Lumeya home">Lumeya <small>Holistic discovery</small></a>
+    <nav class="site-nav" aria-label="Primary navigation"><ul>
+      <li><a href="index.html">Discover</a></li><li><a href="services.html">Services</a></li><li><a href="masters.html">Practitioners</a></li><li><a href="map.html">Map</a></li><li><a href="events.html">Events</a></li><li><a href="about.html">About</a></li>
+    </ul></nav>
+    <button class="menu-trigger site-menu-button" type="button" aria-label="Open menu"><span aria-hidden="true">☰</span><span>Menu</span></button>
+  </header>
+  <main class="public-main" id="main">
+    <header class="page-intro"><p class="eyebrow">No account required</p><h1>Suggest something useful—or tell us what you need</h1><p>Requests go to a private curation queue when the Lumeya data service is available. If sending fails, the draft is kept in this browser for up to seven days and a Telegram fallback appears.</p></header>
+
+    <div class="form-grid">
+      <form class="public-form" id="suggest-listing-form" data-public-request="suggest_listing" novalidate>
+        <h2 id="suggest-listing">Suggest a listing</h2>
+        <p>Recommend a practitioner, service or place. Submission does not guarantee publication.</p>
+        <label>What are you suggesting? <select name="type" required><option value="">Choose one</option><option value="practitioner">Practitioner</option><option value="service">Service</option><option value="place">Place</option></select></label>
+        <label>Listing name <input name="name" maxlength="120" required autocomplete="off"></label>
+        <label>City or area <input name="city" maxlength="100" autocomplete="address-level2"></label>
+        <label>Why it may belong in Lumeya <textarea name="details" minlength="20" maxlength="2000" required placeholder="Share the approach, public context and any useful link."></textarea></label>
+        <label>How can we reply? <input name="contact" maxlength="180" required autocomplete="email" placeholder="Email, Telegram handle or phone"></label>
+        <label class="honeypot" aria-hidden="true">Company website <input name="website" tabindex="-1" autocomplete="off"></label>
+        <p class="privacy-note">Do not include medical records, diagnoses or other sensitive health information. Your contact is used only to review and reply to this request. A local draft is saved only if sending fails.</p>
+        <button class="form-submit" type="submit">Send suggestion</button>
+        <p class="form-status" id="suggest-listing-status" data-form-status role="status" aria-live="polite"></p>
+        <div class="fallback-actions" data-telegram-fallback hidden>
+          <button class="button" type="button" data-copy-request>Copy request</button>
+          <a class="button button--primary" href="https://t.me/santioago_bot?start=public_request" target="_blank" rel="noopener noreferrer">Continue in Telegram</a>
+        </div>
+      </form>
+
+      <form class="public-form" id="looking-for-form" data-public-request="looking_for" novalidate>
+        <h2 id="looking-for">What are you looking for?</h2>
+        <p>Describe the outcome or kind of support you want. You do not need to know the right service name.</p>
+        <label>Topic <input name="topic" maxlength="120" required placeholder="For example: recovery, movement, community"></label>
+        <label>Preferred format <select name="preference" required><option value="">Choose one</option><option value="online">Online</option><option value="in_person">In person</option><option value="either">Either works</option></select></label>
+        <label>City or country <input name="city" maxlength="100" autocomplete="address-level2"></label>
+        <label>What would be useful? <textarea name="details" minlength="20" maxlength="2000" required placeholder="Describe what you hope to find, without sensitive health details."></textarea></label>
+        <label>How can we reply? <input name="contact" maxlength="180" required autocomplete="email" placeholder="Email, Telegram handle or phone"></label>
+        <label class="honeypot" aria-hidden="true">Company website <input name="website" tabindex="-1" autocomplete="off"></label>
+        <p class="privacy-note">Do not include medical records, diagnoses or other sensitive health information. Your contact is used only to review and reply to this request. A local draft is saved only if sending fails.</p>
+        <button class="form-submit" type="submit">Send request</button>
+        <p class="form-status" id="looking-for-status" data-form-status role="status" aria-live="polite"></p>
+        <div class="fallback-actions" data-telegram-fallback hidden>
+          <button class="button" type="button" data-copy-request>Copy request</button>
+          <a class="button button--primary" href="https://t.me/santioago_bot?start=public_request" target="_blank" rel="noopener noreferrer">Continue in Telegram</a>
+        </div>
+      </form>
+    </div>
+  </main>
+  <nav class="quick-menu" aria-label="Mobile navigation" hidden></nav>
+  <footer class="public-footer"><div class="public-footer__row"><span>© 2026 Lumeya. Public holistic discovery.</span><nav aria-label="Footer"><a href="space.html">Places</a><a href="calendar.html">Calendar</a><a href="suggest.html">Suggest</a></nav></div></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="public-config.js?v=1"></script>
+  <script src="auth.js?v=7"></script>
+  <script src="menu.js?v=11"></script>
+  <script src="public-forms.js?v=1"></script>
+</body>
+</html>

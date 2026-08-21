@@ -5,7 +5,7 @@
 
   const LOGIN_URL = 'https://t.me/santioago_bot?start=login';
   const SUPPORTED = ['en', 'cz', 'ru', 'ua'];
-  const DEFAULT_LANG = 'ru';
+  const DEFAULT_LANG = 'en';
 
   const copy = {
     en: {
@@ -110,25 +110,6 @@
   let cabinetSort = 'newest';
 
   function getLang() {
-    const htmlLang = (document.documentElement.lang || '').toLowerCase();
-    let pageLang = null;
-    if (htmlLang.startsWith('cs') || htmlLang.startsWith('cz')) pageLang = 'cz';
-    if (htmlLang.startsWith('uk')) pageLang = 'ua';
-    if (htmlLang.startsWith('ru')) pageLang = 'ru';
-    if (SUPPORTED.includes(htmlLang)) pageLang = htmlLang;
-
-    const siteLang = localStorage.getItem('language');
-    const calendarLang = localStorage.getItem('ma3-lang');
-
-    if (location.pathname.endsWith('calendar.html')) {
-      if (pageLang) return pageLang;
-      if (calendarLang && SUPPORTED.includes(calendarLang)) return calendarLang;
-    }
-
-    if (siteLang && SUPPORTED.includes(siteLang)) return siteLang;
-    if (pageLang) return pageLang;
-    if (calendarLang && SUPPORTED.includes(calendarLang)) return calendarLang;
-
     return DEFAULT_LANG;
   }
 
@@ -138,14 +119,7 @@
   }
 
   function getUser() {
-    if (window.MA3Auth && window.MA3Auth.user) return window.MA3Auth.user;
-    const id = localStorage.getItem('ma3-user-id');
-    return {
-      id,
-      role: localStorage.getItem('ma3-user-role') || 'guest',
-      name: localStorage.getItem('ma3-user-name') || null,
-      isLoggedIn: !!id
-    };
+    return { id: null, role: 'guest', name: null, isLoggedIn: false };
   }
 
   function getClient() {

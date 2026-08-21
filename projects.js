@@ -2,7 +2,7 @@
   'use strict';
 
   const STORAGE_KEY = 'language';
-  const DEFAULT_LANG = 'ru';
+  const DEFAULT_LANG = 'en';
   const SUPPORTED = ['en', 'cz', 'ru', 'ua'];
   const state = { category: 'all', status: 'all', owner: 'all', sort: 'priority' };
   let currentLang = detectLanguage();
@@ -270,10 +270,6 @@
   ];
 
   function detectLanguage() {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored && SUPPORTED.includes(stored)) return stored;
-    } catch (e) {}
     return DEFAULT_LANG;
   }
 

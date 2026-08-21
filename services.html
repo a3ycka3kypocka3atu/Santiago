@@ -1,223 +1,40 @@
-<!DOCTYPE html>
-<html lang="ru">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Услуги Студии Сантьяго — массаж, чайные церемонии, йога, тренировки." />
-  <title>Услуги | Сантьяго</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=10" />
-  <link rel="stylesheet" href="favorites.css?v=2" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Browse Lumeya services with clear status, duration, delivery format, location and practitioner connections.">
+  <title>Services — Lumeya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=13">
 </head>
-<body>
-  <div class="bg-clouds">
-    <div class="cloud-global c1"></div>
-    <div class="cloud-global c2"></div>
-    <div class="cloud-global c3"></div>
-  </div>
-
-  <a href="index.html" class="top-logo-container" aria-label="На главную" title="На главную">
-    <svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" class="top-logo-svg">
-      <g stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="100" cy="90" r="50"/><line x1="100" y1="15" x2="100" y2="30"/><line x1="135" y1="25" x2="125" y2="40"/><line x1="165" y1="50" x2="150" y2="60"/><line x1="180" y1="90" x2="165" y2="90"/><line x1="65" y1="25" x2="75" y2="40"/><line x1="35" y1="50" x2="50" y2="60"/><line x1="20" y1="90" x2="35" y2="90"/>
-        <circle cx="100" cy="80" r="14"/><path d="M100 70 Q105 76 100 87 Q94 80 100 70" fill="currentColor" stroke="none"/>
-        <line x1="100" y1="65" x2="100" y2="40"/><line x1="115" y1="80" x2="140" y2="80"/><line x1="85" y1="80" x2="60" y2="80"/>
-        <line x1="52" y1="105" x2="148" y2="105"/>
-        <path d="M98 105 Q115 115 90 125 T95 140 L105 140 Q85 125 110 115 T103 105 Z" fill="currentColor" stroke="none"/>
-      </g>
-      <text x="100" y="180" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="28" fill="currentColor" letter-spacing="2">SANTIAGO</text>
-      <text x="100" y="205" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="14" fill="currentColor" letter-spacing="6">WAY</text>
-    </svg>
-  </a>
-
-  <a href="shop.html" class="home-icon" aria-label="Магазин" title="Магазин">
-    <svg viewBox="0 0 24 24" width="34" height="34" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="svg-home">
-      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path>
-    </svg>
-  </a>
-
-    <div class="desktop-controls">
-    <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" title="Login via Telegram">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
-      <span class="tg-text">Login via Telegram</span>
-    </a>
-
-    <div class="lang-switcher">
-      <button class="lang-btn" data-lang="en">EN</button>
-      <button class="lang-btn" data-lang="cz">CZ</button>
-      <button class="lang-btn" data-lang="ru">RU</button>
-      <button class="lang-btn" data-lang="ua">UA</button>
+<body class="lumeya-public">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="bg-clouds" aria-hidden="true"><div class="cloud-global c1"></div><div class="cloud-global c2"></div><div class="cloud-global c3"></div></div>
+  <header class="site-header">
+    <a class="site-brand" href="index.html" aria-label="Lumeya home">Lumeya <small>Holistic discovery</small></a>
+    <nav class="site-nav" aria-label="Primary navigation"><ul>
+      <li><a href="index.html">Discover</a></li><li><a href="services.html" aria-current="page" class="active">Services</a></li><li><a href="masters.html">Practitioners</a></li><li><a href="map.html">Map</a></li><li><a href="events.html">Events</a></li><li><a href="about.html">About</a></li>
+    </ul></nav>
+    <button class="menu-trigger site-menu-button" type="button" aria-label="Open menu"><span aria-hidden="true">☰</span><span>Menu</span></button>
+  </header>
+  <main class="public-main" id="main">
+    <header class="page-intro"><p class="eyebrow">Service-centred discovery</p><h1>Services</h1><p>Understand what is offered before you contact anyone. Availability is descriptive—not a promise of instant booking.</p></header>
+    <div class="catalog-toolbar" id="services-filters" aria-label="Filter services">
+      <label>Search <input id="services-search" type="search" placeholder="Service, topic or practitioner" autocomplete="off"></label>
+      <label>Status <select id="services-status-filter"><option value="all">All statuses</option><option value="available">Available</option><option value="by-request">By request</option><option value="coming-soon">Coming soon</option><option value="online">Online</option><option value="limited-availability">Limited availability</option></select></label>
+      <label>Format <select id="services-format-filter"><option value="all">All formats</option><option value="individual">Individual</option><option value="group">Group</option><option value="b2b">B2B</option></select></label>
     </div>
-
-    <button class="theme-toggle theme-toggle-btn" title="Toggle theme">
-      <span class="icon-sun">☀️</span>
-      <span class="icon-moon">🌙</span>
-      <span class="toggle-thumb"></span>
-    </button>
-    
-    <button class="menu-trigger" aria-label="Open menu">☰</button>
-  </div>
-  </div>
-
-  <!-- ═══ PAGE CONTENT ═══ -->
-  <div class="page-wrapper">
-
-    <div class="gallery-header">
-      <h1 data-i18n="services.page.title">Наши услуги</h1>
-      <p data-i18n="services.page.desc">Всё, что мы предлагаем для вашего тела, разума и развития — в одном месте.</p>
-    </div>
-
-    <!-- Service Filters -->
-    <div class="services-filters" id="services-filters">
-      <div class="filter-group">
-        <div class="filter-label" data-i18n="filter.category">Category</div>
-        <div class="filter-tabs" role="tablist" aria-label="Service category">
-          <button class="filter-tab active" data-filter="category" data-value="all" role="tab" aria-selected="true" data-i18n="filter.all">All</button>
-          <button class="filter-tab" data-filter="category" data-value="body" role="tab" aria-selected="false" data-i18n="filter.body">Body</button>
-          <button class="filter-tab" data-filter="category" data-value="mind" role="tab" aria-selected="false" data-i18n="filter.mind">Mind</button>
-          <button class="filter-tab" data-filter="category" data-value="incubator" role="tab" aria-selected="false" data-i18n="filter.incubator">Incubator</button>
-          <button class="filter-tab" data-filter="category" data-value="space" role="tab" aria-selected="false" data-i18n="filter.space">Space</button>
-        </div>
-      </div>
-      <div class="filter-group">
-        <div class="filter-label" data-i18n="filter.format">Format</div>
-        <div class="filter-tabs" role="tablist" aria-label="Service format">
-          <button class="filter-tab active" data-filter="format" data-value="all" role="tab" aria-selected="true" data-i18n="filter.all">All</button>
-          <button class="filter-tab" data-filter="format" data-value="individual" role="tab" aria-selected="false" data-i18n="filter.individual">Individual</button>
-          <button class="filter-tab" data-filter="format" data-value="group" role="tab" aria-selected="false" data-i18n="filter.group">Group</button>
-        </div>
-      </div>
-      <div class="filter-group filter-group--instructor">
-        <div class="filter-label" data-i18n="filter.provider">Provider</div>
-        <div class="filter-select-wrap">
-          <select class="filter-select" id="provider-filter" data-filter="provider" aria-label="Select provider">
-            <option value="all" data-i18n="filter.allProviders">All Providers</option>
-            <option value="person" data-i18n="filter.people">People</option>
-            <option value="project" data-i18n="filter.projectsTeams">Projects / Teams</option>
-            <option value="ivanprotinak">Иван Протиняк</option>
-            <option value="katerina">Катерина</option>
-            <option value="andrijpycha">Andrij Pýcha</option>
-            <option value="violettablago">Виолетта Благо</option>
-            <option value="santiago-interviews">Santiago Talks & Interviews</option>
-            <option value="ethical-automation-agency">Ethical Marketing & Automation Agency</option>
-            <option value="conscious-relationships">Conscious Relationships Platform</option>
-          </select>
-          <svg class="select-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-      </div>
-      <div class="filter-group filter-group--sort">
-        <div class="filter-label" data-i18n="filter.sort">Sort</div>
-        <div class="filter-select-wrap">
-          <select class="filter-select" id="services-sort" aria-label="Sort services">
-            <option value="default" data-i18n="filter.sortPriority">Default</option>
-            <option value="provider" data-i18n="filter.sortProvider">By provider</option>
-            <option value="title" data-i18n="filter.sortTitle">By title</option>
-          </select>
-          <svg class="select-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- Empty State -->
-    <div class="services-empty" id="services-empty" hidden>
-      <div class="services-empty__icon">
-        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6"/></svg>
-      </div>
-      <p class="services-empty__text" data-i18n="services.empty.text">No services match your criteria</p>
-      <button class="services-empty__reset" id="reset-filters" data-i18n="services.empty.reset">Reset Filters</button>
-    </div>
-
-    <div class="gallery-grid" id="services-grid">
-    </div>
-  </div>
-
-  <div class="service-booking-overlay" id="service-booking-popup" aria-hidden="true" role="dialog" aria-labelledby="service-booking-title" hidden>
-    <div class="service-booking-backdrop" data-service-booking-close></div>
-    <div class="service-booking-dialog">
-      <button class="service-booking-close" type="button" aria-label="Close" data-service-booking-close>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-      </button>
-      <h2 id="service-booking-title">Забронювати час</h2>
-      <p class="service-booking-summary" id="service-booking-summary">Оберіть бажаний день і час для послуги.</p>
-      <form class="service-booking-form" id="service-booking-form">
-        <div class="service-booking-fields">
-          <label>
-            <span id="service-booking-date-label">Дата</span>
-            <input type="date" id="service-booking-date" required>
-          </label>
-          <label>
-            <span id="service-booking-time-label">Час</span>
-            <input type="time" id="service-booking-time" step="900" required>
-          </label>
-        </div>
-        <label>
-          <span id="service-booking-note-label">Коментар</span>
-          <textarea id="service-booking-note" rows="3" placeholder="Запит, побажання або контакт для уточнення"></textarea>
-        </label>
-        <div class="service-booking-actions">
-          <button class="service-booking-submit" id="service-booking-submit" type="submit">Надіслати заявку</button>
-          <a class="service-booking-login" id="service-booking-login" href="https://t.me/santioago_bot?start=login" target="_blank" rel="noopener" hidden>Увійти через Telegram</a>
-          <a class="service-booking-telegram" id="service-booking-telegram" href="https://t.me/santioago_bot" target="_blank" rel="noopener" hidden>Продовжити в Telegram</a>
-        </div>
-        <p class="service-booking-status" id="service-booking-status" role="status" aria-live="polite"></p>
-      </form>
-    </div>
-  </div>
-
-  <nav class="quick-menu" aria-label="Navigation">
-    <ul>
-      <li><a href="index.html" data-i18n="nav.home">Главная</a></li>
-      <li><a href="services.html" data-i18n="nav.offers">Продукты и услуги</a></li>
-      <li><a href="events.html" data-i18n="nav.events">События</a></li>
-      <li><a href="masters.html" data-i18n="nav.partners">Партнёры</a></li>
-      <li><a href="projects.html" data-i18n="nav.projects">Проекты</a></li>
-      <li><a href="space.html" data-i18n="nav.spaces">Пространства</a></li>
-      <li><a href="community.html" data-i18n="nav.club">Клуб</a></li>
-      <li><a href="openmic.html" data-i18n="nav.openmic">Open Mic</a></li>
-      <li><a href="shop.html" data-i18n="nav.shop">Shop</a></li>
-    </ul>
-
-    <div class="menu-controls">
-      <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" style="width: 100%; justify-content: center; margin-bottom: 1rem;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
-        <span class="tg-text">Login via Telegram</span>
-      </a>
-
-      <div class="lang-switcher">
-        <button class="lang-btn" data-lang="en">EN</button>
-        <button class="lang-btn" data-lang="cz">CZ</button>
-        <button class="lang-btn" data-lang="ru">RU</button>
-        <button class="lang-btn" data-lang="ua">UA</button>
-      </div>
-
-      <button class="theme-toggle theme-toggle-btn" title="Toggle theme">
-        <span class="icon-sun">☀️</span>
-        <span class="icon-moon">🌙</span>
-        <span class="toggle-thumb"></span>
-      </button>
-    </div>
-  </nav>
-
-  <footer class="footer">
-    <p data-i18n="footer.text">© 2026 Сантьяго – Цифровой Дзен. Все права защищены.</p>
-  </footer>
-
-  <script src="translations.js?v=10"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="auth.js?v=6"></script>
-  <script src="menu.js?v=10"></script>
-  <script src="submission-requests.js?v=2"></script>
-  <script src="favorites.js?v=2"></script>
-  <script src="services.js?v=10"></script>
-  <script>
-    const themeToggles = document.querySelectorAll('.theme-toggle-btn');
-    if (localStorage.getItem('grayscale') === 'enabled') document.body.classList.add('grayscale-mode');
-    themeToggles.forEach(t => t.addEventListener('click', () => {
-      document.body.classList.toggle('grayscale-mode');
-      localStorage.setItem('grayscale', document.body.classList.contains('grayscale-mode') ? 'enabled' : 'disabled');
-    }));
-  </script>
+    <div class="entity-grid" id="services-grid" aria-live="polite"></div>
+    <div class="state-card" id="services-empty" hidden><strong>No matching services</strong><span>Try a broader search or clear the filters.</span> <button class="button" id="services-reset-filters" type="button">Clear filters</button></div>
+    <section class="public-section"><div class="section-heading"><div><h2>Can’t find the right fit?</h2><p>Tell us what you are looking for. The public request flow does not require an account.</p></div><a class="button button--primary" href="suggest.html#looking-for">Share what you need</a></div></section>
+  </main>
+  <nav class="quick-menu" aria-label="Mobile navigation" hidden></nav>
+  <footer class="public-footer"><div class="public-footer__row"><span>© 2026 Lumeya. Public holistic discovery.</span><nav aria-label="Footer"><a href="space.html">Places</a><a href="calendar.html">Calendar</a><a href="suggest.html">Suggest</a></nav></div></footer>
+  <script src="menu.js?v=11"></script>
+  <script src="discovery-data.js?v=1"></script>
+  <script src="services.js?v=4"></script>
 </body>
 </html>

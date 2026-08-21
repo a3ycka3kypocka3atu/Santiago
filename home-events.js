@@ -5,42 +5,19 @@
   if (!track) return;
 
   const sb = window.supabaseClient;
-  const STORAGE_KEY = 'language';
-  const LEGACY_STORAGE_KEY = 'ma3-lang';
-  const SUPPORTED = ['en', 'cz', 'ru', 'ua'];
-  const DEFAULT_LANG = 'ru';
+  const DEFAULT_LANG = 'en';
   const MAX_EVENTS = 5;
   const LOOKAHEAD_MONTHS = 6;
+  const EVENTS_UNAVAILABLE_TEXT = 'Events temporarily unavailable';
 
-  const emptyLabels = {
-    en: 'No upcoming events',
-    cz: 'Žádné nadcházející události',
-    ru: 'Нет ближайших событий',
-    ua: 'Немає найближчих подій'
-  };
+  const emptyLabel = 'No upcoming events';
 
   function getLang() {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored && SUPPORTED.includes(stored)) return stored;
-    const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
-    if (legacy && SUPPORTED.includes(legacy)) {
-      localStorage.setItem(STORAGE_KEY, legacy);
-      return legacy;
-    }
-    const pageLang = document.documentElement.lang;
-    if (pageLang === 'cs') return 'cz';
-    if (pageLang === 'uk') return 'ua';
-    if (SUPPORTED.includes(pageLang)) return pageLang;
     return DEFAULT_LANG;
   }
 
   function getLocale(lang) {
-    return {
-      en: 'en-US',
-      cz: 'cs-CZ',
-      ru: 'ru-RU',
-      ua: 'uk-UA'
-    }[lang] || 'ru-RU';
+    return 'en-US';
   }
 
   function escapeHtml(value) {
@@ -57,8 +34,17 @@
     const lang = getLang();
     track.innerHTML = `
       <div class="event-card glass-card home-events-status">
-        <h3>${emptyLabels[lang] || emptyLabels.ru}</h3>
+        <h3>${emptyLabel}</h3>
         <p>${new Date().toLocaleDateString(getLocale(lang), { month: 'long', year: 'numeric' })}</p>
+      </div>
+    `;
+  }
+
+  function renderUnavailable() {
+    track.innerHTML = `
+      <div class="event-card glass-card home-events-status" role="status">
+        <h3>${EVENTS_UNAVAILABLE_TEXT}</h3>
+        <p>Please try again later.</p>
       </div>
     `;
   }
@@ -116,7 +102,7 @@
 
   async function loadEvents() {
     if (!sb) {
-      renderEmpty();
+      renderUnavailable();
       return;
     }
 
@@ -128,6 +114,7 @@
       const { data, error } = await sb
         .from('events')
         .select('*')
+        .eq('type', 'public')
         .eq('status', 'confirmed')
         .lte('start_time', lookahead.toISOString())
         .order('start_time', { ascending: true });
@@ -143,15 +130,11 @@
       renderEvents(upcoming);
     } catch (err) {
       console.warn('[HomeEvents] Could not load events:', err);
-      renderEmpty();
+      renderUnavailable();
     }
   }
 
   document.addEventListener('ma3-auth-changed', loadEvents);
-  document.querySelectorAll('.lang-btn').forEach(button => {
-    button.addEventListener('click', () => setTimeout(loadEvents, 0));
-  });
-
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadEvents);
   } else {

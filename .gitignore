@@ -14,3 +14,8 @@ profile:/
 # Bot environment variables
 bot/.env
 bot/node_modules/
+
+# Machine-local agent and hosting state
+AGENTS.md
+.claude/
+.vercel/

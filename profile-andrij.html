@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Andrij Pýcha — идеолог Santiago Way, фасилитатор связей, создатель платформ, медиа и осознанных событий." />
-  <title>Andrij Pýcha — Мастер связей | Сантьяго</title>
+  <meta name="description" content="Andrij Pýcha works across facilitation, connected projects, media and conscious event formats." />
+  <title>Andrij Pýcha — Practitioner — Lumeya</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css?v=8" />
 </head>
-<body>
+<body data-practitioner="andrij-pycha">
   <div class="bg-clouds">
     <div class="cloud-global c1"></div>
     <div class="cloud-global c2"></div>
@@ -64,7 +64,7 @@
   </a>
 
   <div class="desktop-controls">
-    <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" title="Login via Telegram">
+    <a href="https://t.me/santioago_bot" target="_blank" rel="noopener noreferrer" class="tg-login-btn" title="Login via Telegram">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
       <span class="tg-text">Login via Telegram</span>
     </a>
@@ -148,9 +148,9 @@
         <span class="cta-icon">🛠️</span>
         <span data-i18n="andrij.cta.services">Посмотреть услуги</span>
       </a>
-      <a href="calendar.html?mine=1&instructor=andrij" class="cta-card">
+      <a href="events.html" class="cta-card">
         <span class="cta-icon">📅</span>
-        <span data-i18n="andrij.cta.events">Форматы событий</span>
+        <span>View public events</span>
       </a>
       <a href="projects.html?owner=andrijpycha&mine=1" class="cta-card">
         <span class="cta-icon">🏗️</span>
@@ -162,6 +162,8 @@
       </a>
     </div>
   </div>
+
+  <section id="profile-discovery-data" aria-live="polite"></section>
 
   <nav class="quick-menu" aria-label="Navigation">
     <ul>
@@ -177,7 +179,7 @@
     </ul>
 
     <div class="menu-controls">
-      <a href="https://t.me/santioago_bot" target="_blank" class="tg-login-btn" style="width: 100%; justify-content: center; margin-bottom: 1rem;">
+      <a href="https://t.me/santioago_bot" target="_blank" rel="noopener noreferrer" class="tg-login-btn" style="width: 100%; justify-content: center; margin-bottom: 1rem;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2L2 11l8 3 3 8z"/></svg>
         <span class="tg-text">Login via Telegram</span>
       </a>
@@ -201,6 +203,8 @@
 
   <script src="translations.js?v=10"></script>
   <script src="menu.js?v=10"></script>
+  <script src="discovery-data.js?v=1"></script>
+  <script src="profile-enhancements.js?v=1"></script>
   <script>
     const themeToggles = document.querySelectorAll('.theme-toggle-btn');
     if (localStorage.getItem('grayscale') === 'enabled') document.body.classList.add('grayscale-mode');

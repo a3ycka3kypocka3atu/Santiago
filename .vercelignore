@@ -1,0 +1,37 @@
+# Repository and machine-local tooling
+.git/
+.github/
+.agents/
+.claude/
+.codex/
+.vercel/
+**/.DS_Store
+
+# Credentials and local dependencies
+.env
+.env.*
+**/.env
+**/.env.*
+node_modules/
+bot/
+
+# Development-only verification and documentation
+docs/
+verify/
+AGENTS.md
+README.md
+*.md
+*.py
+package.json
+update_translations.js
+submission-requests.js
+
+# Accidental legacy paths
+offer:/
+profile:/
+
+# Only the two videos referenced by the public site are deployment inputs
+man_videos/*
+!man_videos/IMG_9530.MOV
+woman_videos/*
+!woman_videos/IMG_9488.MOV

@@ -1,3 +1,5 @@
+@import url("mvp.css?v=1");
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 25vh; /* Places the section nicely in the middle when clicked */
@@ -6706,4 +6708,19 @@ body.calendar-page:not(.grayscale-mode) .master-event-field textarea {
     scroll-behavior: auto !important;
     transition-duration: 0.001ms !important;
   }
+}
+
+/* Keep the public discovery shell on its approved dark palette. The legacy
+   day-theme rules above remain available to the dormant legacy pages. */
+body.lumeya-public:not(.calendar-page):not(.grayscale-mode) {
+  color: var(--lumeya-text);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(85, 190, 165, 0.15), transparent 28rem),
+    radial-gradient(circle at 90% 18%, rgba(237, 207, 150, 0.1), transparent 24rem),
+    var(--lumeya-bg);
+  background-attachment: fixed;
+}
+
+body.lumeya-public:not(.calendar-page):not(.grayscale-mode) .bg-clouds {
+  opacity: 0.28;
 }

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore Lumeya practitioners and places on an accessible Leaflet map or connected list.">
+  <title>Map — Lumeya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="style.css?v=13">
+</head>
+<body class="lumeya-public">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="bg-clouds" aria-hidden="true"><div class="cloud-global c1"></div><div class="cloud-global c2"></div><div class="cloud-global c3"></div></div>
+  <header class="site-header">
+    <a class="site-brand" href="index.html" aria-label="Lumeya home">Lumeya <small>Holistic discovery</small></a>
+    <nav class="site-nav" aria-label="Primary navigation"><ul>
+      <li><a href="index.html">Discover</a></li><li><a href="services.html">Services</a></li><li><a href="masters.html">Practitioners</a></li><li><a href="map.html" aria-current="page" class="active">Map</a></li><li><a href="events.html">Events</a></li><li><a href="about.html">About</a></li>
+    </ul></nav>
+    <button class="menu-trigger site-menu-button" type="button" aria-label="Open menu"><span aria-hidden="true">☰</span><span>Menu</span></button>
+  </header>
+  <main class="public-main" id="main">
+    <header class="page-intro"><p class="eyebrow">Locate connected work</p><h1>Map</h1><p>Explore practitioners and active places together. Lumeya shows a marker only when a public position has been verified; all other records remain list-only.</p></header>
+    <div class="catalog-toolbar" aria-label="Filter map">
+      <label>City <select id="map-city-filter"><option value="all">All cities</option></select></label>
+      <label>Topic <select id="map-topic-filter"><option value="all">All topics</option></select></label>
+      <label>Show <select id="map-type-filter"><option value="all">Practitioners and places</option><option value="practitioner">Practitioners</option><option value="place">Places</option></select></label>
+    </div>
+    <div class="map-view-toggle" aria-label="Choose map or list view">
+      <button class="button" id="show-map-view" type="button" aria-pressed="true">Map</button>
+      <button class="button" id="show-list-view" type="button" aria-pressed="false">List</button>
+    </div>
+    <p class="state-card" id="map-status" role="status" aria-live="polite">Loading locations…</p>
+    <div class="map-layout" id="map-layout">
+      <section class="map-panel" id="map-panel" aria-label="Practitioner and place map"><div id="discovery-map"></div></section>
+      <section class="map-list" id="map-list-panel" aria-label="Practitioner and place list" hidden></section>
+    </div>
+  </main>
+  <nav class="quick-menu" aria-label="Mobile navigation" hidden></nav>
+  <footer class="public-footer"><div class="public-footer__row"><span>© 2026 Lumeya. Public holistic discovery.</span><nav aria-label="Footer"><a href="space.html">Places</a><a href="calendar.html">Calendar</a><a href="suggest.html">Suggest</a></nav></div></footer>
+  <script src="menu.js?v=11"></script>
+  <script src="discovery-data.js?v=1"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="map.js?v=1"></script>
+</body>
+</html>
