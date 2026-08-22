@@ -19,3 +19,4 @@ bot/node_modules/
 AGENTS.md
 .claude/
 .vercel/
+.env*
