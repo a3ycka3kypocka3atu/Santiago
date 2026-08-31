@@ -6,6 +6,6 @@
  * mode. Never place a service-role or other privileged credential here.
  */
 window.LumeyaConfig = Object.freeze({
-  supabaseUrl: '',
-  supabasePublishableKey: ''
+  supabaseUrl: 'https://ccwvyjszlrrluzplizsu.supabase.co',
+  supabasePublishableKey: 'sb_publishable_41TaV7iEZxB2Gp7qaUx29w_xo1MeUs1'
 });

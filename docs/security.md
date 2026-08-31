@@ -24,19 +24,20 @@ Stored requests expire after 90 days. `delete_expired_public_discovery_requests`
 
 ## Migration status
 
-`bot/schema.sql` is the migration-0001 baseline, not a safe final state. The authoritative final schema is that baseline followed by every numbered migration through `0016_public_discovery_security.sql`. Migration 0016 is prepared locally but is **not confirmed as applied to Lumeya's dedicated Supabase project**.
+Migration `0016_public_discovery_security.sql` was applied on 31 August 2026 to
+Lumeya's dedicated project `ccwvyjszlrrluzplizsu`. Live verification confirmed
+that anonymous callers can read published services, cannot read the request
+table or private platform tables, and can submit through only the validated
+request RPC. One disposable request was submitted and removed.
 
-Before a public release, a collaborator with access to the intended Supabase project must:
+The historical remote migration table is empty even though legacy schema
+objects already exist. Treat `bot/schema.sql` and migrations `0002`–`0015` as a
+legacy reconstruction chain; normalize that history before expanding the live
+backend. Migration `0016` is idempotent and remains the authoritative public-MVP
+security boundary.
 
-1. Confirm the project is the correct Lumeya environment and take an appropriate backup.
-2. Review the baseline and apply migrations in order through `0016_public_discovery_security.sql`.
-3. Confirm anonymous callers can execute only `submit_public_discovery_request` from the new public flow.
-4. Confirm anonymous callers cannot read `public_discovery_requests` or private platform tables.
-5. Confirm only confirmed public events and published public services are readable.
-6. Configure `SUPABASE_PUBLISHABLE_KEY` in the bot test environment and run `npm run test:public-mvp` from `bot/`. The test submits one disposable request, checks anonymous denial/public reads, verifies service-role access, and removes the test row.
-7. Run Supabase security and performance advisors after the migration and resolve any relevant findings.
-
-Until that is done, the website must treat request submission and event loading as unavailable and preserve the Telegram fallback. Repository code does not prove live database state.
+The live notification worker and retention cleanup still require a continuously
+running bot/server environment with its separately configured service-role key.
 
 ## Bot environment
 
@@ -56,7 +57,7 @@ The website fallback opens the bot with `start=public_request`. The user must pa
 
 ## Known limits before broad launch
 
-- Live Supabase reachability, grants, RLS, bot availability, and production deployment still require external verification.
+- Live Supabase reachability, public grants, RLS, and request insertion are verified; bot availability and the final notification hop still require external verification.
 - The public endpoint has validation, a honeypot and a basic database rate limit, but no CAPTCHA/Turnstile, reputation check or moderation queue UI.
 - Telegram fallback also needs network access; it cannot deliver while the device is fully offline.
 - The in-memory Telegram conversation session can be lost when the bot process restarts.

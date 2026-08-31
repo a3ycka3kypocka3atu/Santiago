@@ -19,5 +19,8 @@
     "verify:secrets": "node verify/run.js --secrets",
     "verify:smoke": "node verify/run.js --smoke",
     "verify:static-only": "node verify/run.js --pages --links --assets --js --static --mvp --journey --security --secrets"
+  },
+  "devDependencies": {
+    "supabase": "2.116.0"
   }
 }

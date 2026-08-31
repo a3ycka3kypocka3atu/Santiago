@@ -16,10 +16,9 @@ street address and coordinates of Santiago Studio are not published in the
 approved source material, so the place remains list-only and the map creates no
 synthetic marker.
 
-Copy Lumeya's dedicated Supabase URL and publishable key into
-`public-config.js` only after the project identity has been confirmed. Empty
-values deliberately keep the site in guest/fallback mode. A service-role key
-must never appear in browser source.
+The browser configuration now points to Lumeya's confirmed dedicated Supabase
+project and contains only its publishable key. A service-role key must never
+appear in browser source.
 
 Run the local release gate with:
 

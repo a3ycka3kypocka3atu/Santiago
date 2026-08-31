@@ -30,8 +30,11 @@ module.exports = {
     requirePattern(migration, /REVOKE EXECUTE ON FUNCTION %s FROM PUBLIC, anon, authenticated/i, 'legacy browser RPC revocation is missing', errors);
     requirePattern(migration, /GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public\.public_discovery_requests\s+TO service_role/i, 'service-role request queue privileges are not explicit', errors);
 
-    if (/https:\/\/[a-z0-9-]+\.supabase\.co/i.test(auth) || /https:\/\/[a-z0-9-]+\.supabase\.co/i.test(config)) {
-      errors.push('browser source contains a hard-coded Supabase project URL');
+    const expectedProjectUrl = 'https://ccwvyjszlrrluzplizsu.supabase.co';
+    const configuredProjectUrls = [auth, config]
+      .flatMap((text) => text.match(/https:\/\/[a-z0-9-]+\.supabase\.co/gi) || []);
+    if (configuredProjectUrls.some((url) => url !== expectedProjectUrl)) {
+      errors.push('browser source contains a Supabase URL outside the confirmed Lumeya project');
     }
     if (/service[_-]?role/i.test(config.replace(/service-role[^\n]*/gi, ''))) {
       errors.push('public-config.js appears to contain a service-role value');

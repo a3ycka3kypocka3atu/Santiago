@@ -55,7 +55,8 @@ The bot fails closed when any required production variable is missing. The
 stores the request when possible, and directly notifies `ADMIN_CHAT_ID` even if
 database persistence fails.
 
-After migration 0016 is applied to the confirmed dedicated Lumeya project, run:
+Migration 0016 is applied to the confirmed dedicated Lumeya project. To repeat
+the disposable service-role boundary test, run:
 
 ```sh
 npm run test:public-mvp

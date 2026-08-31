@@ -58,6 +58,7 @@ function isPlaceholder(value) {
   return !normalized ||
     /^[A-Z][A-Z0-9_]*$/.test(raw) ||
     normalized.includes('process.env') ||
+    normalized.includes('env(') ||
     normalized.includes('${{') ||
     normalized.includes('secrets.') ||
     /(?:replace|placeholder|example|dummy|redacted|your[_-]|test[_-]?only)/.test(normalized);

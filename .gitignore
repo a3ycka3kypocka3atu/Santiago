@@ -20,3 +20,7 @@ AGENTS.md
 .claude/
 .vercel/
 .env*
+!.env.example
+
+# Project dependencies
+node_modules/
